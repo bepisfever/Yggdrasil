@@ -60,10 +60,10 @@ SMODS.Joker {
    
          for i,v in pairs(gains) do
             if v ~= (G.GAME["skill_added_"..i] or 0) then
-               if i == "hand_size" then
+               if i == "hand_size" and G.hand then
                   G.hand:change_size(v - (G.GAME["skill_added_"..i] or 0))
                elseif i == "ante_scaling" then
-                  G.GAME.win_ante = G.GAME.win_ante + (v - (G.GAME["skill_added_"..i] or 0))
+                  G.GAME.win_ante = (G.GAME.win_ante or 0) + (v - (G.GAME["skill_added_"..i] or 0))
                elseif i == "showdown_ante_decrease" then
                   G.GAME[i] = (G.GAME[i] or 0) + (v - (G.GAME["skill_added_"..i] or 0))
                end

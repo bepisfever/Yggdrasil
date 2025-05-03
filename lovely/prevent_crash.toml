@@ -29,7 +29,7 @@ function SMODS.calculate_card_areas(_type, context, return_table, args)
     local flags = {}
     if _type == 'jokers' then
         for _, area in ipairs(SMODS.get_card_areas('jokers')) do
-            if args and args.joker_area then context.cardarea = area end
+            if args and args.joker_area and not args.has_area then context.cardarea = area end
             for _, _card in ipairs(area.cards) do
 '''
 payload = '''
@@ -37,6 +37,6 @@ function SMODS.calculate_card_areas(_type, context, return_table, args)
     local flags = {}
     if _type == 'jokers' then
         for _, area in ipairs(SMODS.get_card_areas('jokers')) do
-            if args and args.joker_area then context.cardarea = area end
+            if args and args.joker_area and not args.has_area then context.cardarea = area end
             for _, _card in ipairs(area.cards or {}) do
 '''

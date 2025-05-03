@@ -190,7 +190,7 @@ SMODS.Joker {
             if if_skill_obtained("ygg_special_light") then
                for _,v in ipairs(G.play.cards or {}) do
                   v.ability.perma_bonus = (v.ability.perma_bonus or 0) + 5
-                  if (v:get_chip_bonus() or 0) >= 100 then
+                  if to_big((v:get_chip_bonus() or 0)) >= to_big(100) then
                      v.ability.perma_x_mult = (v.ability.perma_x_mult or 1) + 0.05 
                   end
                end

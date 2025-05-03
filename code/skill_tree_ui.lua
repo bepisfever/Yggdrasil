@@ -158,6 +158,27 @@ DisabledSkills = {
 
 YggdrasilDefaultButton = true
 
+function check_if_section_exist(sec)
+    for _,v in ipairs(SkillTreeSections) do
+        for _,v2 in ipairs(v) do
+            if v2 == sec then return true end
+        end
+    end
+    return false
+end
+
+function add_new_section(sec)
+    if check_if_section_exist(sec) then return true end
+    for i,v in ipairs(SkillTreeSections) do
+        if #v < 4 then
+            v[#v+1] = sec
+            return true
+        end
+    end
+
+    SkillTreeSections[#SkillTreeSections+1] = {sec}
+end
+
 function ret_skill_tree()
     return SkillTreePerks
 end

@@ -20,23 +20,10 @@ payload = '''if not self.children or not self.children.view_deck then return end
 match_indent = true
 
 [[patches]]
-[patches.pattern]
+[patches.regex]
 target = '=[SMODS _ "src/utils.lua"]'
-match_indent = true
+pattern = '\(area\.cards\)'
 position = 'at'
-pattern = '''
-function SMODS.calculate_card_areas(_type, context, return_table, args)
-    local flags = {}
-    if _type == 'jokers' then
-        for _, area in ipairs(SMODS.get_card_areas('jokers')) do
-            if args and args.joker_area and not args.has_area then context.cardarea = area end
-            for _, _card in ipairs(area.cards) do
-'''
-payload = '''
-function SMODS.calculate_card_areas(_type, context, return_table, args)
-    local flags = {}
-    if _type == 'jokers' then
-        for _, area in ipairs(SMODS.get_card_areas('jokers')) do
-            if args and args.joker_area and not args.has_area then context.cardarea = area end
-            for _, _card in ipairs(area.cards or {}) do
-'''
+payload = "(area.cards or {})"
+overwrite = true
+match_indent = false

@@ -23,6 +23,9 @@ SMODS.Joker {
    perishable_compat = false,
    pos = { x = 0, y = 0 },
    no_collection = true,
+   in_pool = function(self, args)
+      return false
+   end,
 
    update = function(self,card,dt)
       if G and G.GAME then

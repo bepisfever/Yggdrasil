@@ -25,45 +25,47 @@ SMODS.Joker {
    no_collection = true,
 
    update = function(self,card,dt)
-      local gains = {
-         hand_size = 0,
-         ante_scaling = 0,
-         showdown_ante_decrease = 0,
-      }
-
-      local function check_skill_gains(i,v)
-         local info = get_skill_info(i) or {}
-         for i2,v2 in pairs(info) do
-            if i2 == "showdown_ante_decrease" and info["force_showdown_ante_decrease"] then
-               if gains[i2] then gains[i2] = gains[i2] + ((v2 + (G.GAME.win_ante - 8)) * v) end
-            else
-               if gains[i2] then gains[i2] = gains[i2] + (v2 * v) end
+      if G and G.GAME then
+         local gains = {
+            hand_size = 0,
+            ante_scaling = 0,
+            showdown_ante_decrease = 0,
+         }
+   
+         local function check_skill_gains(i,v)
+            local info = get_skill_info(i) or {}
+            for i2,v2 in pairs(info) do
+               if i2 == "showdown_ante_decrease" and info["force_showdown_ante_decrease"] then
+                  if gains[i2] then gains[i2] = gains[i2] + ((v2 + (G.GAME.win_ante - 8)) * v) end
+               else
+                  if gains[i2] then gains[i2] = gains[i2] + (v2 * v) end
+               end
             end
          end
-      end
-
-      for i,v in pairs(G.PROFILES[G.SETTINGS.profile].skill_perks or {}) do
-         check_skill_gains(i,v)
-      end
-
-      for i,v in pairs(G.GAME.skill_perks or {}) do
-         check_skill_gains(i,v)
-      end
-
-      if if_skill_obtained("ygg_mult10") then
-         gains["hand_size"] = gains["hand_size"] + math.floor((card.ability.current_mult or 0)/100)
-      end
-
-      for i,v in pairs(gains) do
-         if v ~= (G.GAME["skill_added_"..i] or 0) then
-            if i == "hand_size" then
-               G.hand:change_size(v - (G.GAME["skill_added_"..i] or 0))
-            elseif i == "ante_scaling" then
-               G.GAME.win_ante = G.GAME.win_ante + (v - (G.GAME["skill_added_"..i] or 0))
-            elseif i == "showdown_ante_decrease" then
-               G.GAME[i] = (G.GAME[i] or 0) + (v - (G.GAME["skill_added_"..i] or 0))
+   
+         for i,v in pairs(G.PROFILES[G.SETTINGS.profile].skill_perks or {}) do
+            check_skill_gains(i,v)
+         end
+   
+         for i,v in pairs(G.GAME.skill_perks or {}) do
+            check_skill_gains(i,v)
+         end
+   
+         if if_skill_obtained("ygg_mult10") then
+            gains["hand_size"] = gains["hand_size"] + math.floor((card.ability.current_mult or 0)/100)
+         end
+   
+         for i,v in pairs(gains) do
+            if v ~= (G.GAME["skill_added_"..i] or 0) then
+               if i == "hand_size" then
+                  G.hand:change_size(v - (G.GAME["skill_added_"..i] or 0))
+               elseif i == "ante_scaling" then
+                  G.GAME.win_ante = G.GAME.win_ante + (v - (G.GAME["skill_added_"..i] or 0))
+               elseif i == "showdown_ante_decrease" then
+                  G.GAME[i] = (G.GAME[i] or 0) + (v - (G.GAME["skill_added_"..i] or 0))
+               end
+               G.GAME["skill_added_"..i] = v
             end
-            G.GAME["skill_added_"..i] = v
          end
       end
    end,

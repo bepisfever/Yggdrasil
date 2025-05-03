@@ -1,7 +1,7 @@
 [manifest]
 version = "1.0.0"
 dump_lua = true
-priority = -100000000
+priority = 1
 
 [[patches]]
 [patches.pattern]
@@ -25,5 +25,14 @@ target = '=[SMODS _ "src/utils.lua"]'
 pattern = '\(area\.cards\)'
 position = 'at'
 payload = "(area.cards or {})"
+overwrite = true
+match_indent = false
+
+[[patches]]
+[patches.regex]
+target = '=[SMODS _ "src/utils.lua"]'
+pattern = 'G.deck.cards'
+position = 'at'
+payload = "((G.deck or {}).cards or {})"
 overwrite = true
 match_indent = false

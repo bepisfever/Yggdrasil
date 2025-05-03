@@ -1,0 +1,814 @@
+[manifest]
+version = "1.0.0"
+dump_lua = true
+priority = 1
+
+[[patches]]
+[patches.pattern]
+target = 'card.lua'
+match_indent = true
+position = 'before'
+pattern = '''
+G.E_MANAGER:add_event(Event({trigger = 'after',delay = 0.1,func = function() G.hand.highlighted[i]:set_ability(G.P_CENTERS[self.ability.consumeable.mod_conv]);return true end }))
+'''
+payload = '''
+if self.ability.name == "The Empress" then
+    G.hand.highlighted[i].ability.perma_mult = (G.hand.highlighted[i].ability.perma_mult or 0) + ((if_skill_obtained("ygg_empress_upgrade") or 0) * 5)
+elseif self.ability.name == "The Hierophant" then
+    G.hand.highlighted[i].ability.perma_bonus = (G.hand.highlighted[i].ability.perma_bonus or 0) + ((if_skill_obtained("ygg_hierophant_upgrade") or 0) * 20)
+end
+'''
+
+[[patches]]
+[patches.pattern]
+target = 'card.lua'
+match_indent = true
+position = 'after'
+pattern = '''
+        if pseudorandom('lucky_mult') < G.GAME.probabilities.normal/5 then
+            self.lucky_trigger = true
+            ret = ret + self.ability.mult
+'''
+payload = '''
+elseif if_skill_obtained("ygg_magician_upgrade") then
+    ret = ret + (self.ability.mult/10)
+'''
+
+[[patches]]
+[patches.pattern]
+target = 'card.lua'
+match_indent = true
+position = 'after'
+pattern = '''
+            if pseudorandom('lucky_money') < G.GAME.probabilities.normal/15 then
+                self.lucky_trigger = true
+                ret = ret +  self.ability.p_dollars
+'''
+payload = '''
+elseif if_skill_obtained("ygg_magician_upgrade") then
+    ret = ret + (self.ability.p_dollars/10)
+'''
+
+[[patches]]
+[patches.pattern]
+target = 'card.lua'
+match_indent = true
+position = 'after'
+times = 1
+pattern = '''
+if self.ability.name == 'The Emperor' or self.ability.name == 'The High Priestess'  then
+'''
+payload = '''
+    if if_skill_obtained("ygg_priestess_upgrade") and self.ability.name == "The High Priestess" then return true end
+    if if_skill_obtained("ygg_emperor_upgrade") and self.ability.name == "The Emperor" then return true end
+'''
+
+[[patches]]
+[patches.pattern]
+target = 'card.lua'
+match_indent = true
+position = 'after'
+times = 1
+pattern = '''
+        for i = 1, math.min((self.ability.consumeable.tarots or self.ability.consumeable.planets), G.consumeables.config.card_limit - #G.consumeables.cards) do
+            G.E_MANAGER:add_event(Event({trigger = 'after', delay = 0.4, func = function()
+                if G.consumeables.config.card_limit > #G.consumeables.cards then
+                    play_sound('timpani')
+                    local card = create_card((self.ability.name == 'The Emperor' and 'Tarot') or (self.ability.name == 'The High Priestess' and 'Planet'), G.consumeables, nil, nil, nil, nil, nil, (self.ability.name == 'The Emperor' and 'emp') or (self.ability.name == 'The High Priestess' and 'pri'))
+                    card:add_to_deck()
+                    G.consumeables:emplace(card)
+                    used_tarot:juice_up(0.3, 0.5)
+                end
+                return true end }))
+        end
+'''
+payload = '''
+if if_skill_obtained("ygg_priestess_upgrade") and self.ability.name == "The High Priestess" then 
+    G.E_MANAGER:add_event(Event({trigger = 'after', delay = 0.4, func = function()
+        play_sound('timpani')
+        local card = SMODS.create_card({set = "Planet", key = BalatroSR.most_played_hand_planet_key(true) or "c_pluto"})
+        card:set_edition("e_negative",true)
+        card:add_to_deck()
+        G.consumeables:emplace(card)
+        used_tarot:juice_up(0.3, 0.5)
+    return true end }))
+end
+
+if if_skill_obtained("ygg_emperor_upgrade") and self.ability.name == "The Emperor" then 
+    G.E_MANAGER:add_event(Event({trigger = 'after', delay = 0.4, func = function()
+        play_sound('timpani')
+        local card = SMODS.create_card({set = "Tarot", edition = "e_negative"})
+        card:set_edition("e_negative",true)
+        card:add_to_deck()
+        G.consumeables:emplace(card)
+        used_tarot:juice_up(0.3, 0.5)
+    return true end }))
+end
+'''
+
+[[patches]]
+[patches.pattern]
+target = 'card.lua'
+match_indent = true
+position = 'after'
+times = 1
+pattern = '''
+    if self.ability.name == 'The Fool' then
+        G.E_MANAGER:add_event(Event({trigger = 'after', delay = 0.4, func = function()
+'''
+payload = '''
+        if if_skill_obtained("ygg_fool_upgrade") then
+            play_sound('timpani')
+            local card = create_card('Tarot_Planet', G.consumeables, nil, nil, nil, nil, G.GAME.last_tarot_planet, 'fool')
+            card:set_edition("e_negative",true)
+            card:add_to_deck()
+            G.consumeables:emplace(card)
+            used_tarot:juice_up(0.3, 0.5)
+            return true
+        end
+'''
+
+[[patches]]
+[patches.pattern]
+target = 'card.lua'
+match_indent = true
+position = 'after'
+times = 1
+pattern = '''
+        if self.ability.name == 'The Fool' then
+            if (#G.consumeables.cards < G.consumeables.config.card_limit or self.area == G.consumeables) 
+                and G.GAME.last_tarot_planet and G.GAME.last_tarot_planet ~= 'c_fool' then return true end
+'''
+payload = '''
+    if if_skill_obtained("ygg_fool_upgrade") and G.GAME.last_tarot_planet and G.GAME.last_tarot_planet ~= 'c_fool' then return true end
+'''
+
+[[patches]]
+[patches.pattern]
+target = 'card.lua'
+match_indent = true
+position = 'after'
+times = 1
+pattern = '''
+            local rightmost = G.hand.highlighted[1]
+            for i=1, #G.hand.highlighted do if G.hand.highlighted[i].T.x > rightmost.T.x then rightmost = G.hand.highlighted[i] end end
+            for i=1, #G.hand.highlighted do
+                G.E_MANAGER:add_event(Event({trigger = 'after',delay = 0.1,func = function()
+                    if G.hand.highlighted[i] ~= rightmost then
+                        copy_card(rightmost, G.hand.highlighted[i])
+                    end
+                    return true end }))
+            end  
+'''
+payload = '''
+if if_skill_obtained("ygg_death_upgrade") then
+    local check = {}
+    for _,v in ipairs(G.hand.cards) do
+        local checked = true
+        for _,v2 in ipairs(G.hand.highlighted) do
+            if v2 == v then checked = false break end
+        end
+        if checked then check[#check+1] = v end
+    end
+
+    if #check > 0 then 
+        local picked_card = pseudorandom_element(check, pseudoseed("ygg_death_upgrade"))
+        G.E_MANAGER:add_event(Event({trigger = 'after',delay = 0.1,func = function()
+            picked_card:flip()
+        return true end }))
+
+        G.E_MANAGER:add_event(Event({trigger = 'after',delay = 0.1,func = function()
+            copy_card(rightmost, picked_card)
+            picked_card:flip()
+        return true end }))
+    end
+end
+'''
+
+[[patches]]
+[patches.pattern]
+target = 'card.lua'
+match_indent = true
+position = 'after'
+times = 1
+pattern = '''
+            G.E_MANAGER:add_event(Event({trigger = 'after', delay = 0.4, func = function()
+            play_sound('timpani')
+            local card = create_card('Joker', G.jokers, self.ability.name == 'The Soul', nil, nil, nil, nil, self.ability.name == 'Judgement' and 'jud' or 'sou')
+            card:add_to_deck()
+            G.jokers:emplace(card)
+            if self.ability.name == 'The Soul' then check_for_unlock{type = 'spawn_legendary'} end
+            used_tarot:juice_up(0.3, 0.5)
+            return true end }))
+'''
+payload = '''
+if if_skill_obtained("ygg_judgement_upgrade") and self.ability.name == "Judgement" then
+    if (#G.jokers.cards + 1) < G.jokers.config.card_limit then
+        for i = 1, (G.jokers.config.card_limit - (#G.jokers.cards + 1)) do
+            G.E_MANAGER:add_event(Event({trigger = 'after', delay = 0.4, func = function()
+                play_sound('timpani')
+                local card = create_card('Joker', G.jokers, self.ability.name == 'The Soul', nil, nil, nil, nil, self.ability.name == 'Judgement' and 'jud' or 'sou')
+                card:add_to_deck()
+                G.jokers:emplace(card)
+                if self.ability.name == 'The Soul' then check_for_unlock{type = 'spawn_legendary'} end
+                used_tarot:juice_up(0.3, 0.5)
+            return true end }))
+        end
+    end
+end
+'''
+
+[[patches]]
+[patches.pattern]
+target = '=[SMODS _ "src/game_object.lua"]'
+match_indent = true
+position = 'after'
+pattern = '''
+            local _suit, _rank =
+                            pseudorandom_element(SMODS.Suits, pseudoseed('familiar_create')).card_key,
+                            pseudorandom_element(faces, pseudoseed('familiar_create')).card_key
+                        local cen_pool = {}
+                        for k, v in pairs(G.P_CENTER_POOLS["Enhanced"]) do
+                            if v.key ~= 'm_stone' and not v.overrides_base_rank then
+                                cen_pool[#cen_pool + 1] = v
+                            end
+                        end
+                        cards[i] = create_playing_card({
+                            front = G.P_CARDS[_suit .. '_' .. _rank],
+                            center = pseudorandom_element(cen_pool, pseudoseed('spe_card'))
+                        }, G.hand, nil, i ~= 1, { G.C.SECONDARY_SET.Spectral })
+'''
+payload = '''
+if if_skill_obtained("ygg_familiar_upgrade") then
+    cards[i]:set_edition(poll_edition('ygg_familiar_buff_ed', nil, true, true),true)
+    cards[i]:set_seal(SMODS.poll_seal({guaranteed = true, type_key = 'ygg_familiar_buff_s'}),true)
+end
+'''
+
+[[patches]]
+[patches.pattern]
+target = '=[SMODS _ "src/game_object.lua"]'
+match_indent = true
+position = 'after'
+pattern = '''
+ local _suit, _rank =
+                            pseudorandom_element(SMODS.Suits, pseudoseed('grim_create')).card_key, 'A'
+                        local cen_pool = {}
+                        for k, v in pairs(G.P_CENTER_POOLS["Enhanced"]) do
+                            if v.key ~= 'm_stone' and not v.overrides_base_rank then
+                                cen_pool[#cen_pool + 1] = v
+                            end
+                        end
+                        cards[i] = create_playing_card({
+                            front = G.P_CARDS[_suit .. '_' .. _rank],
+                            center = pseudorandom_element(cen_pool, pseudoseed('spe_card'))
+                        }, G.hand, nil, i ~= 1, { G.C.SECONDARY_SET.Spectral })
+'''
+payload = '''
+if if_skill_obtained("ygg_grim_upgrade") then
+    cards[i]:set_edition(poll_edition('ygg_grim_buff_ed', nil, true, true),true)
+    cards[i]:set_seal(SMODS.poll_seal({guaranteed = true, type_key = 'ygg_grim_buff_s'}),true)
+end
+'''
+
+[[patches]]
+[patches.pattern]
+target = '=[SMODS _ "src/game_object.lua"]'
+match_indent = true
+position = 'after'
+pattern = '''
+local _suit, _rank =
+                            pseudorandom_element(SMODS.Suits, pseudoseed('incantation_create')).card_key,
+                            pseudorandom_element(numbers, pseudoseed('incantation_create')).card_key
+                        local cen_pool = {}
+                        for k, v in pairs(G.P_CENTER_POOLS["Enhanced"]) do
+                            if v.key ~= 'm_stone' and not v.overrides_base_rank then
+                                cen_pool[#cen_pool + 1] = v
+                            end
+                        end
+                        cards[i] = create_playing_card({
+                            front = G.P_CARDS[_suit .. '_' .. _rank],
+                            center = pseudorandom_element(cen_pool, pseudoseed('spe_card'))
+                        }, G.hand, nil, i ~= 1, { G.C.SECONDARY_SET.Spectral })
+'''
+payload = '''
+if if_skill_obtained("ygg_incantation_upgrade") then
+    cards[i]:set_edition(poll_edition('ygg_incantation_buff_ed', nil, true, true),true)
+    cards[i]:set_seal(SMODS.poll_seal({guaranteed = true, type_key = 'ygg_incantation_buff_s'}),true)
+end
+'''
+
+[[patches]]
+[patches.pattern]
+target = '=[SMODS _ "src/game_object.lua"]'
+match_indent = true
+position = 'after'
+pattern = '''
+local _suit, _rank =
+                            pseudorandom_element(SMODS.Suits, pseudoseed('incantation_create')).card_key,
+                            pseudorandom_element(numbers, pseudoseed('incantation_create')).card_key
+                        local cen_pool = {}
+                        for k, v in pairs(G.P_CENTER_POOLS["Enhanced"]) do
+                            if v.key ~= 'm_stone' and not v.overrides_base_rank then
+                                cen_pool[#cen_pool + 1] = v
+                            end
+                        end
+                        cards[i] = create_playing_card({
+                            front = G.P_CARDS[_suit .. '_' .. _rank],
+                            center = pseudorandom_element(cen_pool, pseudoseed('spe_card'))
+                        }, G.hand, nil, i ~= 1, { G.C.SECONDARY_SET.Spectral })
+'''
+payload = '''
+if if_skill_obtained("ygg_incantation_upgrade") then
+    cards[i]:set_edition(poll_edition('ygg_incantation_buff_ed', nil, true, true),true)
+    cards[i]:set_seal(SMODS.poll_seal({guaranteed = true, type_key = 'ygg_incantation_buff_s'}),true)
+end
+'''
+
+[[patches]]
+[patches.pattern]
+target = 'card.lua'
+match_indent = true
+position = 'after'
+pattern = '''
+    elseif self.seal == 'Gold' then
+        ret = ret +  3
+'''
+payload = '''
+    if if_skill_obtained("ygg_talisman_upgrade") then
+        for _,v in ipairs(G.play.cards or {}) do
+            if v ~= self and v.seal and v.seal == "Gold" then
+                ret = ret + 1
+            end
+        end
+    end
+'''
+
+[[patches]]
+[patches.pattern]
+target = 'card.lua'
+match_indent = true
+position = 'after'
+pattern = '''
+if self.ability.name == 'Aura' then 
+            if G.hand and (#G.hand.highlighted == 1) and G.hand.highlighted[1] and (not G.hand.highlighted[1].edition) then return true end
+'''
+payload = '''
+    if if_skill_obtained("ygg_aura_upgrade") and G.hand and (#G.hand.highlighted <= (self.ability.max_highlighted or 3)) and (#G.hand.highlighted >= 1) then
+        local editionless_exist = false
+        for _,v in ipairs(G.hand.highlighted or {}) do
+            if not v.edition then editionless_exist = true break end
+        end
+
+        return editionless_exist
+    end
+'''
+
+[[patches]]
+[patches.pattern]
+target = 'card.lua'
+match_indent = true
+position = 'before'
+pattern = '''
+        G.E_MANAGER:add_event(Event({trigger = 'after', delay = 0.4, func = function()
+            local over = false
+            local edition = poll_edition('aura', nil, true, true)
+            local aura_card = G.hand.highlighted[1]
+            aura_card:set_edition(edition, true)
+            used_tarot:juice_up(0.3, 0.5)
+        return true end }))
+'''
+payload = '''
+if if_skill_obtained("ygg_aura_upgrade") then
+    G.E_MANAGER:add_event(Event({trigger = 'after', delay = 0.4, func = function()
+        for _,aura_card in ipairs(G.hand.highlighted or {}) do
+            local over = false
+            local edition = poll_edition('aura', nil, true, true)
+            if not aura_card.edition then
+                aura_card:set_edition(edition, true)
+                used_tarot:juice_up(0.3, 0.5)
+            end
+        end
+    return true end }))
+    return
+end
+'''
+
+[[patches]]
+[patches.pattern]
+target = 'functions/common_events.lua'
+match_indent = true
+position = 'after'
+pattern = '''
+if _c.name == 'Aura' then
+'''
+payload = '''
+    loc_vars = {cfg.max_highlighted, localize{type = 'name_text', set = 'Spectral', key = cfg.mod_conv}}
+'''
+
+[[patches]]
+[patches.pattern]
+target = 'card.lua'
+match_indent = true
+position = 'at'
+pattern = '''
+            if G.GAME.dollars ~= 0 then
+                ease_dollars(-G.GAME.dollars, true)
+            end
+'''
+payload = '''
+if G.GAME.dollars ~= 0 and not if_skill_obtained("ygg_wraith_upgrade") then
+    ease_dollars(-G.GAME.dollars, true)
+elseif if_skill_obtained("ygg_wraith_upgrade") then
+    if to_big(G.GAME.dollars) < to_big(0) then
+        ease_dollars(-G.GAME.dollars, true)
+    elseif to_big(G.GAME.dollars) > to_big(0) then
+        ease_dollars(math.floor(-G.GAME.dollars/2), true)
+    end
+end
+'''
+
+[[patches]]
+[patches.pattern]
+target = '=[SMODS _ "src/game_object.lua"]'
+match_indent = true
+position = 'after'
+pattern = '''
+            local _rank = pseudorandom_element(SMODS.Ranks, pseudoseed('ouija'))
+            for i = 1, #G.hand.cards do
+                G.E_MANAGER:add_event(Event({
+                    func = function()
+                        local _card = G.hand.cards[i]
+                        assert(SMODS.change_base(_card, nil, _rank.key))
+'''
+payload = '''
+            if if_skill_obtained("ygg_ouija_upgrade") then
+                local cen_pool = {}
+                for k, v in pairs(G.P_CENTER_POOLS["Enhanced"]) do
+                    if v.key ~= 'm_stone' and not v.overrides_base_rank then
+                        cen_pool[#cen_pool + 1] = v
+                    end
+                end
+
+                local radEnhancement = pseudorandom_element(cen_pool,pseudoseed("ygg_ouija_upgrade_en"))
+                if not next(SMODS.get_enhancements(_card)) then
+                    _card:set_ability(radEnhancement,nil,false)
+                end
+            end
+'''
+
+[[patches]]
+[patches.pattern]
+target = '=[SMODS _ "src/game_object.lua"]'
+match_indent = true
+position = 'at'
+pattern = '''
+G.hand:change_size(-1)
+'''
+payload = '''
+if not if_skill_obtained("ygg_ouija_upgrade") then
+    G.hand:change_size(-1)
+end
+'''
+
+[[patches]]
+[patches.pattern]
+target = 'functions/common_events.lua'
+match_indent = true
+position = 'at'
+pattern = '''
+if _c.name == 'Aura' then
+    loc_vars = {cfg.max_highlighted, localize{type = 'name_text', set = 'Spectral', key = cfg.mod_conv}}
+    info_queue[#info_queue+1] = G.P_CENTERS.e_foil
+    info_queue[#info_queue+1] = G.P_CENTERS.e_holo
+    info_queue[#info_queue+1] = G.P_CENTERS.e_polychrome
+end
+localize{type = 'descriptions', key = _c.key, set = _c.set, nodes = desc_nodes, vars = _c.vars or loc_vars}
+'''
+payload = '''
+if _c.name == 'Aura' then
+    loc_vars = {cfg.max_highlighted, localize{type = 'name_text', set = 'Spectral', key = cfg.mod_conv}}
+    info_queue[#info_queue+1] = G.P_CENTERS.e_foil
+    info_queue[#info_queue+1] = G.P_CENTERS.e_holo
+    info_queue[#info_queue+1] = G.P_CENTERS.e_polychrome
+end
+if (_c.name == "Ankh" and if_skill_obtained("ygg_ankh_upgrade")) or (_c.name == "Hex" and if_skill_obtained("ygg_hex_upgrade")) then
+    localize{type = 'descriptions', key = _c.key.."_u", set = _c.set, nodes = desc_nodes, vars = _c.vars or loc_vars}
+else
+    localize{type = 'descriptions', key = _c.key, set = _c.set, nodes = desc_nodes, vars = _c.vars or loc_vars}
+end
+'''
+
+[[patches]]
+[patches.pattern]
+target = 'card.lua'
+match_indent = true
+position = 'at'
+pattern = '''
+local deletable_jokers = {}
+for k, v in pairs(G.jokers.cards) do
+   if not v.ability.eternal then deletable_jokers[#deletable_jokers + 1] = v end
+end
+local chosen_joker = pseudorandom_element(G.jokers.cards, pseudoseed('ankh_choice'))
+local _first_dissolve = nil
+G.E_MANAGER:add_event(Event({trigger = 'before', delay = 0.75, func = function()
+   for k, v in pairs(deletable_jokers) do
+       if v ~= chosen_joker then 
+           v:start_dissolve(nil, _first_dissolve)
+           _first_dissolve = true
+       end
+   end
+return true end }))
+G.E_MANAGER:add_event(Event({trigger = 'before', delay = 0.4, func = function()
+   local card = copy_card(chosen_joker, nil, nil, nil, chosen_joker.edition and chosen_joker.edition.negative)
+   card:start_materialize()
+   card:add_to_deck()
+   if card.edition and card.edition.negative then
+       card:set_edition(nil, true)
+   end
+   G.jokers:emplace(card)
+return true end }))
+'''
+payload = '''
+if not if_skill_obtained("ygg_ankh_upgrade") then
+    local deletable_jokers = {}
+    for k, v in pairs(G.jokers.cards) do
+        if not v.ability.eternal then deletable_jokers[#deletable_jokers + 1] = v end
+    end
+    local chosen_joker = pseudorandom_element(G.jokers.cards, pseudoseed('ankh_choice'))
+    local _first_dissolve = nil
+    G.E_MANAGER:add_event(Event({trigger = 'before', delay = 0.75, func = function()
+        for k, v in pairs(deletable_jokers) do
+            if v ~= chosen_joker then 
+                v:start_dissolve(nil, _first_dissolve)
+                _first_dissolve = true
+            end
+        end
+    return true end }))
+    G.E_MANAGER:add_event(Event({trigger = 'before', delay = 0.4, func = function()
+        local card = copy_card(chosen_joker, nil, nil, nil, chosen_joker.edition and chosen_joker.edition.negative)
+        card:start_materialize()
+        card:add_to_deck()
+        if card.edition and card.edition.negative then
+            card:set_edition(nil, true)
+        end
+        G.jokers:emplace(card)
+    return true end }))
+else
+    if #G.jokers.cards == 1 then
+        local chosen_joker = G.jokers.cards[1]
+        G.E_MANAGER:add_event(Event({trigger = 'before', delay = 0.4, func = function()
+            local card = copy_card(chosen_joker, nil, nil, nil, chosen_joker.edition and chosen_joker.edition.negative)
+            card:start_materialize()
+            card:add_to_deck()
+            if card.edition and card.edition.negative then
+                card:set_edition(nil, true)
+            end
+            G.jokers:emplace(card)
+        return true end }))
+    else
+        local leftmost = G.jokers.cards[1]
+        local rightmost = G.jokers.cards[#G.jokers.cards]
+
+        local selectedToDestroy = pseudorandom_element({leftmost,rightmost}, pseudoseed("ankh_choice"))
+        local chosen_joker = selectedToDestroy
+        local chosen_to_destroy = ((selectedToDestroy == leftmost) and rightmost) or leftmost
+        G.E_MANAGER:add_event(Event({trigger = 'before', delay = 0.75, func = function()
+            if not chosen_to_destroy.ability.eternal then
+                chosen_to_destroy:start_dissolve(nil, true)
+            end
+        return true end }))
+
+        G.E_MANAGER:add_event(Event({trigger = 'before', delay = 0.4, func = function()
+            local card = copy_card(chosen_joker, nil, nil, nil, chosen_joker.edition and chosen_joker.edition.negative)
+            card:start_materialize()
+            card:add_to_deck()
+            if card.edition and card.edition.negative then
+                card:set_edition(nil, true)
+            end
+            G.jokers:emplace(card)
+        return true end }))
+    end
+end
+'''
+
+[[patches]]
+[patches.pattern]
+target = 'card.lua'
+match_indent = true
+position = 'at'
+pattern = '''
+if self.ability.name == 'Ectoplasm' or self.ability.name == 'Hex' then
+    if next(self.eligible_editionless_jokers) then return true end
+'''
+payload = '''
+if self.ability.name == 'Ectoplasm' or self.ability.name == 'Hex' then
+    if if_skill_obtained("ygg_hex_upgrade") and self.ability.name == "Hex" then
+        if #G.jokers.cards >= 2 and #G.jokers.highlighted > 0 then
+            local valid = false
+            for _,v in ipairs(G.jokers.cards) do
+                if not v.edition and v ~= G.jokers.highlighted[1] then valid = true break end
+            end
+            return valid
+        end
+    else
+        if next(self.eligible_editionless_jokers) then return true end
+    end
+'''
+
+[[patches]]
+[patches.pattern]
+target = 'card.lua'
+match_indent = true
+position = 'after'
+pattern = '''
+elseif self.ability.name == 'Hex' then
+    edition = {polychrome = true}
+'''
+payload = '''
+if if_skill_obtained("ygg_hex_upgrade") then
+    local valid_pool = {}
+    for _,v in ipairs(G.jokers.cards or {}) do
+        if v ~= G.jokers.highlighted[1] and not v.edition then valid_pool[#valid_pool + 1] = v end
+    end
+    eligible_card = pseudorandom_element(valid_pool, pseudoseed("hex_upgrade_pool"))
+end
+'''
+
+[[patches]]
+[patches.pattern]
+target = 'card.lua'
+match_indent = true
+position = 'at'
+pattern = '''
+if self.ability.name == 'Hex' then 
+    local _first_dissolve = nil
+    for k, v in pairs(G.jokers.cards) do
+        if v ~= eligible_card and (not v.ability.eternal) then v:start_dissolve(nil, _first_dissolve);_first_dissolve = true end
+    end
+end
+'''
+payload = '''
+if self.ability.name == 'Hex' then 
+    if if_skill_obtained("ygg_hex_upgrade") then
+        G.jokers.highlighted[1]:start_dissolve(nil,true)
+    else
+        local _first_dissolve = nil
+        for k, v in pairs(G.jokers.cards) do
+            if v ~= eligible_card and (not v.ability.eternal) then v:start_dissolve(nil, _first_dissolve);_first_dissolve = true end
+        end
+    end
+end
+'''
+
+[[patches]]
+[patches.pattern]
+target = 'functions/common_events.lua'
+match_indent = true
+position = 'at'
+pattern = '''
+elseif v.boss.showdown and (G.GAME.round_resets.ante)%G.GAME.win_ante == 0 and G.GAME.round_resets.ante >= 2 then
+'''
+payload = '''
+elseif v.boss.showdown and (G.GAME.round_resets.ante)%(G.GAME.win_ante - (G.GAME.showdown_ante_decrease or 0)) == 0 and G.GAME.round_resets.ante >= 2 then
+'''
+
+[[patches]]
+[patches.pattern]
+target = 'functions/common_events.lua'
+match_indent = true
+position = 'at'
+pattern = '''
+elseif not v.boss.showdown and (v.boss.min <= math.max(1, G.GAME.round_resets.ante) and ((math.max(1, G.GAME.round_resets.ante))%G.GAME.win_ante ~= 0 or G.GAME.round_resets.ante < 2)) then
+'''
+payload = '''
+elseif not v.boss.showdown and (v.boss.min <= math.max(1, G.GAME.round_resets.ante) and ((math.max(1, G.GAME.round_resets.ante))%(G.GAME.win_ante - (G.GAME.showdown_ante_decrease or 0)) ~= 0 or G.GAME.round_resets.ante < 2)) then
+'''
+
+[[patches]]
+[patches.pattern]
+target = 'functions/state_events.lua'
+match_indent = true
+position = 'at'
+pattern = '''
+G.GAME.current_round.reroll_cost_increase = 0
+'''
+payload = '''
+if not if_skill_obtained("ygg_diff5") then
+    G.GAME.current_round.reroll_cost_increase = 0
+end
+'''
+
+[[patches]]
+[patches.pattern]
+target = 'functions/state_events.lua'
+match_indent = true
+position = 'at'
+pattern = '''
+G.GAME.current_round.hands_left = (math.max(1, G.GAME.round_resets.hands + G.GAME.round_bonus.next_hands))
+'''
+payload = '''
+if not if_skill_obtained("ygg_diff6") then
+    G.GAME.current_round.hands_left = (math.max(1, G.GAME.round_resets.hands + G.GAME.round_bonus.next_hands))
+else
+
+end
+'''
+
+[[patches]]
+[patches.pattern]
+target = 'functions/button_callbacks.lua'
+match_indent = true
+position = 'at'
+pattern = '''
+G.GAME.current_round.hands_left = (math.max(1, G.GAME.round_resets.hands + G.GAME.round_bonus.next_hands))
+'''
+payload = '''
+if not if_skill_obtained("ygg_diff6") then
+    G.GAME.current_round.hands_left = (math.max(1, G.GAME.round_resets.hands + G.GAME.round_bonus.next_hands))
+else
+    G.GAME.current_round.hands_left = math.min(((G.GAME.current_round.hands_left or 0) + 2), G.GAME.round_resets.hands) + G.GAME.round_bonus.next_hands
+end
+'''
+
+[[patches]]
+[patches.pattern]
+target = 'functions/state_events.lua'
+match_indent = true
+position = 'at'
+pattern = '''
+if to_big(G.GAME.dollars) >= to_big(5) and not G.GAME.modifiers.no_interest then
+   add_round_eval_row({bonus = true, name='interest', pitch = pitch, dollars = G.GAME.interest_amount*math.min(math.floor(G.GAME.dollars/5), G.GAME.interest_cap/5)})
+   pitch = pitch + 0.06
+   if (not G.GAME.seeded and not G.GAME.challenge) or SMODS.config.seeded_unlocks then
+       if G.GAME.interest_amount*math.min(math.floor(G.GAME.dollars/5), G.GAME.interest_cap/5) == G.GAME.interest_amount*G.GAME.interest_cap/5 then 
+           G.PROFILES[G.SETTINGS.profile].career_stats.c_round_interest_cap_streak = G.PROFILES[G.SETTINGS.profile].career_stats.c_round_interest_cap_streak + 1
+       else
+           G.PROFILES[G.SETTINGS.profile].career_stats.c_round_interest_cap_streak = 0
+       end
+   end
+   check_for_unlock({type = 'interest_streak'})
+   dollars = dollars + G.GAME.interest_amount*math.min(math.floor(G.GAME.dollars/5), G.GAME.interest_cap/5)
+'''
+payload = '''
+local cash_per_interest = 5
+if if_skill_obtained("ygg_diff7") then cash_per_interest = cash_per_interest + 5 end
+if to_big(G.GAME.dollars) >= to_big(cash_per_interest) and not G.GAME.modifiers.no_interest then
+   add_round_eval_row({bonus = true, name='interest', pitch = pitch, dollars = G.GAME.interest_amount*math.min(math.floor(G.GAME.dollars/cash_per_interest), G.GAME.interest_cap/5)})
+   pitch = pitch + 0.06
+   if (not G.GAME.seeded and not G.GAME.challenge) or SMODS.config.seeded_unlocks then
+       if G.GAME.interest_amount*math.min(math.floor(G.GAME.dollars/cash_per_interest), G.GAME.interest_cap/5) == G.GAME.interest_amount*G.GAME.interest_cap/5 then 
+           G.PROFILES[G.SETTINGS.profile].career_stats.c_round_interest_cap_streak = G.PROFILES[G.SETTINGS.profile].career_stats.c_round_interest_cap_streak + 1
+       else
+           G.PROFILES[G.SETTINGS.profile].career_stats.c_round_interest_cap_streak = 0
+       end
+   end
+   check_for_unlock({type = 'interest_streak'})
+   dollars = dollars + G.GAME.interest_amount*math.min(math.floor(G.GAME.dollars/cash_per_interest), G.GAME.interest_cap/5)
+'''
+
+[[patches]]
+[patches.pattern]
+target = 'functions/common_events.lua'
+match_indent = true
+position = 'at'
+pattern = '''
+elseif config.name == 'interest' then
+    table.insert(left_text, {n=G.UIT.T, config={text = num_dollars, scale = 0.8*scale, colour = G.C.MONEY, shadow = true, juice = true}})
+    table.insert(left_text,{n=G.UIT.O, config={object = DynaText({string = {" "..localize{type = 'variable', key = 'interest', vars = {G.GAME.interest_amount, 5, G.GAME.interest_amount*G.GAME.interest_cap/5}}}, colours = {G.C.UI.TEXT_LIGHT}, shadow = true, pop_in = 0, scale = 0.4*scale, silent = true})}})
+'''
+payload = '''
+elseif config.name == 'interest' then
+    local cash_per_interest = 5
+    if if_skill_obtained("ygg_diff7") then cash_per_interest = cash_per_interest + 5 end
+    table.insert(left_text, {n=G.UIT.T, config={text = num_dollars, scale = 0.8*scale, colour = G.C.MONEY, shadow = true, juice = true}})
+    table.insert(left_text,{n=G.UIT.O, config={object = DynaText({string = {" "..localize{type = 'variable', key = 'interest', vars = {G.GAME.interest_amount, cash_per_interest, G.GAME.interest_amount*G.GAME.interest_cap/5}}}, colours = {G.C.UI.TEXT_LIGHT}, shadow = true, pop_in = 0, scale = 0.4*scale, silent = true})}})
+'''
+
+#[[patches]]
+#[patches.pattern]
+#target = 'functions/state_events.lua'
+#match_indent = true
+#position = 'at'
+#pattern = '''
+#G.FUNCS.draw_from_hand_to_discard()
+    #if G.GAME.blind:get_type() == 'Boss' then
+#'''
+#payload = '''
+#G.FUNCS.draw_from_hand_to_discard()
+#    if G.GAME.blind:get_type() == 'Boss' and (not if_skill_obtained("ygg_diff4") or (if_skill_obtained("ygg_diff4") and G.GAME.round_resets.blind_states.Big == "Defeated")) then
+#'''
+
+#[[patches]]
+#[patches.pattern]
+#target = 'functions/state_events.lua'
+#match_indent = true
+#position = 'at'
+#pattern = '''
+#elseif G.GAME.round_resets.blind == G.P_BLINDS.bl_big then
+#    G.GAME.round_resets.blind_states.Big = 'Defeated'
+#'''
+#payload = '''
+#elseif (G.GAME.round_resets.blind == G.P_BLINDS.bl_big) or (G.GAME.round_resets.blind_states.Small == "Defeated" and G.GAME.round_resets.blind_states.Big ~= "Defeated" and if_skill_obtained("ygg_diff4")) then
+#    G.GAME.round_resets.blind_states.Big = 'Defeated'
+#'''

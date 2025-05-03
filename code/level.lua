@@ -1,0 +1,390 @@
+ygg_to_refer_level_bar = {text = "LV 1 | XP: 50/100"}
+
+Yggdrasil.change_xp = function(xp) --Function used to change XP (either add or remove).
+    G.GAME.ygg_placeholder_xp = (G.GAME.ygg_placeholder_xp or 0) + xp
+end
+
+Yggdrasil.reset_skill_tree = function()
+    local a,b = 0,0
+    for i,v in pairs(G.PROFILES[G.SETTINGS.profile].skill_perks or {}) do
+        a = a + get_skill_cost(i) * v
+    end
+    for i,v in pairs(G.GAME.skill_perks or {}) do
+        b = b + get_skill_cost(i) * v
+    end
+
+    G.PROFILES[G.SETTINGS.profile].skill_perks = {}
+    G.GAME.skill_perks = {}
+
+    G.PROFILES[G.SETTINGS.profile].ygg_skill_points = (G.PROFILES[G.SETTINGS.profile].ygg_skill_points or 0) + a
+    G.GAME.ygg_skill_points = (G.GAME.ygg_skill_points or 0) + b
+end
+
+local hookTo = Game.start_run
+function Game:start_run(args) --To add level meter.
+   hookTo(self, args)
+
+    if G and G.jokers then
+        G.GAME.ygg_current_xp = 0
+        if G.ygg_xp_bar then G.ygg_xp_bar:remove() end
+        local setPadding = 0.02
+        local ygg_xp_bar_text = {n = G.UIT.O, config = {object = DynaText({scale = 0.5, string = {{ref_table = ygg_to_refer_level_bar, ref_value = "text"}}, maxw = 9, colours = { G.C.WHITE }, float = true, shadow = true, silent = true})}}
+    
+        G.ygg_xp_bar = UIBox {
+            definition = {
+                n = G.UIT.ROOT,
+                config = {
+                    align = "cm",
+                    padding = setPadding,
+                    colour = G.C.CLEAR,
+                },
+                nodes = {
+                    {
+                        n = G.UIT.C,
+                        config = {align = "cr", padding = 0.05},
+                        nodes = {
+                            {n = G.UIT.R, config = {align = "cm", padding = setPadding}, nodes = {
+                                create_progress_bar({reverse_fill = false, bar_rotation = "Horizontal", w = 10, h = 0.25, ref_table = G.GAME, ref_value = 'ygg_current_xp', min = 0, max = 100})
+                            }},
+                            {n = G.UIT.R, config = {align = "tm", padding = setPadding}, nodes = {
+                                ygg_xp_bar_text
+                            }},
+                        }
+                    },
+                }
+            },
+            config = {
+                align = "tr",
+                offset = { x = -9, y = 3.85},
+                major = G.jokers,
+                bond = 'Strong'
+            }
+        }
+    end
+
+end
+
+local hookTo = Game.update
+local ygg_xp_speed = 5
+function Game:update(dt) --Bunch of stuff relating to XP and Levels.
+    hookTo(self, dt)
+    if G and G.GAME then
+        if ygg_to_refer_level_bar then
+            ygg_to_refer_level_bar.text = "LV "..((G.PROFILES[G.SETTINGS.profile].ygg_level or 1) + (G.GAME.ygg_level or 0)).." | XP: "..math.floor((G.GAME.ygg_current_xp or 0)).."/100"
+        end
+
+        if G.GAME.ygg_placeholder_xp then
+            if G.GAME.ygg_placeholder_xp < 0 then
+                local changeAmount = math.min(G.GAME.ygg_placeholder_xp/ygg_xp_speed, 100 - G.GAME.ygg_current_xp)
+
+                G.GAME.ygg_current_xp = G.GAME.ygg_current_xp + changeAmount
+                G.GAME.ygg_placeholder_xp = G.GAME.ygg_placeholder_xp - changeAmount
+                G.GAME.ygg_placeholder_xp = math.min(G.GAME.ygg_placeholder_xp,0)
+            elseif G.GAME.ygg_placeholder_xp > 0 then
+                local changeAmount = math.min(G.GAME.ygg_placeholder_xp/ygg_xp_speed, 100 - G.GAME.ygg_current_xp)
+
+                G.GAME.ygg_current_xp = G.GAME.ygg_current_xp + changeAmount
+                G.GAME.ygg_placeholder_xp = G.GAME.ygg_placeholder_xp - changeAmount
+                G.GAME.ygg_placeholder_xp = math.max(G.GAME.ygg_placeholder_xp,0)
+            end 
+        end
+
+        if (G.GAME.ygg_current_xp or 0) >= 100 then
+            G.GAME.ygg_level = (G.GAME.ygg_level or 0) + 1
+            G.GAME.ygg_current_xp = G.GAME.ygg_current_xp - 100
+            G.GAME.ygg_skill_points = (G.GAME.ygg_skill_points or 0) + 1
+        end
+
+        local toRet = 0
+
+        local function check_xp(i,v)
+            local info = get_skill_info(i) or {}
+            toRet = toRet + (info["xp_gain"] or 0) * v
+        end
+
+        for i,v in pairs(G.PROFILES[G.SETTINGS.profile].skill_perks or {}) do
+            check_xp(i,v)
+        end
+   
+        for i,v in pairs(G.GAME.skill_perks or {}) do
+            check_xp(i,v)
+        end
+
+        G.GAME.XP_MULTIPLIER = 1 + (toRet / 100)
+    end
+end
+
+function skill_tree_save()
+    G.PROFILES[G.SETTINGS.profile].ygg_level = (G.PROFILES[G.SETTINGS.profile].ygg_level or 1) + (G.GAME.ygg_level or 0)
+    G.PROFILES[G.SETTINGS.profile].ygg_skill_points = (G.PROFILES[G.SETTINGS.profile].ygg_skill_points or 0) + (G.GAME.ygg_skill_points or 0)
+
+    if not G.PROFILES[G.SETTINGS.profile].skill_perks then G.PROFILES[G.SETTINGS.profile].skill_perks = {} end
+
+    for i,v in pairs(G.GAME.skill_perks or {}) do
+        G.PROFILES[G.SETTINGS.profile].skill_perks[i] = (G.PROFILES[G.SETTINGS.profile].skill_perks[i] or 0) + v
+    end
+end
+
+local hookTo = Game.update_game_over
+function Game:update_game_over(dt) --Adding levels earned from current run to the profile.
+    if not G.STATE_COMPLETE and G.GAME.round_resets.ante > 1 then
+        skill_tree_save()
+    end
+    hookTo(self, dt)
+end
+
+--All methods of obtaining XP.
+
+--1. Winning a Blind.
+local hookTo = end_round
+end_round = function()
+    local ret = hookTo()
+    local multi = 1
+
+    if G.GAME and G.GAME.blind and G.GAME.blind.config and G.GAME.blind.config.blind then
+        if G.GAME.blind.config.blind.key == "bl_big" then
+            multi = 2
+        end
+        if G.GAME.blind.config.blind.boss then
+            multi = 3
+        end
+        if G.GAME.blind.config.blind.boss and G.GAME.blind.config.blind.boss.showdown then
+            multi = 4
+        end
+    end
+
+    if G.GAME.round_resets.ante == G.GAME.win_ante then
+        multi = multi * 2
+    end
+
+    G.GAME.skip_multi = (G.GAME.skip_multi or 0) + 0.4 --Increasing the next skip's XP Gain.
+ 
+    Yggdrasil.change_xp(G.GAME.round_resets.ante * (G.GAME.XP_MULTIPLIER or 1) * 5 * multi)
+    return ret
+end
+
+--2. Skipping a blind.
+local hookTo = G.FUNCS.skip_blind
+G.FUNCS.skip_blind = function(e)
+    Yggdrasil.change_xp(G.GAME.round_resets.ante * (G.GAME.XP_MULTIPLIER or 1) * 10 * (1 + (G.GAME.skip_multi or 0)))
+    G.GAME.skip_multi = (G.GAME.skip_multi or 0)/2 --Reducing the next skip's XP Gain by half to disc
+    if e then local ret = hookTo(e) return ret end
+end
+
+--3. Having hands/discards remaining after a round.
+local hookTo = end_round
+end_round = function()
+    local ret = hookTo()
+
+    Yggdrasil.change_xp(G.GAME.round_resets.ante * (G.GAME.XP_MULTIPLIER or 1) * 5 * (1 + (G.GAME.current_round.hands_left or 0) * 0.1 + (G.GAME.current_round.discards_left or 0) * 0.1))
+    return ret
+end
+
+--Some Level-related skills.
+SMODS.Consumable:take_ownership('hermit', {
+    no_mod_badges = true,
+    update = function(self,card,dt)
+        local how_many = (if_skill_obtained("ygg_hermit_upgrade") or 0)
+        if not card.ability["registered_hermit_upgrade"] or (how_many ~= card.ability["registered_hermit_upgrade"]) then
+            if how_many == 0 then
+                card.ability.extra = 20
+            else
+                card.ability.extra = 20 + ((how_many - (card.ability["registered_hermit_upgrade"] or 0)) * 20) 
+            end
+        end
+        card.ability["registered_hermit_upgrade"] = how_many
+    end,
+})
+
+SMODS.Consumable:take_ownership('temperance', {
+    no_mod_badges = true,
+    update = function(self,card,dt)
+        local how_many = (if_skill_obtained("ygg_temperance_upgrade") or 0)
+        if not card.ability["registered_temperance_upgrade"] or (how_many ~= card.ability["registered_temperance_upgrade"]) then
+            if how_many == 0 then
+                card.ability.extra = 50
+            else
+                card.ability.extra = 50 + ((how_many - (card.ability["registered_temperance_upgrade"] or 0)) * 50) 
+            end
+        end
+        card.ability["registered_temperance_upgrade"] = how_many
+    end,
+})
+
+SMODS.Consumable:take_ownership('wheel_of_fortune', {
+    no_mod_badges = true,
+    update = function(self,card,dt)
+        local how_many = (if_skill_obtained("ygg_wof_upgrade") or 0)
+        if not card.ability["registered_wof_upgrade"] or (how_many ~= card.ability["registered_wof_upgrade"]) then
+            if how_many == 0 then
+                card.ability.extra = 4
+            else
+                card.ability.extra = 4 - ((how_many - (card.ability["registered_wof_upgrade"] or 0)) * 2) 
+            end
+        end
+        card.ability["registered_wof_upgrade"] = how_many
+    end,
+})
+
+local increase_highlight_table = {
+    chariot = {
+        base = 1,
+        increase = 1
+    },
+    justice = {
+        base = 1,
+        increase = 1
+    },
+    devil = {
+        base = 1,
+        increase = 1
+    },
+    sun = {
+        base = 3,
+        increase = 2
+    },
+    moon = {
+        base = 3,
+        increase = 2
+    },
+    star = {
+        base = 3,
+        increase = 2
+    },
+    world = {
+        base = 3,
+        increase = 2
+    },
+    tower = {
+        base = 1,
+        increase = 4
+    },
+    hanged_man = {
+        base = 2,
+        increase = 1
+    },
+    strength = {
+        base = 2,
+        increase = 3
+    },
+    aura = { --fuck you spectral cards
+        base = 1,
+        increase = 2,
+    },
+}
+
+for i,v in pairs(increase_highlight_table) do
+    SMODS.Consumable:take_ownership(i, {
+        no_mod_badges = true,
+        update = function(self,card,dt)
+            local how_many = (if_skill_obtained("ygg_"..i.."_upgrade") or 0)
+            local a = "registered_"..i.."_upgrade"
+            if not card.ability[a] or (how_many ~= card.ability[a]) then
+                if how_many == 0 then
+                    card.ability.max_highlighted = v["base"]
+                    card.ability.consumeable.max_highlighted = card.ability.max_highlighted
+                else
+                    card.ability.max_highlighted = v["base"] + ((how_many - (card.ability[a] or 0)) * v["increase"]) 
+                    card.ability.consumeable.max_highlighted = card.ability.max_highlighted
+                end
+            end
+            card.ability[a] = how_many
+        end,
+    }) 
+end
+
+--Hard-forcing wild cards from being debuffed. (hopefully)
+local hookTo = Card.set_debuff
+function Card:set_debuff(should_debuff)
+    if not (SMODS.has_enhancement(self, "m_wild") and if_skill_obtained("ygg_lovers_upgrade")) then
+        local ret = hookTo(self, should_debuff)
+        return ret 
+    else
+        self.debuff = false
+        self.debuffed_by_blind = false
+    end
+end
+
+local hookTo = Card.set_ability
+function Card:set_ability(center, initial, delay_sprites)
+    local ret = hookTo(self, center, initial, delay_sprites)
+    if self.ability and SMODS.has_enhancement(self, "m_wild") and if_skill_obtained("ygg_lovers_upgrade") then
+        self:set_debuff(false)
+    end
+    return ret 
+end
+
+local hookTo = Blind.debuff_card
+function Blind:debuff_card(card, from_blind)
+    local ret = hookTo(self, card, from_blind)
+    if card.ability and SMODS.has_enhancement(card, "m_wild") and if_skill_obtained("ygg_lovers_upgrade") then
+        card:set_debuff(false)
+    end
+    return ret 
+end
+
+local hookTo = Game.start_run
+function Game:start_run(args) --To replace big blinds with boss blinds.
+    hookTo(self, args)
+    if G.GAME.round_resets.blind_choices.Big == "bl_big" and if_skill_obtained("ygg_diff4") then
+        G.GAME.round_resets.blind_choices.Big = get_new_boss() 
+    end
+    if G.GAME.round_resets.blind_choices.Small == "bl_small" and if_skill_obtained("ygg_diff4_add") then
+        G.GAME.round_resets.blind_choices.Small = get_new_boss() 
+    end
+end
+
+local hookTo = end_round
+end_round = function() --Same effect.
+    if G.GAME.blind:get_type() == "Big" and if_skill_obtained("ygg_diff4") then
+        G.GAME.round_resets.blind = G.P_BLINDS.bl_big
+    end
+    if G.GAME.blind:get_type() == "Small" and if_skill_obtained("ygg_diff4_add") then
+        G.GAME.round_resets.blind = G.P_BLINDS.bl_small
+    end
+
+    local ret = hookTo()
+
+    if G.GAME.blind:get_type() == "Boss" and if_skill_obtained("ygg_diff4") then
+        G.GAME.RESET_BIG_BLIND = true
+    end
+    if G.GAME.blind:get_type() == "Boss" and if_skill_obtained("ygg_diff4_add") then
+        G.GAME.RESET_SMALL_BLIND = true
+    end
+
+    if G.GAME.blind:get_type() == "Boss" and if_skill_obtained("ygg_diff5") then
+        G.GAME.current_round.reroll_cost_increase = 0
+        calculate_reroll_cost(true)
+    end
+
+    return ret
+end
+
+local get_typeref = Blind.get_type
+function Blind.get_type(self) --Ensuring that defeating a Boss Blind (replacing Big Blinds) won't reset to Small Blind.
+    if (G.GAME.round_resets.blind_states.Small == "Defeated" or G.GAME.round_resets.blind_states.Small == "Skipped") and (G.GAME.round_resets.blind_states.Big == "Current") and if_skill_obtained("ygg_diff4") then
+        return "Big"
+    end
+    if G.GAME.round_resets.blind_states.Small == "Current" and if_skill_obtained("ygg_diff4_add") then
+        return "Small"
+    end
+    return get_typeref(self)
+end
+
+local hookTo = create_UIBox_blind_select
+function create_UIBox_blind_select() --Randomizing world after Showdown boss is beaten, the timing is when you enter the Blind selection screen.
+    if G.GAME.RESET_BIG_BLIND and if_skill_obtained("ygg_diff4") then
+        G.GAME.RESET_BIG_BLIND = false
+        G.GAME.round_resets.blind_choices.Big = get_new_boss() 
+    end
+    if G.GAME.RESET_SMALL_BLIND and if_skill_obtained("ygg_diff4_add") then
+        G.GAME.RESET_SMALL_BLIND = false
+        G.GAME.round_resets.blind_choices.Small = get_new_boss() 
+    end
+
+    local ret = hookTo()
+ 
+    return ret
+end
+
+--I want to check G.GAME.round_resets.blind_states.Boss in end_round.

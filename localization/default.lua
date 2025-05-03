@@ -1,0 +1,1151 @@
+return { --remind me to work on this
+    descriptions = {
+        Spectral = {
+            c_aura={
+                name="Aura",
+                text={
+                    "Add {C:dark_edition}Foil{}, {C:dark_edition}Holographic{},",
+                    "or {C:dark_edition}Polychrome{} effect to",
+                    "{C:attention}#1#{} selected card in hand",
+                },
+            },
+            c_ankh_u={
+                name="Ankh",
+                text={
+                    "Randomly {C:attention}destroys{} leftmost",
+                    "or rightmost Joker, then",
+                    "{C:attention}duplicates{} the other",
+                    "{s:0.2} ",
+                    "{C:inactive}({}{C:dark_edition}Overhauled{}{C:inactive} Effect){}",
+                },
+            },
+            c_hex_u={
+                name="Hex",
+                text={
+                    "{C:attention}Destroys{} selected Joker,",
+                    "then adds {C:dark_edition}Polychrome{} to",
+                    "a random {C:attention}Joker{}",
+                    "{s:0.2} ",
+                    "{C:inactive}({}{C:dark_edition}Overhauled{}{C:inactive} Effect){}",
+                },
+            },
+        },
+        SkillPerks = {
+            sp_ygg_cost = {
+                name = "Cost",
+                text = {
+                    "Cost: {C:red}#1#{} Skill Point",
+                }
+            },
+
+            sp_ygg_trailblaze = {
+                name = "Trailblaze",
+                text = {
+                    "Increases all Jokers' {C:attention}SPD{} by 1",
+                    "{C:inactive}(#1#/25)",
+                }
+            },
+            sp_ygg_trailblaze_name = {
+                name = "Trailblaze",
+                text = {
+                    "Trailblaze",
+                }
+            },
+            sp_ygg_hunt_speed = {
+                name = "The Hunt's Swiftness",
+                text = {
+                    "Increases all Jokers' {C:attention}SPD{} by 1",
+                    "{C:inactive}(#1#/25)",
+                }
+            },
+            sp_ygg_hunt_speed_name = {
+                name = "The Hunt's Swiftness",
+                text = {
+                    "The Hunt's Swiftness",
+                }
+            },
+            sp_ygg_lan_blessing = {
+                name = "Lan's Blessing",
+                text = {
+                    "Increases all Jokers' {C:attention}SPD{} by 15",
+                    "{C:inactive}(#1#/1)",
+                }
+            },
+            sp_ygg_lan_blessing_name = {
+                name = "The Hunt's Swiftness",
+                text = {
+                    "Lan's Blessing",
+                }
+            },
+            sp_ygg_calm = {
+                name = "Lan's Blessing",
+                text = {
+                    "Decreases all Jokers' {C:attention}SPD{} by 10",
+                    "Increases all Jokers' {C:attention}All-Type Element Multiplier{} by 10%",
+                    "{C:inactive}(#1#/1)",
+                }
+            },
+            sp_ygg_calm_name = {
+                name = "The Hunt's Swiftness",
+                text = {
+                    "Take a Breath",
+                }
+            },
+            sp_ygg_godspeed = {
+                name = "Lan's Blessing",
+                text = {
+                    "Increases all Jokers' {C:attention}SPD{} by 20",
+                    "Decreases all Jokers' {C:attention}BEE{} by 5%",
+                    "{C:inactive}(#1#/1)",
+                }
+            },
+            sp_ygg_godspeed_name = {
+                name = "The Hunt's Swiftness",
+                text = {
+                    "Godspeed",
+                }
+            },
+            sp_ygg_destructive = {
+                name = "Placeholder",
+                text = {
+                    "Increases all Jokers' {C:attention}ATK{} by 0.1%",
+                    "{C:inactive}(#1#/10)",
+                }
+            },
+            sp_ygg_destructive_name = {
+                name = "Placeholder",
+                text = {
+                    "Destructive Energy",
+                }
+            },
+            sp_ygg_destruction_strength = {
+                name = "Placeholder",
+                text = {
+                    "Increases all Jokers' {C:attention}ATK{} by 0.1%",
+                    "{C:inactive}(#1#/10)",
+                }
+            },
+            sp_ygg_destruction_strength_name = {
+                name = "Placeholder",
+                text = {
+                    "Destruction's Strength",
+                }
+            },
+            sp_ygg_nanook_blessing = {
+                name = "Placeholder",
+                text = {
+                    "Increases all Jokers' {C:attention}ATK{} by 20%",
+                    "{C:inactive}(#1#/1)",
+                }
+            },
+            sp_ygg_nanook_blessing_name = {
+                name = "Placeholder",
+                text = {
+                    "Nanook's Blessing",
+                }
+            },
+            sp_ygg_wrath = {
+                name = "Placeholder",
+                text = {
+                    "Increases all Jokers' {C:attention}ATK{} by 20%",
+                    "Increases all Jokers' {C:attention}BEE{} by 10%",
+                    "{C:inactive}(#1#/1)",
+                }
+            },
+            sp_ygg_wrath_name = {
+                name = "Placeholder",
+                text = {
+                    "{C:ygg_fire}Wrath{}",
+                }
+            },
+            sp_ygg_titan_wrath = {
+                name = "Placeholder",
+                text = {
+                    "Increases all Jokers' {C:attention}ATK{} by 1%",
+                    "Increases all Jokers' {C:attention}BEE{} by 0.5%",
+                    "Decreases all Jokers' {C:attention}SPD{} by 1",
+                    "{C:inactive}(#1#/10)",
+                }
+            },
+            sp_ygg_titan_wrath_name = {
+                name = "Placeholder",
+                text = {
+                    "Titan's Wrath",
+                }
+            },
+
+            sp_ygg_special_light = {
+                name = "Placeholder",
+                text = {
+                    "Increases {C:chips}Chips{} of played cards by {C:chips}+5{}",
+                    "If played card's {C:chips}Chips{} is more than (or equal) {C:chips}100{},",
+                    "increases its {X:mult,C:white}XMult{} by {X:mult,C:white}X1.05{}",
+                    "{C:inactive}(#1#/1)",
+                    "{s:0.7,C:inactive}(Name Credit: N')",
+                }
+            },
+            sp_ygg_special_light_name = {
+                name = "Placeholder",
+                text = {
+                    "The Whereabouts of Light",
+                }
+            },
+
+            sp_ygg_mult1 = {
+                name = "Mult, please!",
+                text = {
+                    "{C:mult}+0.5{} Mult",
+                    "{C:inactive}(#1#/25)",
+                }
+            },
+            sp_ygg_mult1_name = {
+                name = "Mult, please!",
+                text = {
+                    "Mult, please!",
+                }
+            },
+            sp_ygg_mult2 = {
+                name = "Even MORE Mult!",
+                text = {
+                    "{C:mult}+0.5{} Mult",
+                    "{C:inactive}(#1#/25)",
+                }
+            },
+            sp_ygg_mult2_name = {
+                name = "Even MORE Mult!",
+                text = {
+                    "Even MORE Mult!",
+                }
+            },
+            sp_ygg_mult3 = {
+                name = "Not Enough Mult",
+                text = {
+                    "Each {C:mult}+10{} Mult from {C:attention}Skill Tree{} additionally gives",
+                    "{X:mult,C:white}X1.005{} Mult",
+                    "{C:inactive}(#1#/1)",
+                }
+            },
+            sp_ygg_mult3_name = {
+                name = "Not Enough Mult",
+                text = {
+                    "Not Enough {C:mult}Mult{}",
+                }
+            },
+            sp_ygg_mult4 = {
+                name = "Placeholder",
+                text = {
+                    "{X:chips,C:white}X0.95{} Chips, {C:mult}+20{} Mult",
+                    "{C:inactive}(#1#/1)",
+                }
+            },
+            sp_ygg_mult4_name = {
+                name = "Placeholder",
+                text = {
+                    "Mult is good, Mult is life",
+                }
+            },
+            sp_ygg_mult5 = {
+                name = "Placeholder",
+                text = {
+                    "{C:mult}+1{} Mult",
+                    "{C:inactive}(#1#/20)",
+                }
+            },
+            sp_ygg_mult5_name = {
+                name = "Placeholder",
+                text = {
+                    "Back to the Basics",
+                }
+            },
+            sp_ygg_mult6 = {
+                name = "Placeholder",
+                text = {
+                    "{C:mult}+Mult{} from {C:attention}Skill Tree{} increases by {X:mult,C:white}X1.2{}",
+                    "{C:inactive}(#1#/1)",
+                }
+            },
+            sp_ygg_mult6_name = {
+                name = "Placeholder",
+                text = {
+                    "Reinforced Mult Basics",
+                }
+            },
+            sp_ygg_mult7 = {
+                name = "Placeholder",
+                text = {
+                    "{C:mult}+Mult{} from {C:attention}Skill Tree{} is triggered {C:attention}twice{}",
+                    "{C:inactive}(#1#/1)",
+                }
+            },
+            sp_ygg_mult7_name = {
+                name = "Placeholder",
+                text = {
+                    "Mult Expertise",
+                }
+            },
+            sp_ygg_mult8 = {
+                name = "Placeholder",
+                text = {
+                    "{C:mult}+5{} Mult for each {C:attention}face{} card",
+                    "in the deck",
+                    "{C:inactive}(#1#/1)",
+                    "{s:0.7,C:inactive}(Name Credit: Ice)",
+                }
+            },
+            sp_ygg_mult8_name = {
+                name = "Placeholder",
+                text = {
+                    "{C:mult}Mult{}erior {C:mult}Mult{}ives",
+                }
+            },
+            sp_ygg_mult9 = {
+                name = "Placeholder",
+                text = {
+                    "Increases played cards' {C:mult}Mult{} by {C:mult}+5{}",
+                    "{C:inactive}(#1#/1)",
+                    "{s:0.7,C:inactive}(Name Credit: Ice)",
+                }
+            },
+            sp_ygg_mult9_name = {
+                name = "Placeholder",
+                text = {
+                    "{C:mult}Mult{}imate",
+                }
+            },
+            sp_ygg_mult10 = {
+                name = "Placeholder",
+                text = {
+                    "Each {C:mult}+100{} Mult from {C:attention}Skill Tree{}",
+                    "increases {C:attention}hand size{} by +1",
+                    "{C:inactive}(#1#/1)",
+                    "{s:0.7,C:inactive}(Name Credit: notmario)",
+                }
+            },
+            sp_ygg_mult10_name = {
+                name = "Placeholder",
+                text = {
+                    "{C:mult}Mult{}drifter",
+                }
+            },
+            sp_ygg_mult11 = {
+                name = "Placeholder",
+                text = {
+                    "When a card is destroyed, increases {C:mult}Mult{}",
+                    "by {C:mult}+5{} this run",
+                    "{C:inactive}(#1#/1)",
+                    "{s:0.7,C:inactive}(Why do we have a Yu-Gi-Oh card here??)",
+                    "{s:0.7,C:inactive}(Name Credit: N')",
+                }
+            },
+            sp_ygg_mult11_name = {
+                name = "Placeholder",
+                text = {
+                    "Altergeist {C:mult}Mult{}ifaker",
+                }
+            },
+            sp_ygg_mult12 = {
+                name = "Placeholder",
+                text = {
+                    "During {C:attention}first{} hand of round, {C:mult}+87{} Mult",
+                    "if there is less than 19 {C:attention}Jokers{}",
+                    "{C:inactive}(#1#/1)",
+                    "{s:0.7,C:inactive}(He fits in so seamlessly.)",
+                    "{s:0.7,C:inactive}(Name Credit: aikoyori)",
+                }
+            },
+            sp_ygg_mult12_name = {
+                name = "Placeholder",
+                text = {
+                    "markiplier.",
+                    "{s:0.7}IS THAT THE BITE OF 87???{}",
+                }
+            },
+
+            sp_ygg_chips1 = {
+                name = "Placeholder",
+                text = {
+                    "{C:chips}+1{} Chips",
+                    "{C:inactive}(#1#/25)",
+                    "{s:0.7,C:inactive}(Name Credit: aikoyori)",
+                }
+            },
+            sp_ygg_chips1_name = {
+                name = "Placeholder",
+                text = {
+                    "Chippy Gaming",
+                }
+            },
+            sp_ygg_chips2 = {
+                name = "Placeholder",
+                text = {
+                    "{C:chips}+1{} Chips",
+                    "{C:inactive}(#1#/25)",
+                    "{s:0.7,C:inactive}(Name Credit: aikoyori)",
+                }
+            },
+            sp_ygg_chips2_name = {
+                name = "Placeholder",
+                text = {
+                    "Chipflake",
+                }
+            },
+            sp_ygg_chips3 = {
+                name = "Placeholder",
+                text = {
+                    "{C:chips}+100{} Chips",
+                    "{X:mult,C:white}X0.95{} Mult",
+                    "{C:inactive}(#1#/1)",
+                    "{s:0.7,C:inactive}(Name Credit: notmario)",
+                }
+            },
+            sp_ygg_chips3_name = {
+                name = "Placeholder",
+                text = {
+                    "Chip's Challenge",
+                }
+            },
+            sp_ygg_chips4 = {
+                name = "Placeholder",
+                text = {
+                    "{C:chips}+50{} Chips",
+                    "{X:chips,C:white}X1.02{} Chips",
+                    "{C:inactive}(#1#/1)",
+                    "{s:0.7,C:inactive}(Name Credit: notmario)",
+                }
+            },
+            sp_ygg_chips4_name = {
+                name = "Placeholder",
+                text = {
+                    "Cheap as Chips",
+                }
+            },
+            sp_ygg_chips5 = {
+                name = "Placeholder",
+                text = {
+                    "{X:chips,C:white}XChips{} from {C:attention}Skill Tree{} is never",
+                    "lower than {X:chips,C:white}X1.1{}",
+                    "{C:inactive}(#1#/1)",
+                    "{s:0.7,C:inactive}(Name Credit: Mini)",
+                }
+            },
+            sp_ygg_chips5_name = {
+                name = "Placeholder",
+                text = {
+                    "{C:chips}Chips{} Ahoy",
+                }
+            },
+            sp_ygg_chips6 = {
+                name = "Placeholder",
+                text = {
+                    "{C:green}75%{} to give {C:chips}+25{} Chips,",
+                    "{C:attention}repeats{} until {C:red}failure{}",
+                    "{C:inactive}(#1#/1)",
+                    "{s:0.7,C:inactive}(Name Credit: aikoyori)",
+                }
+            },
+            sp_ygg_chips6_name = {
+                name = "Placeholder",
+                text = {
+                    "{C:chips}Chip{}py {C:chips}Chip{}py Chapa Chapa",
+                }
+            },
+            sp_ygg_chips7 = {
+                name = "Placeholder",
+                text = {
+                    "{C:chips}+(x/10){} Chips",
+                    "{C:inactive}(x = Mult from Skill Tree)",
+                    "{C:inactive}(#1#/1)",
+                    "{s:0.7,C:inactive}(Name Credit: aikoyori)",
+                }
+            },
+            sp_ygg_chips7_name = {
+                name = "Placeholder",
+                text = {
+                    "{C:chips}Chip{}ment Ready",
+                }
+            },
+            sp_ygg_chips8 = {
+                name = "Placeholder",
+                text = {
+                    "If {C:attention}remaining hands{} is 1, {X:chips,C:white}X1.5{} Chips",
+                    "{C:inactive}(#1#/1)",
+                    "{s:0.7,C:inactive}(Name Credit: Nxkoo)",
+                }
+            },
+            sp_ygg_chips8_name = {
+                name = "Placeholder",
+                text = {
+                    "Overtime Wage",
+                }
+            },
+            sp_ygg_chips9 = {
+                name = "Placeholder",
+                text = {
+                    "{C:chips}-100{} Chips",
+                    "{X:chips,C:white}X1.2{} Chips",
+                    "{C:inactive}(#1#/1)",
+                    "{s:0.7,C:inactive}(Name Credit: aikoyori)",
+                }
+            },
+            sp_ygg_chips9_name = {
+                name = "Placeholder",
+                text = {
+                    "{C:chips}Chip{}otle",
+                }
+            },
+            sp_ygg_chips10 = {
+                name = "Placeholder",
+                text = {
+                    "{C:green}50%{} to give {X:chips,C:white}X1.5{} Chips",
+                    "On {C:red}failure{}, {C:chips}-50{} Chips",
+                    "{C:inactive}(#1#/1)",
+                    "{s:0.7,C:inactive}(Name Credit: Nxkoo)",
+                }
+            },
+            sp_ygg_chips10_name = {
+                name = "Placeholder",
+                text = {
+                    "All on {C:chips}Chips{}",
+                }
+            },
+
+            --Fortune Believers
+            sp_ygg_hermit_upgrade = {
+                name = "Placeholder",
+                text = {
+                    "{C:attention}Money cap{} of {C:attention}The Hermit{}",
+                    "increases by {C:money}$20{}",
+                    "{C:inactive}(#1#/1)",
+                }
+            },
+            sp_ygg_hermit_upgrade_name = {
+                name = "Placeholder",
+                text = {
+                    "The Hermit, but {C:green}better{}",
+                }
+            },
+            sp_ygg_temperance_upgrade = {
+                name = "Placeholder",
+                text = {
+                    "{C:attention}Money cap{} of {C:attention}The Temperance{}",
+                    "increases by {C:money}$50{}",
+                    "{C:inactive}(#1#/1)",
+                }
+            },
+            sp_ygg_temperance_upgrade_name = {
+                name = "Placeholder",
+                text = {
+                    "The Temperance, but {C:green}better{}",
+                }
+            },
+            sp_ygg_wof_upgrade = {
+                name = "Placeholder",
+                text = {
+                    "{C:attention}Base chance{} of {C:attention}Wheel of Fortune{}",
+                    "increases to {C:green}1 in 2{}",
+                    "{C:inactive}(#1#/1)",
+                }
+            },
+            sp_ygg_wof_upgrade_name = {
+                name = "Placeholder",
+                text = {
+                    "Wheel of Fortune, but {C:green}better{}",
+                }
+            },
+            sp_ygg_empress_upgrade = {
+                name = "Placeholder",
+                text = {
+                    "{C:attention}The Empress{} permenantly increases",
+                    "selected cards' {C:mult}Mult{} by {C:mult}+5{}",
+                    "{C:inactive}(#1#/1)",
+                }
+            },
+            sp_ygg_empress_upgrade_name = {
+                name = "Placeholder",
+                text = {
+                    "The Empress, but {C:green}better{}",
+                }
+            },
+            sp_ygg_hierophant_upgrade = {
+                name = "Placeholder",
+                text = {
+                    "{C:attention}The Heirophant{} permenantly increases",
+                    "selected cards' {C:chips}Chips{} by {C:chips}+20{}",
+                    "{C:inactive}(#1#/1)",
+                }
+            },
+            sp_ygg_hierophant_upgrade_name = {
+                name = "Placeholder",
+                text = {
+                    "The Heirophant, but {C:green}better{}",
+                }
+            },
+            sp_ygg_lovers_upgrade = {
+                name = "Placeholder",
+                text = {
+                    "{C:attention}Wild{} cards cannot",
+                    "be debuffed {s:0.7,C:inactive}(most of the time)",
+                    "{C:inactive}(#1#/1)",
+                }
+            },
+            sp_ygg_lovers_upgrade_name = {
+                name = "Placeholder",
+                text = {
+                    "The Lovers, but {C:green}better{}",
+                }
+            },
+            sp_ygg_magician_upgrade = {
+                name = "Placeholder",
+                text = {
+                    "{C:attention}Lucky{} cards give",
+                    "{C:attention}10%{} of their {C:mult}Mult{}/{C:money}Cash{} if",
+                    "their {C:green}probabilities{} fail",
+                    "{C:inactive}(#1#/1)",
+                }
+            },
+            sp_ygg_magician_upgrade_name = {
+                name = "Placeholder",
+                text = {
+                    "The Magician, but {C:green}better{}",
+                }
+            },
+            sp_ygg_priestess_upgrade = {
+                name = "Placeholder",
+                text = {
+                    "{C:attention}The High Priestess{} also",
+                    "creates a {C:dark_edition}Negative{} {C:planet}Planet{} card",
+                    "of most played {C:attention}poker hand{}",
+                    "{C:inactive}(#1#/1)",
+                }
+            },
+            sp_ygg_priestess_upgrade_name = {
+                name = "Placeholder",
+                text = {
+                    "The High Priestess, but {C:green}better{}",
+                }
+            },
+            sp_ygg_emperor_upgrade = {
+                name = "Placeholder",
+                text = {
+                    "{C:attention}The Emperor{} also",
+                    "creates a {C:dark_edition}Negative{} {C:tarot}Tarot{} card",
+                    "{C:inactive}(#1#/1)",
+                }
+            },
+            sp_ygg_emperor_upgrade_name = {
+                name = "Placeholder",
+                text = {
+                    "The Emperor, but {C:green}better{}",
+                }
+            },
+            sp_ygg_fool_upgrade = {
+                name = "Placeholder",
+                text = {
+                    "{C:attention}The Fool{}'s created card",
+                    "becomes {C:dark_edition}Negative{}",
+                    "{C:inactive}(#1#/1)",
+                }
+            },
+            sp_ygg_fool_upgrade_name = {
+                name = "Placeholder",
+                text = {
+                    "The Fool, but {C:green}better{}",
+                }
+            },
+            sp_ygg_chariot_upgrade = {
+                name = "Placeholder",
+                text = {
+                    "{C:attention}The Chariot{}'s selection cap",
+                    "increases by {C:attention}1{}",
+                    "{C:inactive}(#1#/1)",
+                }
+            },
+            sp_ygg_chariot_upgrade_name = {
+                name = "Placeholder",
+                text = {
+                    "The Chariot, but {C:green}better{}",
+                }
+            },
+            sp_ygg_justice_upgrade = {
+                name = "Placeholder",
+                text = {
+                    "{C:attention}The Justice{}'s selection cap",
+                    "increases by {C:attention}1{}",
+                    "{C:inactive}(#1#/1)",
+                }
+            },
+            sp_ygg_justice_upgrade_name = {
+                name = "Placeholder",
+                text = {
+                    "The Justice, but {C:green}better{}",
+                }
+            },
+            sp_ygg_devil_upgrade = {
+                name = "Placeholder",
+                text = {
+                    "{C:attention}The Devil{}'s selection cap",
+                    "increases by {C:attention}1{}",
+                    "{C:inactive}(#1#/1)",
+                }
+            },
+            sp_ygg_devil_upgrade_name = {
+                name = "Placeholder",
+                text = {
+                    "The Devil, but {C:green}better{}",
+                }
+            },
+            sp_ygg_death_upgrade = {
+                name = "Placeholder",
+                text = {
+                    "{C:attention}Death{} also converts a {C:attention}random{}",
+                    "card into the {C:attention}right{} card",
+                    "{C:inactive}(#1#/1)",
+                }
+            },
+            sp_ygg_death_upgrade_name = {
+                name = "Placeholder",
+                text = {
+                    "Death, but {C:green}better{}",
+                }
+            },
+            sp_ygg_world_upgrade = {
+                name = "Placeholder",
+                text = {
+                    "{C:attention}The World{}'s selection cap",
+                    "increases by {C:attention}2{}",
+                    "{C:inactive}(#1#/1)",
+                }
+            },
+            sp_ygg_world_upgrade_name = {
+                name = "Placeholder",
+                text = {
+                    "The World, but {C:green}better{}",
+                }
+            },
+            sp_ygg_sun_upgrade = {
+                name = "Placeholder",
+                text = {
+                    "{C:attention}The Sun{}'s selection cap",
+                    "increases by {C:attention}2{}",
+                    "{C:inactive}(#1#/1)",
+                }
+            },
+            sp_ygg_sun_upgrade_name = {
+                name = "Placeholder",
+                text = {
+                    "The Sun, but {C:green}better{}",
+                }
+            },
+            sp_ygg_moon_upgrade = {
+                name = "Placeholder",
+                text = {
+                    "{C:attention}The Moon{}'s selection cap",
+                    "increases by {C:attention}2{}",
+                    "{C:inactive}(#1#/1)",
+                }
+            },
+            sp_ygg_moon_upgrade_name = {
+                name = "Placeholder",
+                text = {
+                    "The Moon, but {C:green}better{}",
+                }
+            },
+            sp_ygg_star_upgrade = {
+                name = "Placeholder",
+                text = {
+                    "{C:attention}The Star{}'s selection cap",
+                    "increases by {C:attention}2{}",
+                    "{C:inactive}(#1#/1)",
+                }
+            },
+            sp_ygg_star_upgrade_name = {
+                name = "Placeholder",
+                text = {
+                    "The Star, but {C:green}better{}",
+                }
+            },
+            sp_ygg_judgement_upgrade = {
+                name = "Placeholder",
+                text = {
+                    "{C:attention}The Judgement{} creates random",
+                    "{C:attention}Joker{} cards until Joker slots are full",
+                    "{C:inactive}(#1#/1)",
+                }
+            },
+            sp_ygg_judgement_upgrade_name = {
+                name = "Placeholder",
+                text = {
+                    "The Judgement, but {C:green}better{}",
+                }
+            },
+            sp_ygg_strength_upgrade = {
+                name = "Placeholder",
+                text = {
+                    "{C:attention}Strength{}'s selection cap",
+                    "increases by {C:attention}3{}",
+                    "{C:inactive}(#1#/1)",
+                }
+            },
+            sp_ygg_strength_upgrade_name = {
+                name = "Placeholder",
+                text = {
+                    "Strength, but {C:green}better{}",
+                }
+            },
+            sp_ygg_hanged_man_upgrade = {
+                name = "Placeholder",
+                text = {
+                    "{C:attention}The Hanged Man{}'s selection cap",
+                    "increases by {C:attention}1{}",
+                    "{C:inactive}(#1#/1)",
+                }
+            },
+            sp_ygg_hanged_man_upgrade_name = {
+                name = "Placeholder",
+                text = {
+                    "The Hanged Man, but {C:green}better{}",
+                }
+            },
+            sp_ygg_tower_upgrade = {
+                name = "Placeholder",
+                text = {
+                    "{C:attention}The Tower{}'s selection cap",
+                    "increases by {C:attention}4{}",
+                    "{C:inactive}(#1#/1)",
+                }
+            },
+            sp_ygg_tower_upgrade_name = {
+                name = "Placeholder",
+                text = {
+                    "The Tower, but {C:green}better{}",
+                }
+            },
+            sp_ygg_familiar_upgrade = {
+                name = "Placeholder",
+                text = {
+                    "{C:attention}Familiar{}'s created cards have",
+                    "random {C:attention}editions{} and {C:attention}seals{}",
+                    "{C:inactive}(#1#/1)",
+                    "{s:0.7,C:inactive}(Idea Credit: N')",
+                }
+            },
+            sp_ygg_familiar_upgrade_name = {
+                name = "Placeholder",
+                text = {
+                    "Familiar, but {C:green}better{}",
+                }
+            },
+            sp_ygg_grim_upgrade = {
+                name = "Placeholder",
+                text = {
+                    "{C:attention}Grim{}'s created cards have",
+                    "random {C:attention}editions{} and {C:attention}seals{}",
+                    "{C:inactive}(#1#/1)",
+                    "{s:0.7,C:inactive}(Idea Credit: N')",
+                }
+            },
+            sp_ygg_grim_upgrade_name = {
+                name = "Placeholder",
+                text = {
+                    "Grim, but {C:green}better{}",
+                }
+            },
+            sp_ygg_incantation_upgrade = {
+                name = "Placeholder",
+                text = {
+                    "{C:attention}Incantation{}'s created cards have",
+                    "random {C:attention}editions{} and {C:attention}seals{}",
+                    "{C:inactive}(#1#/1)",
+                    "{s:0.7,C:inactive}(Idea Credit: N')",
+                }
+            },
+            sp_ygg_incantation_upgrade_name = {
+                name = "Placeholder",
+                text = {
+                    "Incantation, but {C:green}better{}",
+                }
+            },
+            sp_ygg_talisman_upgrade = {
+                name = "Placeholder",
+                text = {
+                    "{C:attention}Gold Seal{} gives extra {C:money}$1{}",
+                    "for each played card that has {C:attention}Gold Seal{}",
+                    "{C:inactive}(#1#/1)",
+                }
+            },
+            sp_ygg_talisman_upgrade_name = {
+                name = "Placeholder",
+                text = {
+                    "Talisman, but {C:green}better{}",
+                }
+            },
+            sp_ygg_aura_upgrade = {
+                name = "Placeholder",
+                text = {
+                    "{C:attention}Aura{}'s selection cap",
+                    "increases by {C:attention}2{}",
+                    "{C:inactive}(#1#/1)",
+                }
+            },
+            sp_ygg_aura_upgrade_name = {
+                name = "Placeholder",
+                text = {
+                    "Aura, but {C:green}better{}",
+                }
+            },
+            sp_ygg_wraith_upgrade = {
+                name = "Placeholder",
+                text = {
+                    "{C:attention}Wraith{} only takes {C:attention}half{}",
+                    "of your money",
+                    "{C:inactive}(Sets money to $0 if in debt){}",
+                    "{C:inactive}(#1#/1)",
+                }
+            },
+            sp_ygg_wraith_upgrade_name = {
+                name = "Placeholder",
+                text = {
+                    "Wraith, but {C:green}better{}",
+                }
+            },
+            sp_ygg_ouija_upgrade = {
+                name = "Placeholder",
+                text = {
+                    "{C:attention}Ouija{} no longer reduces",
+                    "{C:attention}Hand Size{}",
+                    "{s:0.3} ",
+                    "{C:attention}Ouija{} also {C:attention}enhances{}",
+                    "all cards in hand",
+                    "{C:inactive}(#1#/1)",
+                }
+            },
+            sp_ygg_ouija_upgrade_name = {
+                name = "Placeholder",
+                text = {
+                    "Ouija, but {C:green}better{}",
+                }
+            },
+            sp_ygg_ankh_upgrade = {
+                name = "Placeholder",
+                text = {
+                    "{C:attention}Ankh{}'s effect is {C:dark_edition}Overhauled{}",
+                    "{s:0.3} ",
+                    "",
+                    "Randomly {C:attention}destroys{} leftmost",
+                    "or rightmost Joker, then",
+                    "{C:attention}duplicates{} the other",
+                    "{s:0.7,C:inactive}(Idea Credit: Victin)",
+                    "{C:inactive}(#1#/1)",
+                }
+            },
+            sp_ygg_ankh_upgrade_name = {
+                name = "Placeholder",
+                text = {
+                    "Ankh, but...?",
+                }
+            },
+            sp_ygg_hex_upgrade = {
+                name = "Placeholder",
+                text = {
+                    "{C:attention}Hex{}'s effect is {C:dark_edition}Overhauled{}",
+                    "{s:0.3} ",
+                    "",
+                    "{C:attention}Destroys{} selected Joker,",
+                    "then adds {C:dark_edition}Polychrome{} to",
+                    "a random {C:attention}Joker{}",
+                    "{s:0.7,C:inactive}(Idea Credit: Velocity)",
+                    "{C:inactive}(#1#/1)",
+                }
+            },
+            sp_ygg_hex_upgrade_name = {
+                name = "Placeholder",
+                text = {
+                    "Hex, but...?",
+                }
+            },
+
+            --Difficulty Skills
+            sp_ygg_diff1 = {
+                name = "Placeholder",
+                text = {
+                    "Increases {C:attention}Ante{} needed",
+                    "to win by {C:attention}2{}",
+                    "{s:0.2} ",
+                    "{C:attention}+25%{} XP Gain",
+                    "{C:inactive}(#1#/4)",
+                    "{s:0.7,C:inactive}(Idea Credit: Nri)",
+                }
+            },
+            sp_ygg_diff1_name = {
+                name = "Placeholder",
+                text = {
+                    "Delayed Victory",
+                }
+            },
+            sp_ygg_diff2 = {
+                name = "Placeholder",
+                text = {
+                    "{C:attention}-1{} hand size",
+                    "{s:0.2} ",
+                    "{C:attention}+10%{} XP Gain",
+                    "{C:inactive}(#1#/3)",
+                }
+            },
+            sp_ygg_diff2_name = {
+                name = "Placeholder",
+                text = {
+                    "Wee Hands",
+                }
+            },
+            sp_ygg_diff3 = {
+                name = "Placeholder",
+                text = {
+                    "Each {C:attention}4{} Antes,",
+                    "{C:attention}Boss Blinds{} become",
+                    "{C:attention}Showdown Blinds{}",
+                    "{s:0.2} ",
+                    "{C:attention}+20%{} XP Gain",
+                    "{C:inactive}(#1#/1)",
+                    "{s:0.7,C:inactive}(Idea Credit: Ice)",
+                }
+            },
+            sp_ygg_diff3_name = {
+                name = "Placeholder",
+                text = {
+                    "The Dragon",
+                }
+            },
+            sp_ygg_diff4 = {
+                name = "Placeholder",
+                text = {
+                    "{C:attention}Big Blinds{} become",
+                    "{C:attention}Boss Blinds{}",
+                    "{s:0.2} ",
+                    "{C:attention}+30%{} XP Gain",
+                    "{C:inactive}(#1#/1)",
+                    "{s:0.7,C:inactive}(Idea Credit: Ice)",
+                }
+            },
+            sp_ygg_diff4_name = {
+                name = "Placeholder",
+                text = {
+                    "Blind Promotion",
+                }
+            },
+            sp_ygg_diff4_add = {
+                name = "Placeholder",
+                text = {
+                    "{C:attention}Small Blinds{} become",
+                    "{C:attention}Boss Blinds{}",
+                    "{s:0.2} ",
+                    "{C:attention}+30%{} XP Gain",
+                    "{C:inactive}(#1#/1)",
+                    "{s:0.7,C:inactive}(Idea Credit: Ice)",
+                }
+            },
+            sp_ygg_diff4_add_name = {
+                name = "Placeholder",
+                text = {
+                    "The Rise of The Small",
+                }
+            },
+            sp_ygg_diff5 = {
+                name = "Placeholder",
+                text = {
+                    "{C:attention}Reroll Cost{} only resets",
+                    "after each {C:attention}Ante{}",
+                    "{s:0.2} ",
+                    "{C:attention}+20%{} XP Gain",
+                    "{C:inactive}(#1#/1)",
+                    "{s:0.7,C:inactive}(Idea Credit: Ice)",
+                }
+            },
+            sp_ygg_diff5_name = {
+                name = "Placeholder",
+                text = {
+                    "Unstable Market",
+                }
+            },
+            sp_ygg_diff6 = {
+                name = "Placeholder",
+                text = {
+                    "Defeating a {C:attention}Blind{}",
+                    "only restores {C:attention}2{} hands",
+                    "at most",
+                    "{s:0.2} ",
+                    "{C:attention}+20%{} XP Gain",
+                    "{C:inactive}(#1#/1)",
+                    "{s:0.7,C:inactive}(Idea Credit: Ice)",
+                }
+            },
+            sp_ygg_diff6_name = {
+                name = "Placeholder",
+                text = {
+                    "Failed Restoration",
+                }
+            },
+            sp_ygg_diff7 = {
+                name = "Placeholder",
+                text = {
+                    "Earns {C:attention}interest{} per",
+                    "{C:money}$10{} instead of {C:money}$5{}",
+                    "{s:0.2} ",
+                    "{C:attention}+10%{} XP Gain",
+                    "{C:inactive}(#1#/1)",
+                    "{s:0.7,C:inactive}(Idea Credit: Ice)",
+                }
+            },
+            sp_ygg_diff7_name = {
+                name = "Placeholder",
+                text = {
+                    "Unknown Fees",
+                }
+            },
+
+            --Shenanigans
+            sp_ygg_chicot = {
+                name = "Chicot",
+                text = {
+                    "Disables effect of every {C:attention}Boss Blind",
+                    "{C:inactive}(#1#/1)",
+                    "{s:0.7,C:inactive}(Might crash your game 99% of the time instead)",
+                }
+            },
+            sp_ygg_chicot_name = {
+                name = "Not Enough Mult",
+                text = {
+                    "Chicot",
+                }
+            },
+            sp_ygg_mult_bruh = {
+                name = "Chicot",
+                text = {
+                    "{C:mult}-1{} Mult",
+                    "{C:inactive}(#1#/1.6e308)",
+                    "{s:0.7,C:inactive}(Name Credit: Myst)",
+                }
+            },
+            sp_ygg_mult_bruh_name = {
+                name = "Not Enough Mult",
+                text = {
+                    "De{C:mult}mult{}ed",
+                }
+            },
+        }
+    },
+    misc={
+        dictionary = {
+            ygg_skill_tree_text = "Skill Tree",
+
+            ygg_skill_tree_sec1 = "Need for Stats",
+            ygg_skill_tree_sec2 = "I'm Multin' it",
+            ygg_skill_tree_sec3 = "Fortune Believers",
+            ygg_skill_tree_sec4 = "Jimbobusters",
+            ygg_skill_tree_sec_sec = "Shenaniganing",
+            ygg_skill_tree_diff = "ULTRALATRO",
+            
+            ygg_reset_skill_tree = "RESET SKILL TREE",
+            ygg_page = "PAGE"
+        },
+    },
+}

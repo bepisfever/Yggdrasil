@@ -156,7 +156,7 @@ DisabledSkills = {
     --Add perk ids here, like "ygg_world_upgrade".
 }
 YggdrasilDefaultButton = true
-YggdrasilDebugMode = true
+YggdrasilDebugMode = false
 
 function check_if_section_exist(sec)
     for _,v in ipairs(SkillTreeSections) do

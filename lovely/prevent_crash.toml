@@ -20,6 +20,14 @@ payload = '''if not self.children or not self.children.view_deck then return end
 match_indent = true
 
 [[patches]]
+[patches.pattern]
+target = '=[SMODS _ "src/utils.lua"]'
+pattern = 'if G.GAME.blind then t[#t+1] = { object = G.GAME.blind, scored_card = G.GAME.blind.children.animatedSprite } end'
+position = "at"
+payload = 'if G.GAME.blind then t[#t+1] = { object = G.GAME.blind, scored_card = ((G.GAME.blind or {}).children or {}).animatedSprite or nil } end'
+match_indent = true
+
+[[patches]]
 [patches.regex]
 target = '=[SMODS _ "src/utils.lua"]'
 pattern = '\(area\.cards\)'

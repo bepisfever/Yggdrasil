@@ -804,7 +804,7 @@ function create_skill_tree_UI(args)
         },
     }
 
-    local skill_perks = create_skill_perks(G.GAME.ygg_chosen_skill_tree_sec or 'ygg_skill_tree_sec1')
+    local skill_perks = create_skill_perks(G.GAME.ygg_chosen_skill_tree_sec or 'ygg_skill_tree_diff')
 
     return {n=G.UIT.ROOT, config = {align = "cm", minw = G.ROOM.T.w*5, minh = G.ROOM.T.h*5,padding = 0.1, r = 0.1, colour = args.bg_colour or {G.C.GREY[1], G.C.GREY[2], G.C.GREY[3],0.7}}, nodes={
       {n=G.UIT.R, config={align = "cm", minh = 1,r = 0.3, padding = 0.07, minw = 1, colour = args.outline_colour or G.C.JOKER_GREY, emboss = 0.1}, nodes={
@@ -912,7 +912,7 @@ function create_skill_tree_UI(args)
                             {n = G.UIT.O, config = {object = DynaText({scale = 0.75, string = localize('ygg_skill_tree_text').." ("..((G.PROFILES[G.SETTINGS.profile].ygg_skill_points or 0) + (G.GAME.ygg_skill_points or 0)).." SP)", maxw = 9, colours = { G.C.WHITE }, float = true, silent = true, shadow = true})}}
                         }},
                         {n = G.UIT.R, config = {align = "tm", padding = 0.02}, nodes = {
-                            {n = G.UIT.O, config = {object = DynaText({scale = 0.4, string = localize(G.GAME.ygg_chosen_skill_tree_sec or 'ygg_skill_tree_sec1'), maxw = 9, colours = { G.C.WHITE }, float = true, silent = true})}}
+                            {n = G.UIT.O, config = {object = DynaText({scale = 0.4, string = localize(G.GAME.ygg_chosen_skill_tree_sec or 'ygg_skill_tree_diff'), maxw = 9, colours = { G.C.WHITE }, float = true, silent = true})}}
                         }},
                         {n = G.UIT.R, config = {align = "tr", padding = 0.02}, nodes = { --Reset skill tree button.
                             {

@@ -86,7 +86,7 @@ payload = '''
 if if_skill_obtained("ygg_priestess_upgrade") and self.ability.name == "The High Priestess" then 
     G.E_MANAGER:add_event(Event({trigger = 'after', delay = 0.4, func = function()
         play_sound('timpani')
-        local card = SMODS.create_card({set = "Planet", key = BalatroSR.most_played_hand_planet_key(true) or "c_pluto"})
+        local card = SMODS.create_card({set = "Planet", key = Yggdrasil.most_played_hand_planet_key(true) or "c_pluto"})
         card:set_edition("e_negative",true)
         card:add_to_deck()
         G.consumeables:emplace(card)

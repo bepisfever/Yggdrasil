@@ -4,7 +4,7 @@ Yggdrasil.change_xp = function(xp) --Function used to change XP (either add or r
     G.GAME.ygg_placeholder_xp = (G.GAME.ygg_placeholder_xp or 0) + xp
 end
 
-Yggdrasil.reset_skill_tree = function()
+Yggdrasil.force_reset_skill_tree = function()
     local a,b = 0,0
     for i,v in pairs(G.PROFILES[G.SETTINGS.profile].skill_perks or {}) do
         a = a + get_skill_cost(i) * v
@@ -18,6 +18,20 @@ Yggdrasil.reset_skill_tree = function()
 
     G.PROFILES[G.SETTINGS.profile].ygg_skill_points = (G.PROFILES[G.SETTINGS.profile].ygg_skill_points or 0) + a
     G.GAME.ygg_skill_points = (G.GAME.ygg_skill_points or 0) + b
+end
+
+Yggdrasil.reset_skill_tree = function()
+    for i,_ in pairs(G.PROFILES[G.SETTINGS.profile].skill_perks or {}) do
+        if get_skill_info(i) then
+            Yggdrasil.reset_skill(i)
+        end
+    end
+
+    for i,_ in pairs(G.GAME.skill_perks or {}) do
+        if get_skill_info(i) then
+            Yggdrasil.reset_skill(i)
+        end
+    end
 end
 
 local hookTo = Game.start_run

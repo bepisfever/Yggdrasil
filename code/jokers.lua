@@ -97,6 +97,10 @@ SMODS.Joker {
          mult = 0, chips = 0, xmult = 1, xchips = 1
       }
 
+      if card.edition then
+         card:set_edition(nil,true)
+      end
+
       local function check_skill_gains(i,v)
          local info = get_skill_info(i) or {}
          for i2,_ in pairs(gains) do

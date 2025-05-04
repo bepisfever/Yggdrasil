@@ -24,7 +24,7 @@ match_indent = true
 target = '=[SMODS _ "src/utils.lua"]'
 pattern = 'local eff, triggered = individual.object:calculate(context)'
 position = "before"
-payload = 'if not individual or not individual.object then return ret, post_trig end'
+payload = 'if not individual or not individual.object or not individual.object.calculate then return ret, post_trig end'
 match_indent = true
 
 [[patches]]

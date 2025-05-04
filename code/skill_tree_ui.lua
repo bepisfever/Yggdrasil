@@ -1038,7 +1038,7 @@ function Game:start_run(args)
         },
         config = {
             align = "cardarea_add_to_highlighted_ref",
-            offset = { x = 0, y = -0.75 },
+            offset = { x = 7.8, y = -0.75 },
             major = G.jokers,
             bond = 'Weak'
         }

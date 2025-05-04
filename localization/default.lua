@@ -360,6 +360,22 @@ return { --remind me to work on this
                     "{s:0.7}IS THAT THE BITE OF 87???{}",
                 }
             },
+            sp_ygg_mult_add1 = {
+                name = "Placeholder",
+                text = {
+                    "During {C:attention}first{} hand of round, {C:mult}+87{} Mult",
+                    "if there is less than 19 {C:attention}Jokers{}",
+                    "{C:inactive}(#1#/1)",
+                    "{s:0.7,C:inactive}(He fits in so seamlessly.)",
+                    "{s:0.7,C:inactive}(Name Credit: aikoyori)",
+                }
+            },
+            sp_ygg_mult_add1_name = {
+                name = "Placeholder",
+                text = {
+                    "Vodka {C:mult}Mult{}ini",
+                }
+            },
 
             sp_ygg_chips1 = {
                 name = "Placeholder",
@@ -527,7 +543,7 @@ return { --remind me to work on this
             sp_ygg_temperance_upgrade = {
                 name = "Placeholder",
                 text = {
-                    "{C:attention}Money cap{} of {C:attention}The Temperance{}",
+                    "{C:attention}Money cap{} of {C:attention}Temperance{}",
                     "increases by {C:money}$50{}",
                     "{C:inactive}(#1#/1)",
                 }
@@ -535,7 +551,7 @@ return { --remind me to work on this
             sp_ygg_temperance_upgrade_name = {
                 name = "Placeholder",
                 text = {
-                    "The Temperance, but {C:green}better{}",
+                    "Temperance, but {C:green}better{}",
                 }
             },
             sp_ygg_wof_upgrade = {
@@ -767,7 +783,7 @@ return { --remind me to work on this
             sp_ygg_judgement_upgrade = {
                 name = "Placeholder",
                 text = {
-                    "{C:attention}The Judgement{} creates random",
+                    "{C:attention}Judgement{} creates random",
                     "{C:attention}Joker{} cards until Joker slots are full",
                     "{C:inactive}(#1#/1)",
                 }
@@ -775,7 +791,7 @@ return { --remind me to work on this
             sp_ygg_judgement_upgrade_name = {
                 name = "Placeholder",
                 text = {
-                    "The Judgement, but {C:green}better{}",
+                    "Judgement, but {C:green}better{}",
                 }
             },
             sp_ygg_strength_upgrade = {
@@ -1131,6 +1147,38 @@ return { --remind me to work on this
                     "De{C:mult}mult{}ed",
                 }
             },
+
+            --Aikoyori's Shenanigans
+            sp_ygg_AKYRS_1 = {
+                name = "Placeholder",
+                text = {
+                    "Each {C:attention}character{} in",
+                    "all {C:attention}Jokers' descriptions{}",
+                    "gives {C:chips}+0.5{} Chips",
+                    "{C:inactive}(#1#/1)",
+                }
+            },
+            sp_ygg_AKYRS_1_name = {
+                name = "Placeholder",
+                text = {
+                    "tl;dr nightmare.",
+                }
+            },
+            sp_ygg_AKYRS_2 = {
+                name = "Placeholder",
+                text = {
+                    "Scored {C:attention}Ys{} give",
+                    "{X:mult,C:white}X2.99999999999999998{}",
+                    "Mult",
+                    "{C:inactive}(#1#/1)",
+                }
+            },
+            sp_ygg_AKYRS_2_name = {
+                name = "Placeholder",
+                text = {
+                    "why",
+                }
+            },
         }
     },
     misc={
@@ -1143,6 +1191,7 @@ return { --remind me to work on this
             ygg_skill_tree_sec4 = "Jimbobusters",
             ygg_skill_tree_sec_sec = "Shenaniganing",
             ygg_skill_tree_diff = "ULTRALATRO",
+            ygg_skill_tree_AKYRS = "aikoyori.",
             
             ygg_reset_skill_tree = "RESET SKILL TREE",
             ygg_page = "PAGE"

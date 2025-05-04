@@ -157,6 +157,8 @@ end_round = function()
         multi = multi * 2
     end
 
+    multi = multi * 0.75
+
     G.GAME.skip_multi = (G.GAME.skip_multi or 0) + 0.4 --Increasing the next skip's XP Gain.
  
     Yggdrasil.change_xp(G.GAME.round_resets.ante * (G.GAME.XP_MULTIPLIER or 1) * 5 * multi)

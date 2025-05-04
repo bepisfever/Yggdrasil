@@ -167,8 +167,28 @@ function check_if_section_exist(sec)
     return false
 end
 
-Yggdrasil.give_skill_points = function(n)
-    G.PROFILES[G.SETTINGS.profile].ygg_skill_points = (G.PROFILES[G.SETTINGS.profile].ygg_skill_points or 0) + n
+Yggdrasil.give_skill_points = function(n, temp)
+    if not temp then
+        G.PROFILES[G.SETTINGS.profile].ygg_skill_points = (G.PROFILES[G.SETTINGS.profile].ygg_skill_points or 0) + n
+    else
+        G.GAME.ygg_skill_points = (G.GAME.ygg_skill_points or 0) + n
+    end
+end
+
+Yggdrasil.reset_skill = function(key)
+    for i,v in pairs(G.PROFILES[G.SETTINGS.profile].skill_perks or {}) do
+        if i == key then 
+            Yggdrasil.give_skill_points(get_skill_cost(key) * v)
+            G.PROFILES[G.SETTINGS.profile].skill_perks[key] = nil 
+        end
+    end
+
+    for i,v in pairs(G.GAME.skill_perks or {}) do
+        if i == key then 
+            Yggdrasil.give_skill_points(get_skill_cost(key) * v, true)
+            G.GAME.skill_perks[key] = nil 
+        end
+    end
 end
 
 function add_new_section(sec)

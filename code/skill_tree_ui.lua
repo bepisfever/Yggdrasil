@@ -155,8 +155,8 @@ SkillTreeSections = {
 DisabledSkills = {
     --Add perk ids here, like "ygg_world_upgrade".
 }
-
 YggdrasilDefaultButton = true
+YggdrasilDebugMode = true
 
 function check_if_section_exist(sec)
     for _,v in ipairs(SkillTreeSections) do
@@ -165,6 +165,10 @@ function check_if_section_exist(sec)
         end
     end
     return false
+end
+
+Yggdrasil.give_skill_points = function(n)
+    G.PROFILES[G.SETTINGS.profile].ygg_skill_points = (G.PROFILES[G.SETTINGS.profile].ygg_skill_points or 0) + n
 end
 
 function add_new_section(sec)
@@ -506,7 +510,7 @@ G.FUNCS.reset_skill_tree = function(e)
 end
 
 G.FUNCS.check_valid_reset = function(e)
-    if (G.GAME.round or 0) <= 0 then
+    if ((G.GAME.round or 0) <= 0) or YggdrasilDebugMode then
         e.config.colour = G.C.RED
         e.config.button = "reset_skill_tree"
     else
@@ -993,6 +997,7 @@ end
 local game_start_run_ref = Game.start_run
 function Game:start_run(args)
     game_start_run_ref(self, args)
+    
     self.ygg_extra_buttons = YggdrasilDefaultButton and UIBox {
         definition = {
             n = G.UIT.ROOT,
@@ -1044,3 +1049,5 @@ function Game:start_run(args)
         }
     }
 end
+
+--G.localization.descriptions.Joker <-- then something something here

@@ -36,3 +36,13 @@ position = 'at'
 payload = "((G.deck or {}).cards or {})"
 overwrite = true
 match_indent = false
+
+# Solving conflicts with Reverie.
+[[patches]]
+[patches.regex]
+target = '=[SMODS Reverie "data/main.lua"]'
+pattern = 'G\.cine_quests\.cards'
+position = 'at'
+payload = "((G.cine_quests or {}).cards or {})"
+overwrite = true
+match_indent = false

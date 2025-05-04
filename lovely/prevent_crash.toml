@@ -22,6 +22,14 @@ match_indent = true
 [[patches]]
 [patches.pattern]
 target = '=[SMODS _ "src/utils.lua"]'
+pattern = 'local eff, triggered = individual.object:calculate(context)'
+position = "before"
+payload = 'if not individual or not individual.object then return ret, post_trig end'
+match_indent = true
+
+[[patches]]
+[patches.pattern]
+target = '=[SMODS _ "src/utils.lua"]'
 pattern = 'if G.GAME.blind then t[#t+1] = { object = G.GAME.blind, scored_card = G.GAME.blind.children.animatedSprite } end'
 position = "at"
 payload = 'if G.GAME.blind then t[#t+1] = { object = G.GAME.blind, scored_card = ((G.GAME.blind or {}).children or {}).animatedSprite or nil } end'

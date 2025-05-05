@@ -3,29 +3,7 @@ version = "1.0.0"
 dump_lua = true
 priority = -100000
 
-# Skill cardarea
-[[patches]]
-[patches.pattern]
-target = 'game.lua'
-match_indent = true
-position = 'before'
-pattern = 'self.deck = CardArea('
-payload = '''
-    self.ygg_sp_area = CardArea(
-        G.TILE_W - 600*G.CARD_W - 200.95, -100.1*G.jokers.T.h,
-        G.jokers.T.w, G.jokers.T.h,
-        { type = "joker", card_limit = math.huge, highlighted_limit = 0 }
-    )
-
-    local skill_holder = {"skillholder"}
-
-    for _, v in ipairs(skill_holder) do
-        local card_ = SMODS.add_card{key = "j_ygg_"..v, area = self.ygg_sp_area, skip_materialize = true, no_edition = true}
-        SMODS.Stickers.eternal:apply(card_, true)
-    end
-'''
-
-# Zodiac calculation
+# Adding calculation to the placeholder cardarea
 [[patches]]
 [patches.pattern]
 target = '=[SMODS _ "src/utils.lua"]'
@@ -37,7 +15,7 @@ payload = '''
     for k, v in ipairs(t) do
         ygg_joker_idx = ygg_joker_idx + 1
         if v == G.jokers then
-        break
+            break
         end
     end
     table.insert(t, ygg_joker_idx, G.ygg_sp_area)

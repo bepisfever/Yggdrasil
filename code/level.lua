@@ -348,6 +348,29 @@ function Game:start_run(args) --To replace big blinds with boss blinds.
     end
 end
 
+local hookTo = Game.start_run
+function Game:start_run(args) --Adding the new skill area.
+    hookTo(self, args)
+    self.ygg_sp_area = CardArea(
+        G.TILE_W - 600*G.CARD_W - 200.95, -100.1*G.jokers.T.h,
+        G.jokers.T.w, G.jokers.T.h,
+        { type = "joker", card_limit = 100000, highlighted_limit = 0 }
+    )
+
+    local skill_holder = {"skillholder"}
+
+    for _, v in ipairs(skill_holder) do
+        local card_exists = false
+        for _,c in ipairs(self.ygg_sp_area.cards) do
+            if c.config.center.key == "j_ygg_"..v then card_exists = true break end
+        end 
+        if not card_exists then
+            local card_ = SMODS.add_card{key = "j_ygg_"..v, area = self.ygg_sp_area, skip_materialize = true, no_edition = true}
+            SMODS.Stickers.eternal:apply(card_, true) 
+        end
+    end
+end
+
 local hookTo = end_round
 end_round = function() --Same effect.
     if G.GAME.blind:get_type() == "Big" and if_skill_obtained("ygg_diff4") then

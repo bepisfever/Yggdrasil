@@ -360,6 +360,22 @@ return { --remind me to work on this
                     "{s:0.7}IS THAT THE BITE OF 87???{}",
                 }
             },
+            sp_ygg_mult_add1 = {
+                name = "Placeholder",
+                text = {
+                    "During {C:attention}first{} hand of round, {C:mult}+87{} Mult",
+                    "if there is less than 19 {C:attention}Jokers{}",
+                    "{C:inactive}(#1#/1)",
+                    "{s:0.7,C:inactive}(He fits in so seamlessly.)",
+                    "{s:0.7,C:inactive}(Name Credit: aikoyori)",
+                }
+            },
+            sp_ygg_mult_add1_name = {
+                name = "Placeholder",
+                text = {
+                    "Vodka {C:mult}Mult{}ini",
+                }
+            },
 
             sp_ygg_chips1 = {
                 name = "Placeholder",
@@ -527,7 +543,7 @@ return { --remind me to work on this
             sp_ygg_temperance_upgrade = {
                 name = "Placeholder",
                 text = {
-                    "{C:attention}Money cap{} of {C:attention}The Temperance{}",
+                    "{C:attention}Money cap{} of {C:attention}Temperance{}",
                     "increases by {C:money}$50{}",
                     "{C:inactive}(#1#/1)",
                 }
@@ -535,7 +551,7 @@ return { --remind me to work on this
             sp_ygg_temperance_upgrade_name = {
                 name = "Placeholder",
                 text = {
-                    "The Temperance, but {C:green}better{}",
+                    "Temperance, but {C:green}better{}",
                 }
             },
             sp_ygg_wof_upgrade = {
@@ -767,7 +783,7 @@ return { --remind me to work on this
             sp_ygg_judgement_upgrade = {
                 name = "Placeholder",
                 text = {
-                    "{C:attention}The Judgement{} creates random",
+                    "{C:attention}Judgement{} creates random",
                     "{C:attention}Joker{} cards until Joker slots are full",
                     "{C:inactive}(#1#/1)",
                 }
@@ -775,7 +791,7 @@ return { --remind me to work on this
             sp_ygg_judgement_upgrade_name = {
                 name = "Placeholder",
                 text = {
-                    "The Judgement, but {C:green}better{}",
+                    "Judgement, but {C:green}better{}",
                 }
             },
             sp_ygg_strength_upgrade = {
@@ -1131,6 +1147,177 @@ return { --remind me to work on this
                     "De{C:mult}mult{}ed",
                 }
             },
+
+            --Aikoyori's Shenanigans
+            sp_ygg_AKYRS_1 = {
+                name = "Placeholder",
+                text = {
+                    "Each {C:attention}character{} in",
+                    "all {C:attention}Jokers' descriptions{}",
+                    "gives {C:chips}+0.5{} Chips",
+                    "{C:inactive}(#1#/1)",
+                }
+            },
+            sp_ygg_AKYRS_1_name = {
+                name = "Placeholder",
+                text = {
+                    "tl;dr nightmare.",
+                }
+            },
+            sp_ygg_AKYRS_2 = {
+                name = "Placeholder",
+                text = {
+                    "Scored {C:attention}Ys{} give",
+                    "{X:mult,C:white}X2.99999999999999998{}",
+                    "Mult",
+                    "{C:inactive}(#1#/1)",
+                }
+            },
+            sp_ygg_AKYRS_2_name = {
+                name = "Placeholder",
+                text = {
+                    "\"why\"",
+                }
+            },
+            sp_ygg_AKYRS_3 = {
+                name = "Placeholder",
+                text = {
+                    "{X:mult,C:white}X1{} Mult",
+                    "{C:inactive}(#1#/1)",
+                }
+            },
+            sp_ygg_AKYRS_3_name = {
+                name = "Placeholder",
+                text = {
+                    "\"i am sorry\"",
+                }
+            },
+            sp_ygg_AKYRS_4 = {
+                name = "Placeholder",
+                text = {
+                    "{X:mult,C:white}X1{} Mult,",
+                    "increases by {X:mult,C:white}X0.5{}",
+                    "for each {C:attention}FPS{} below {C:attention}40{}",
+                    "{C:inactive}(#1#/1)",
+                }
+            },
+            sp_ygg_AKYRS_4_name = {
+                name = "Placeholder",
+                text = {
+                    "\"i seriously dont know why the game is laggy\"",
+                }
+            },
+            --Grim
+            sp_ygg_GRM_1 = {
+                name = "Placeholder",
+                text = {
+                    "All sources of {C:purple}XP{}",
+                    "in {C:attention}Grim{} also give",
+                    "{C:purple}+20{} XP",
+                    "{C:inactive}(#1#/1)",
+                }
+            },
+            sp_ygg_GRM_1_name = {
+                name = "Placeholder",
+                text = {
+                    "Knowledge of an Another World",
+                }
+            },
+            sp_ygg_GRM_2 = {
+                name = "Placeholder",
+                text = {
+                    "{C:attention}Grim{} receives {C:purple}XP{}",
+                    "equal to {C:attention}10%{} of",
+                    "{C:attention}XP{} earned in this",
+                    "{C:attention}Skill Tree{}",
+                    "{C:inactive}(#1#/1)",
+                }
+            },
+            sp_ygg_GRM_2_name = {
+                name = "Placeholder",
+                text = {
+                    "Expertise of Both Worlds",
+                }
+            },
+            sp_ygg_GRM_3 = {
+                name = "Placeholder",
+                text = {
+                    "{C:attention}Upgrade 1{} gives",
+                    "{C:purple}+50{} XP instead,",
+                    "scales with {C:attention}XP Gain{}",
+                    "{C:inactive}(#1#/1)",
+                }
+            },
+            sp_ygg_GRM_3_name = {
+                name = "Placeholder",
+                text = {
+                    "{C:purple}XP{}, XP, and {C:attention}XP{}",
+                }
+            },
+            sp_ygg_GRM_4 = {
+                name = "Placeholder",
+                text = {
+                    "{C:purple}XP{} gained from {C:attention}Grim",
+                    "has a fixed {C:green}75%{} to increase",
+                    "{C:attention}XP{} by {C:attention}+25{}",
+                    "{C:inactive}(#1#/1)",
+                }
+            },
+            sp_ygg_GRM_4_name = {
+                name = "Placeholder",
+                text = {
+                    "Wormhole {C:attention}X{}{C:purple}P{}",
+                }
+            },
+            --MoreFluff
+            sp_ygg_MoreFluff_1 = {
+                name = "Placeholder",
+                text = {
+                    "{C:colourcard}Colour{} cards' {C:attention}round{}",
+                    "increases by {C:attention}1{} for each {C:colourcard}Colour",
+                    "card held except itself at {C:attention}end of round{}",
+                    "{C:inactive}(#1#/1)",
+                }
+            },
+            sp_ygg_MoreFluff_1_name = {
+                name = "Placeholder",
+                text = {
+                    "Goethe's {C:colourcard}Colour{} Wheel",
+                }
+            },
+            sp_ygg_MoreFluff_2 = {
+                name = "Placeholder",
+                text = {
+                    "Each {C:attention}unique{} {C:colourcard}Colour{} card held",
+                    "increases {C:attention}hand size{} by {C:attention}1{}",
+                    "{C:inactive}(#1#/1)",
+                }
+            },
+            sp_ygg_MoreFluff_2_name = {
+                name = "Placeholder",
+                text = {
+                    "{C:colourcard}Rainbow{} Road",
+                }
+            },
+            sp_ygg_MoreFluff_3 = {
+                name = "Placeholder",
+                text = {
+                    "All {C:attention}Boss Blinds{}",
+                    "become {C:attention}DX Boss Blinds{},",
+                    "reduce {C:mult}Mult{} and {C:chips}Chips{}",
+                    "from {C:attention}Skill Tree{} by {C:red}50%{}",
+                    "{s:0.2} ",
+                    "{C:attention}+100%{} XP Gain",
+                    "{C:inactive}(#1#/1)",
+                }
+            },
+            sp_ygg_MoreFluff_3_name = {
+                name = "Placeholder",
+                text = {
+                    "{C:inactive}Pale{} Forest",
+                    "{s:0.8,C:red}good luck.{}",
+                }
+            },
         }
     },
     misc={
@@ -1143,6 +1330,9 @@ return { --remind me to work on this
             ygg_skill_tree_sec4 = "Jimbobusters",
             ygg_skill_tree_sec_sec = "Shenaniganing",
             ygg_skill_tree_diff = "ULTRALATRO",
+            ygg_skill_tree_AKYRS = "aikoyori.",
+            ygg_skill_tree_GRM = "Grafting",
+            ygg_skill_tree_MoreFluff = "Double Rainbow",
             
             ygg_reset_skill_tree = "RESET SKILL TREE",
             ygg_page = "PAGE"

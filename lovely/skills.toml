@@ -86,7 +86,7 @@ payload = '''
 if if_skill_obtained("ygg_priestess_upgrade") and self.ability.name == "The High Priestess" then 
     G.E_MANAGER:add_event(Event({trigger = 'after', delay = 0.4, func = function()
         play_sound('timpani')
-        local card = SMODS.create_card({set = "Planet", key = BalatroSR.most_played_hand_planet_key(true) or "c_pluto"})
+        local card = SMODS.create_card({set = "Planet", key = Yggdrasil.most_played_hand_planet_key(true) or "c_pluto"})
         card:set_edition("e_negative",true)
         card:add_to_deck()
         G.consumeables:emplace(card)
@@ -783,6 +783,43 @@ elseif config.name == 'interest' then
     if if_skill_obtained("ygg_diff7") then cash_per_interest = cash_per_interest + 5 end
     table.insert(left_text, {n=G.UIT.T, config={text = num_dollars, scale = 0.8*scale, colour = G.C.MONEY, shadow = true, juice = true}})
     table.insert(left_text,{n=G.UIT.O, config={object = DynaText({string = {" "..localize{type = 'variable', key = 'interest', vars = {G.GAME.interest_amount, cash_per_interest, G.GAME.interest_amount*G.GAME.interest_cap/5}}}, colours = {G.C.UI.TEXT_LIGHT}, shadow = true, pop_in = 0, scale = 0.4*scale, silent = true})}})
+'''
+
+[[patches]]
+[patches.pattern]
+target = '=[SMODS GRM "Grim.lua"]'
+match_indent = true
+position = 'at'
+pattern = '''
+function add_skill_xp(amount, card, message_, no_mod)
+    local message = true
+    if message_ ~= nil then
+        message = message_
+    end
+    if not no_mod then
+        amount = get_modded_xp(amount)
+    end
+'''
+payload = '''
+function add_skill_xp(amount, card, message_, no_mod)
+    local message = true
+    if message_ ~= nil then
+        message = message_
+    end
+    if not no_mod then
+        amount = get_modded_xp(amount)
+    end
+    if if_skill_obtained("ygg_GRM_3") and (amount or 0) > 0 then
+        amount = amount + (50 * (G.GAME.XP_MULTIPLIER or 1))
+    elseif if_skill_obtained("ygg_GRM_1") and (amount or 0) > 0 then
+        amount = amount + 20
+    end
+
+    if if_skill_obtained("ygg_GRM_4") and (amount or 0) > 0 then
+        if pseudorandom("ygg_GRM_4_check") <= 3/4 then
+            Yggdrasil.change_xp(25 * (G.GAME.XP_MULTIPLIER or 1))
+        end
+    end
 '''
 
 #[[patches]]

@@ -4,7 +4,7 @@ Yggdrasil.change_xp = function(xp) --Function used to change XP (either add or r
     G.GAME.ygg_placeholder_xp = (G.GAME.ygg_placeholder_xp or 0) + xp
 end
 
-Yggdrasil.reset_skill_tree = function()
+Yggdrasil.force_reset_skill_tree = function()
     local a,b = 0,0
     for i,v in pairs(G.PROFILES[G.SETTINGS.profile].skill_perks or {}) do
         a = a + get_skill_cost(i) * v
@@ -18,6 +18,20 @@ Yggdrasil.reset_skill_tree = function()
 
     G.PROFILES[G.SETTINGS.profile].ygg_skill_points = (G.PROFILES[G.SETTINGS.profile].ygg_skill_points or 0) + a
     G.GAME.ygg_skill_points = (G.GAME.ygg_skill_points or 0) + b
+end
+
+Yggdrasil.reset_skill_tree = function()
+    for i,_ in pairs(G.PROFILES[G.SETTINGS.profile].skill_perks or {}) do
+        if get_skill_info(i) then
+            Yggdrasil.reset_skill(i)
+        end
+    end
+
+    for i,_ in pairs(G.GAME.skill_perks or {}) do
+        if get_skill_info(i) then
+            Yggdrasil.reset_skill(i)
+        end
+    end
 end
 
 local hookTo = Game.start_run
@@ -159,7 +173,7 @@ end_round = function()
 
     G.GAME.skip_multi = (G.GAME.skip_multi or 0) + 0.4 --Increasing the next skip's XP Gain.
  
-    Yggdrasil.change_xp(G.GAME.round_resets.ante * (G.GAME.XP_MULTIPLIER or 1) * 5 * multi)
+    Yggdrasil.change_xp(math.min(G.GAME.round_resets.ante,G.GAME.win_ante) * (G.GAME.XP_MULTIPLIER or 1) * 5 * multi)
     return ret
 end
 
@@ -334,6 +348,29 @@ function Game:start_run(args) --To replace big blinds with boss blinds.
     end
 end
 
+local hookTo = Game.start_run
+function Game:start_run(args) --Adding the new skill area.
+    hookTo(self, args)
+    self.ygg_sp_area = CardArea(
+        G.TILE_W - 600*G.CARD_W - 200.95, -100.1*G.jokers.T.h,
+        G.jokers.T.w, G.jokers.T.h,
+        { type = "joker", card_limit = 100000, highlighted_limit = 0 }
+    )
+
+    local skill_holder = {"skillholder"}
+
+    for _, v in ipairs(skill_holder) do
+        local card_exists = false
+        for _,c in ipairs(self.ygg_sp_area.cards) do
+            if c.config.center.key == "j_ygg_"..v then card_exists = true break end
+        end 
+        if not card_exists then
+            local card_ = SMODS.add_card{key = "j_ygg_"..v, area = self.ygg_sp_area, skip_materialize = true, no_edition = true}
+            SMODS.Stickers.eternal:apply(card_, true) 
+        end
+    end
+end
+
 local hookTo = end_round
 end_round = function() --Same effect.
     if G.GAME.blind:get_type() == "Big" and if_skill_obtained("ygg_diff4") then
@@ -371,8 +408,27 @@ function Blind.get_type(self) --Ensuring that defeating a Boss Blind (replacing 
     return get_typeref(self)
 end
 
+local hookTo = get_new_boss
+function get_new_boss()
+    if if_skill_obtained("ygg_MoreFluff_3") and next(SMODS.find_mod("MoreFluff")) then
+        local eligible_pool = {}
+        for i,v in pairs(G.P_BLINDS) do
+            if string.find(i, "_dx") and v.debuff and v.debuff.superboss then
+                eligible_pool[#eligible_pool+1] = i
+            end
+        end
+
+        local chosen_blind = pseudorandom_element(eligible_pool, pseudoseed("ygg_MoreFluff_3_roll"))
+        return chosen_blind
+        --return pseudorandom_element(eligible_pool, pseudoseed("ygg_MoreFluff_3_roll"))
+    else
+        local a = hookTo()
+        return a
+    end
+end
+
 local hookTo = create_UIBox_blind_select
-function create_UIBox_blind_select() --Randomizing world after Showdown boss is beaten, the timing is when you enter the Blind selection screen.
+function create_UIBox_blind_select() --Randomizing Big and Small blinds to Boss.
     if G.GAME.RESET_BIG_BLIND and if_skill_obtained("ygg_diff4") then
         G.GAME.RESET_BIG_BLIND = false
         G.GAME.round_resets.blind_choices.Big = get_new_boss() 
@@ -387,4 +443,31 @@ function create_UIBox_blind_select() --Randomizing world after Showdown boss is 
     return ret
 end
 
---I want to check G.GAME.round_resets.blind_states.Boss in end_round.
+local hookTo = Yggdrasil.change_xp
+function Yggdrasil.change_xp(xp)
+    if if_skill_obtained("ygg_GRM_2") and next(SMODS.find_mod("GRM")) then
+        if xp > 0 then
+            add_skill_xp(xp/10, G.deck, nil, true)
+        end
+    end
+
+    hookTo(xp)
+end
+
+local hookTo = end_round
+end_round = function() --I want to increase card.ability.extra.partial_rounds.
+    if if_skill_obtained("ygg_MoreFluff_1") and next(SMODS.find_mod("MoreFluff")) then
+        for _,v in ipairs(G.consumeables.cards or {}) do
+            if v.ability and v.ability.partial_rounds then
+                local color_cards = 0
+                for _,v2 in ipairs(G.consumeables.cards or {}) do
+                    if v2 ~= v and v2.ability and v2.ability.partial_rounds then color_cards = color_cards + 1 end
+                end
+                v.ability.partial_rounds = v.ability.partial_rounds + color_cards
+            end
+        end 
+    end
+
+    local ret = hookTo()
+    return ret
+end

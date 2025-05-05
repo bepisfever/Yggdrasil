@@ -25,8 +25,10 @@ SkillTreePerks = {
     - force_showdown_ante_decrease (num) <- showdown_ante_decrease scales on win ante, because fuck you :3
 
     - config (table) <- Just something that you (or I) can use for code to read.
-    - add_condition (func) <- Only runs code when condition is met.
     
+    - multMulti (num) <- Reduces total Skill Tree's Mult and XMult.
+    - chipsMulti (num) <- Reduces total Skill Tree's Chips and XChips.
+
     Button configs, yipee:
     - lock_first_round: Makes it so the buffs can only be purchased during round 0.
     ]]
@@ -155,8 +157,53 @@ SkillTreeSections = {
 DisabledSkills = {
     --Add perk ids here, like "ygg_world_upgrade".
 }
-
 YggdrasilDefaultButton = true
+YggdrasilDebugMode = false
+
+function check_if_section_exist(sec)
+    for _,v in ipairs(SkillTreeSections) do
+        for _,v2 in ipairs(v) do
+            if v2 == sec then return true end
+        end
+    end
+    return false
+end
+
+Yggdrasil.give_skill_points = function(n, temp)
+    if not temp then
+        G.PROFILES[G.SETTINGS.profile].ygg_skill_points = (G.PROFILES[G.SETTINGS.profile].ygg_skill_points or 0) + n
+    else
+        G.GAME.ygg_skill_points = (G.GAME.ygg_skill_points or 0) + n
+    end
+end
+
+Yggdrasil.reset_skill = function(key)
+    for i,v in pairs(G.PROFILES[G.SETTINGS.profile].skill_perks or {}) do
+        if i == key then 
+            Yggdrasil.give_skill_points(get_skill_cost(key) * v)
+            G.PROFILES[G.SETTINGS.profile].skill_perks[key] = nil 
+        end
+    end
+
+    for i,v in pairs(G.GAME.skill_perks or {}) do
+        if i == key then 
+            Yggdrasil.give_skill_points(get_skill_cost(key) * v, true)
+            G.GAME.skill_perks[key] = nil 
+        end
+    end
+end
+
+function add_new_section(sec)
+    if check_if_section_exist(sec) then return true end
+    for i,v in ipairs(SkillTreeSections) do
+        if #v < 4 then
+            v[#v+1] = sec
+            return true
+        end
+    end
+
+    SkillTreeSections[#SkillTreeSections+1] = {sec}
+end
 
 function ret_skill_tree()
     return SkillTreePerks
@@ -485,7 +532,7 @@ G.FUNCS.reset_skill_tree = function(e)
 end
 
 G.FUNCS.check_valid_reset = function(e)
-    if (G.GAME.round or 0) <= 0 then
+    if ((G.GAME.round or 0) <= 0) or YggdrasilDebugMode then
         e.config.colour = G.C.RED
         e.config.button = "reset_skill_tree"
     else
@@ -783,7 +830,7 @@ function create_skill_tree_UI(args)
         },
     }
 
-    local skill_perks = create_skill_perks(G.GAME.ygg_chosen_skill_tree_sec or 'ygg_skill_tree_sec1')
+    local skill_perks = create_skill_perks(G.GAME.ygg_chosen_skill_tree_sec or 'ygg_skill_tree_diff')
 
     return {n=G.UIT.ROOT, config = {align = "cm", minw = G.ROOM.T.w*5, minh = G.ROOM.T.h*5,padding = 0.1, r = 0.1, colour = args.bg_colour or {G.C.GREY[1], G.C.GREY[2], G.C.GREY[3],0.7}}, nodes={
       {n=G.UIT.R, config={align = "cm", minh = 1,r = 0.3, padding = 0.07, minw = 1, colour = args.outline_colour or G.C.JOKER_GREY, emboss = 0.1}, nodes={
@@ -891,7 +938,7 @@ function create_skill_tree_UI(args)
                             {n = G.UIT.O, config = {object = DynaText({scale = 0.75, string = localize('ygg_skill_tree_text').." ("..((G.PROFILES[G.SETTINGS.profile].ygg_skill_points or 0) + (G.GAME.ygg_skill_points or 0)).." SP)", maxw = 9, colours = { G.C.WHITE }, float = true, silent = true, shadow = true})}}
                         }},
                         {n = G.UIT.R, config = {align = "tm", padding = 0.02}, nodes = {
-                            {n = G.UIT.O, config = {object = DynaText({scale = 0.4, string = localize(G.GAME.ygg_chosen_skill_tree_sec or 'ygg_skill_tree_sec1'), maxw = 9, colours = { G.C.WHITE }, float = true, silent = true})}}
+                            {n = G.UIT.O, config = {object = DynaText({scale = 0.4, string = localize(G.GAME.ygg_chosen_skill_tree_sec or 'ygg_skill_tree_diff'), maxw = 9, colours = { G.C.WHITE }, float = true, silent = true})}}
                         }},
                         {n = G.UIT.R, config = {align = "tr", padding = 0.02}, nodes = { --Reset skill tree button.
                             {
@@ -972,6 +1019,51 @@ end
 local game_start_run_ref = Game.start_run
 function Game:start_run(args)
     game_start_run_ref(self, args)
+
+    if next(SMODS.find_mod("aikoyorisshenanigans")) then --Aikoyori Shenanigan's cross-mod, from yours truly
+        local new_sec = "ygg_skill_tree_AKYRS"
+        if not check_if_section_exist(new_sec) then
+            SkillTreePerks[new_sec] = {
+                {
+                    {text = "AIKO1", perk_id = "ygg_AKYRS_1", max_cap = 1, cost = 10},
+                    {text = "AIKO2", perk_id = "ygg_AKYRS_2", max_cap = 1, cost = 30},
+                    {text = "AIKO3", perk_id = "ygg_AKYRS_3", max_cap = 1, xmult = 0, cost = 0},
+                    {text = "AIKO4", perk_id = "ygg_AKYRS_4", max_cap = 1, cost = 10},
+                },
+            }
+            add_new_section(new_sec) 
+        end
+    end
+
+    if next(SMODS.find_mod("GRM")) then --Grim's cross-mod, skill tree incarnated
+        local new_sec = "ygg_skill_tree_GRM"
+        if not check_if_section_exist(new_sec) then
+            SkillTreePerks[new_sec] = {
+                {
+                    {text = "GRM1", perk_id = "ygg_GRM_1", max_cap = 1, cost = 30},
+                    {text = "GRM2", perk_id = "ygg_GRM_2", max_cap = 1, cost = 50, requirement = {"ygg_GRM_1"}},
+                    {text = "GRM3", perk_id = "ygg_GRM_3", max_cap = 1, cost = 50, requirement = {"ygg_GRM_2"}},
+                    {text = "GRM4", perk_id = "ygg_GRM_4", max_cap = 1, cost = 75, requirement = {"ygg_GRM_3"}},
+                },
+            }
+            add_new_section(new_sec) 
+        end
+    end
+
+    if next(SMODS.find_mod("MoreFluff")) then --MoreFluff's cross-mod, colors
+        local new_sec = "ygg_skill_tree_MoreFluff"
+        if not check_if_section_exist(new_sec) then
+            SkillTreePerks[new_sec] = {
+                {
+                    {text = "MF1", perk_id = "ygg_MoreFluff_1", max_cap = 1, cost = 30},
+                    {text = "MF2", perk_id = "ygg_MoreFluff_2", max_cap = 1, cost = 30},
+                    {text = "...?", perk_id = "ygg_MoreFluff_3", max_cap = 1, xp_gain = 100, cost = 0},
+                },
+            }
+            add_new_section(new_sec) 
+        end
+    end
+
     self.ygg_extra_buttons = YggdrasilDefaultButton and UIBox {
         definition = {
             n = G.UIT.ROOT,
@@ -1017,9 +1109,11 @@ function Game:start_run(args)
         },
         config = {
             align = "cardarea_add_to_highlighted_ref",
-            offset = { x = 0, y = -0.75 },
+            offset = { x = 7.8, y = -0.75 },
             major = G.jokers,
             bond = 'Weak'
         }
     }
 end
+
+--G.localization.descriptions.Joker <-- then something something here

@@ -9,7 +9,7 @@
     "badge_text_colour": "FFFFFF",
     "display_name": "Yggdrasil",
     "version": "1.0.0",
-    "priority": -1000000000000,
+    "priority": 1,
     "dependencies": [
         "Steamodded (>=1.0.0~ALPHA-0321b)"
     ],

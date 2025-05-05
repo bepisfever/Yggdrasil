@@ -23,47 +23,62 @@ SMODS.Joker {
    perishable_compat = false,
    pos = { x = 0, y = 0 },
    no_collection = true,
+   in_pool = function(self, args)
+      return false
+   end,
 
    update = function(self,card,dt)
-      local gains = {
-         hand_size = 0,
-         ante_scaling = 0,
-         showdown_ante_decrease = 0,
-      }
-
-      local function check_skill_gains(i,v)
-         local info = get_skill_info(i) or {}
-         for i2,v2 in pairs(info) do
-            if i2 == "showdown_ante_decrease" and info["force_showdown_ante_decrease"] then
-               if gains[i2] then gains[i2] = gains[i2] + ((v2 + (G.GAME.win_ante - 8)) * v) end
-            else
-               if gains[i2] then gains[i2] = gains[i2] + (v2 * v) end
+      if G and G.GAME then
+         local gains = {
+            hand_size = 0,
+            ante_scaling = 0,
+            showdown_ante_decrease = 0,
+         }
+   
+         local function check_skill_gains(i,v)
+            local info = get_skill_info(i) or {}
+            for i2,v2 in pairs(info) do
+               if i2 == "showdown_ante_decrease" and info["force_showdown_ante_decrease"] then
+                  if gains[i2] then gains[i2] = gains[i2] + ((v2 + (G.GAME.win_ante - 8)) * v) end
+               else
+                  if gains[i2] then gains[i2] = gains[i2] + (v2 * v) end
+               end
             end
          end
-      end
+   
+         for i,v in pairs(G.PROFILES[G.SETTINGS.profile].skill_perks or {}) do
+            check_skill_gains(i,v)
+         end
+   
+         for i,v in pairs(G.GAME.skill_perks or {}) do
+            check_skill_gains(i,v)
+         end
+   
+         if if_skill_obtained("ygg_mult10") then
+            gains["hand_size"] = gains["hand_size"] + math.floor((card.ability.current_mult or 0)/100)
+         end
 
-      for i,v in pairs(G.PROFILES[G.SETTINGS.profile].skill_perks or {}) do
-         check_skill_gains(i,v)
-      end
-
-      for i,v in pairs(G.GAME.skill_perks or {}) do
-         check_skill_gains(i,v)
-      end
-
-      if if_skill_obtained("ygg_mult10") then
-         gains["hand_size"] = gains["hand_size"] + math.floor((card.ability.current_mult or 0)/100)
-      end
-
-      for i,v in pairs(gains) do
-         if v ~= (G.GAME["skill_added_"..i] or 0) then
-            if i == "hand_size" then
-               G.hand:change_size(v - (G.GAME["skill_added_"..i] or 0))
-            elseif i == "ante_scaling" then
-               G.GAME.win_ante = G.GAME.win_ante + (v - (G.GAME["skill_added_"..i] or 0))
-            elseif i == "showdown_ante_decrease" then
-               G.GAME[i] = (G.GAME[i] or 0) + (v - (G.GAME["skill_added_"..i] or 0))
+         if if_skill_obtained("ygg_MoreFluff_2") and next(SMODS.find_mod("MoreFluff")) then
+            local registered_keys = {}
+            
+            for _,v in ipairs(G.consumeables.cards or {}) do
+               if v.ability and v.ability.partial_rounds and not table.contains(registered_keys, v.config.center.key) then registered_keys[#registered_keys+1] = v.config.center.key end
             end
-            G.GAME["skill_added_"..i] = v
+
+            gains["hand_size"] = gains["hand_size"] + #registered_keys
+         end
+   
+         for i,v in pairs(gains) do
+            if v ~= (G.GAME["skill_added_"..i] or 0) then
+               if i == "hand_size" and G.hand then
+                  G.hand:change_size(v - (G.GAME["skill_added_"..i] or 0))
+               elseif i == "ante_scaling" then
+                  G.GAME.win_ante = (G.GAME.win_ante or 0) + (v - (G.GAME["skill_added_"..i] or 0))
+               elseif i == "showdown_ante_decrease" then
+                  G.GAME[i] = (G.GAME[i] or 0) + (v - (G.GAME["skill_added_"..i] or 0))
+               end
+               G.GAME["skill_added_"..i] = v
+            end
          end
       end
    end,
@@ -91,6 +106,10 @@ SMODS.Joker {
       local gains = {
          mult = 0, chips = 0, xmult = 1, xchips = 1
       }
+
+      if card.edition then
+         card:set_edition(nil,true)
+      end
 
       local function check_skill_gains(i,v)
          local info = get_skill_info(i) or {}
@@ -169,6 +188,44 @@ SMODS.Joker {
          end
       end
 
+      if if_skill_obtained("ygg_AKYRS_1") and AKYRS then
+         for _,v in ipairs(G.jokers.cards or {}) do
+            local key = v.config.center.key
+            local desc = (G.localization.descriptions.Joker[key] or {})["text"] or nil
+            
+            if desc then
+               local chars = 0
+               local is_multi_box = false
+               for i,v in pairs(desc) do
+                  if type(v) == "table" then is_multi_box = true end
+               end
+
+               if is_multi_box then
+                  for _,box in ipairs(desc) do
+                     for _,str in ipairs(box) do
+                        local normalizedStr = Yggdrasil.toNormalString(str)
+                        local final = string.gsub(normalizedStr," ","")
+                        final = string.gsub(final, "#", "")
+                        chars = chars + string.len(final)
+                     end
+                  end
+               else
+                  for _,str in ipairs(desc) do
+                     local normalizedStr = Yggdrasil.toNormalString(str)
+                     local final = string.gsub(normalizedStr," ","")
+                     final = string.gsub(final, "#", "")
+                     chars = chars + string.len(final)
+                  end
+               end
+               gains["chips"] = gains["chips"] + (0.5 * chars)
+            end
+         end
+      end
+
+      if if_skill_obtained("ygg_AKYRS_4") and AKYRS then
+         gains["xmult"] = gains["xmult"] + (0.5 * math.max(40 - love.timer.getFPS(), 0))
+      end
+
       if not context.retrigger_joker and not context.blueprint then
          card.ability.current_mult = gains["mult"]
          if context.joker_main then
@@ -176,6 +233,17 @@ SMODS.Joker {
                SMODS.calculate_effect({mult = gains["mult"]},G.deck)
             end
             SMODS.calculate_effect({mult = gains["mult"], chips = gains["chips"], xchips = gains["xchips"], xmult = gains["xmult"]},G.deck)
+         end
+
+         if context.individual and context.cardarea == G.play then
+            if if_skill_obtained("ygg_AKYRS_2") and AKYRS then
+               if context.other_card:get_letter_with_pretend() == "y" or context.other_card:get_letter_with_pretend() == "Y" then
+                  return{
+                     xmult = 2.99999999999999998,
+                     card = context.other_card,
+                  }
+               end
+            end
          end
 
          if context.remove_playing_cards and not context.scoring_hand then
@@ -190,7 +258,7 @@ SMODS.Joker {
             if if_skill_obtained("ygg_special_light") then
                for _,v in ipairs(G.play.cards or {}) do
                   v.ability.perma_bonus = (v.ability.perma_bonus or 0) + 5
-                  if (v:get_chip_bonus() or 0) >= 100 then
+                  if to_big((v:get_chip_bonus() or 0)) >= to_big(100) then
                      v.ability.perma_x_mult = (v.ability.perma_x_mult or 1) + 0.05 
                   end
                end

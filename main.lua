@@ -14,6 +14,14 @@ local allFiles = {
 
 to_big = to_big or function(x) return x end
 
+--I truly love JoyousSpring (part 1)
+local hookTo = SMODS.calculate_context
+function SMODS.calculate_context(context, return_table)
+    -- i hope this prevents the crashes :sob:
+    if G.ygg_sp_area and not G.ygg_sp_area.cards then return {} end
+    return hookTo(context, return_table)
+end
+
 for i = 1,#allFolders do
     if allFolders[i] == "none" then
         for i2 = 1,#allFiles[allFolders[i]] do

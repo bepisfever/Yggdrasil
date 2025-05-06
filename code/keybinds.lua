@@ -40,6 +40,8 @@ SMODS.Keybind{
                         bond = 'Strong'
                     }
                 }
+                G.ygg_xp_bar.states.hover.can = false
+                G.ygg_xp_bar.states.click.can = false
             end
         end
     end

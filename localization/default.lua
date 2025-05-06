@@ -979,7 +979,24 @@ return { --remind me to work on this
                     "Hex, but...?",
                 }
             },
-
+            --All That Glitter
+            sp_ygg_foil_upgrade = {
+                name = "Placeholder",
+                text = {
+                    "{C:attention}Foil{}'s effect is {C:dark_edition}Overhauled{}",
+                    "{s:0.3} ",
+                    "{C:chips}+50{} Chips, {C:attention}retrigger{}",
+                    "At {C:attention}end of round{}, increases",
+                    "edition's {C:chips}Chips{} by {C:chips}X1.5{}",
+                    "{C:inactive}(#1#/1)",
+                }
+            },
+            sp_ygg_foil_upgrade_name = {
+                name = "Placeholder",
+                text = {
+                    "Foiled Again",
+                }
+            },
             --Difficulty Skills
             sp_ygg_diff1 = {
                 name = "Placeholder",
@@ -1303,8 +1320,9 @@ return { --remind me to work on this
                 name = "Placeholder",
                 text = {
                     "All {C:attention}Boss Blinds{}",
-                    "become {C:attention}DX Boss Blinds{},",
-                    "reduce {C:mult}Mult{} and {C:chips}Chips{}",
+                    "become {C:attention}DX Boss Blinds{}",
+                    "{s:0.2} ",
+                    "Reduces {C:mult}Mult{} and {C:chips}Chips{}",
                     "from {C:attention}Skill Tree{} by {C:red}50%{}",
                     "{s:0.2} ",
                     "{C:attention}+100%{} XP Gain",
@@ -1324,15 +1342,17 @@ return { --remind me to work on this
         dictionary = {
             ygg_skill_tree_text = "Skill Tree",
 
-            ygg_skill_tree_sec1 = "Need for Stats",
+            ygg_skill_tree_sec1 = "Need for Stats", --Balatro: Star Rail
             ygg_skill_tree_sec2 = "I'm Multin' it",
             ygg_skill_tree_sec3 = "Fortune Believers",
             ygg_skill_tree_sec4 = "Jimbobusters",
-            ygg_skill_tree_sec_sec = "Shenaniganing",
+            ygg_skill_tree_sec5 = "All That Glitter", --credit to Aikoyori for this name. why tf they keep coming up with cool names though
             ygg_skill_tree_diff = "ULTRALATRO",
-            ygg_skill_tree_AKYRS = "aikoyori.",
-            ygg_skill_tree_GRM = "Grafting",
-            ygg_skill_tree_MoreFluff = "Double Rainbow",
+
+            ygg_skill_tree_sec_sec = "Shenaniganing", --:3
+            ygg_skill_tree_AKYRS = "aikoyori.", --Aikoyori's Shenanigans
+            ygg_skill_tree_GRM = "Grafting", --Grim
+            ygg_skill_tree_MoreFluff = "Double Rainbow", --MoreFluff
             
             ygg_reset_skill_tree = "RESET SKILL TREE",
             ygg_page = "PAGE"

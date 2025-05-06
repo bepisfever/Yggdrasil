@@ -104,7 +104,7 @@ SMODS.Joker {
 
    calculate = function(self,card,context)
       local gains = {
-         mult = 0, chips = 0, xmult = 1, xchips = 1
+         mult = 0, chips = 0, xmult = 1, xchips = 1, multMulti = 1, chipsMulti = 1
       }
 
       if card.edition then
@@ -225,6 +225,9 @@ SMODS.Joker {
       if if_skill_obtained("ygg_AKYRS_4") and AKYRS then
          gains["xmult"] = gains["xmult"] + (0.5 * math.max(40 - love.timer.getFPS(), 0))
       end
+
+      gains["mult"] = gains["mult"] * gains["multMulti"]
+      gains["chips"] = gains["chips"] * gains["chipsMulti"]
 
       if not context.retrigger_joker and not context.blueprint then
          card.ability.current_mult = gains["mult"]

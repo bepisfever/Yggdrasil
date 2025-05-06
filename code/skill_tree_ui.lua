@@ -123,6 +123,11 @@ SkillTreePerks = {
             {text = "HEX", perk_id = "ygg_hex_upgrade", max_cap = 1, cost = 70},
         },
     },
+    ygg_skill_tree_sec5 = {
+        {
+            {text = "FOIL", perk_id = "ygg_foil_upgrade", max_cap = 1, cost = 75},
+        },
+    },
     ygg_skill_tree_diff = {
         {
             {text = "D1", perk_id = "ygg_diff1", max_cap = 4, ante_scaling = 2, lock_first_round = true, xp_gain = 25, cost = 0},
@@ -1057,7 +1062,7 @@ function Game:start_run(args)
                 {
                     {text = "MF1", perk_id = "ygg_MoreFluff_1", max_cap = 1, cost = 30},
                     {text = "MF2", perk_id = "ygg_MoreFluff_2", max_cap = 1, cost = 30},
-                    {text = "...?", perk_id = "ygg_MoreFluff_3", max_cap = 1, xp_gain = 100, cost = 0},
+                    {text = "...?", perk_id = "ygg_MoreFluff_3", max_cap = 1, xp_gain = 100, multMulti = -0.5, chipsMulti = -0.5, lock_first_round = true, cost = 0},
                 },
             }
             add_new_section(new_sec) 

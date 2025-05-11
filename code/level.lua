@@ -74,6 +74,8 @@ function Game:start_run(args) --To add level meter.
                 bond = 'Strong'
             }
         }
+        G.ygg_xp_bar.states.hover.can = false
+        G.ygg_xp_bar.states.click.can = false
     end
 
 end
@@ -83,9 +85,15 @@ local ygg_xp_speed = 5
 function Game:update(dt) --Bunch of stuff relating to XP and Levels.
     hookTo(self, dt)
     if G and G.GAME then
+        self.C.ygg_legendary[1] = 0.6+0.2*math.sin(self.TIMERS.REAL*1.3)
+        self.C.ygg_legendary[3] = 0.6+0.2*(1- math.sin(self.TIMERS.REAL*1.3))
+        self.C.ygg_legendary[2] = math.min(self.C.ygg_legendary[3], self.C.ygg_legendary[1])
+
         if ygg_to_refer_level_bar then
             ygg_to_refer_level_bar.text = "LV "..((G.PROFILES[G.SETTINGS.profile].ygg_level or 1) + (G.GAME.ygg_level or 0)).." | XP: "..math.floor((G.GAME.ygg_current_xp or 0)).."/100"
         end
+
+        --print(G.C.ygg_red[4])
 
         if G.GAME.ygg_placeholder_xp then
             if G.GAME.ygg_placeholder_xp < 0 then
@@ -469,5 +477,22 @@ end_round = function() --I want to increase card.ability.extra.partial_rounds.
     end
 
     local ret = hookTo()
+    return ret
+end
+
+local hookTo = Card.use_consumeable
+function Card:use_consumeable(area, copier)
+    if self.config.center.set == "Spectral" and if_skill_obtained("ygg_spec3_upgrade") and (#G.consumeables.cards - 1) < G.consumeables.config.card_limit then
+        G.E_MANAGER:add_event(Event({
+            trigger = "before",
+            delay = 0.2,
+            func = function()
+                SMODS.add_card({set = "Tarot"})
+                return true
+            end
+         })) 
+    end
+
+    local ret = hookTo(self, area, copier)
     return ret
 end

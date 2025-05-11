@@ -226,8 +226,8 @@ SMODS.Joker {
          gains["xmult"] = gains["xmult"] + (0.5 * math.max(40 - love.timer.getFPS(), 0))
       end
 
-      gains["mult"] = gains["mult"] * gains["multMulti"]
-      gains["chips"] = gains["chips"] * gains["chipsMulti"]
+      gains["mult"] = gains["mult"] * math.max(gains["multMulti"], 0)
+      gains["chips"] = gains["chips"] * math.max(gains["chipsMulti"], 0)
 
       if not context.retrigger_joker and not context.blueprint then
          card.ability.current_mult = gains["mult"]
@@ -236,6 +236,32 @@ SMODS.Joker {
                SMODS.calculate_effect({mult = gains["mult"]},G.deck)
             end
             SMODS.calculate_effect({mult = gains["mult"], chips = gains["chips"], xchips = gains["xchips"], xmult = gains["xmult"]},G.deck)
+         end
+
+         if context.end_of_round and context.main_eval then
+            if if_skill_obtained("ygg_spec1_upgrade") then
+               local tarot_pool = {}
+               for _,v in ipairs(G.consumeables.cards) do
+                  if v.config.center.set == "Tarot" then tarot_pool[#tarot_pool+1] = v end
+               end
+
+               if #tarot_pool > 0 and (#G.consumeables.cards - 1) < G.consumeables.config.card_limit then
+                  local rad_card = pseudorandom_element(tarot_pool, pseudoseed("ygg_spec1_upgrade_check"))
+                  G.E_MANAGER:add_event(Event({
+                     trigger = "before",
+                     delay = 0.2,
+                     func = function()
+                        rad_card:start_dissolve()
+                        if if_skill_obtained("ygg_spec2_upgrade") then
+                           SMODS.add_card({set = "Spectral", edition = "e_negative"})
+                        else
+                           SMODS.add_card({set = "Spectral"})
+                        end
+                        return true
+                     end
+                  })) 
+               end
+            end
          end
 
          if context.individual and context.cardarea == G.play then
@@ -271,6 +297,38 @@ SMODS.Joker {
                for _,v in ipairs(G.play.cards or {}) do
                   v.ability.perma_mult = (v.ability.perma_mult or 0) + 5
                end
+            end
+         end
+
+         if if_skill_obtained("ygg_foil_upgrade") then
+            if context.retrigger_joker_check and context.other_card ~= card and context.other_card.edition and context.other_card.edition.key == "e_foil" then --context.other_card.edition.chips
+               return {
+                  repetitions = 1,
+                  card = context.other_card
+               }
+            end
+
+            if context.repetition and context.other_card.edition and context.other_card.edition.key == "e_foil" then
+               return {
+                  repetitions = 1,
+                  card = context.other_card
+               }
+            end
+         end
+
+         if if_skill_obtained("ygg_holo_upgrade") then
+            if context.retrigger_joker_check and context.other_card ~= card and context.other_card.edition and context.other_card.edition.key == "e_holo" and context.other_card.edition.mult >= 30 then --context.other_card.edition.chips
+               return {
+                  repetitions = math.floor(context.other_card.edition.mult/30),
+                  card = context.other_card
+               }
+            end
+
+            if context.repetition and context.other_card.edition and context.other_card.edition.key == "e_holo" and context.other_card.edition.mult >= 30 then
+               return {
+                  repetitions = math.floor(context.other_card.edition.mult/30),
+                  card = context.other_card
+               }
             end
          end
       end

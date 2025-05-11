@@ -1,5 +1,210 @@
 return { --remind me to work on this
     descriptions = {
+        YggMaterial = {
+            ygg_mat_ygg_card_scrap = {
+                name = "Card Scrap",
+                text = {
+                    "{C:inactive}(Rarity: Common){}",
+                    "{s:0.15} ",
+                    "{C:inactive}Pieces of cards that were torn and",
+                    "{C:inactive}thrown in the trash",
+                }
+            },
+        },
+        Other = {
+            lobc_queen_of_hatred_u_info1 = {
+                name = "PERMISSION REJECTED",
+                text = {
+                    "{C:red}Cannot{} be sold"
+                }
+            },
+
+            ygg_test = {
+                name = "Placeholder",
+                text = {
+                    "X{C:attention}#1#{} #2#",
+                    "{C:white}(Rarity: {}{V:1}#3#{}{C:white})",
+                },
+            },
+            ygg_test_name = {
+                name = "Placeholder",
+                text = {
+                    "Awaiting Loot"
+                },
+            },
+        },
+        Joker = {
+            j_lobc_apocalypse_bird_u = {
+                name = "Apocalypse Bird",
+                text = {
+                    "{s:1.5}:3{}"
+                }
+            },
+
+
+            dis_j_lobc_scorched_girl_1_u = {
+                name = "Scorched Girl",
+                text = {
+                    "{C:attention}(#2#/2){} ...",
+                    "{C:attention}(#3#/?){} ...",
+                    "{s:0.2} ",
+                    "{C:inactive}({}{C:dark_edition}Overhauled{}{C:inactive} Effect){}",
+                }
+            },  
+            dis_j_lobc_scorched_girl_2_u = {
+                name = "Scorched Girl",
+                text = {
+                    "{C:dark_edition}+1{} Joker Slot",
+                    "When {C:attention}Blind{} is selected,",
+                    "{C:attention}-#1#%{} Blind Size",
+                    "{C:attention}(#3#/?){} ...",
+                    "{s:0.2} ",
+                    "{C:inactive}({}{C:dark_edition}Overhauled{}{C:inactive} Effect){}",
+                }
+            },  
+
+
+            j_lobc_scorched_girl_u = {
+                name = "Scorched Girl",
+                text = {
+                    "{C:dark_edition}+1{} Joker Slot",
+                    "When {C:attention}Blind{} is selected,",
+                    "{C:attention}-#1#%{} Blind Size",
+                    "{s:0.15} {}",
+                    "{C:red}Debuffs{} first hand drawn,",
+                    "and a random {C:attention}Joker{}",
+                    "when entering {C:attention}Blind{}",
+                    "{s:0.2} ",
+                    "{C:inactive}({}{C:dark_edition}Overhauled{}{C:inactive} Effect){}",
+                }
+            },  
+            dis_j_lobc_one_sin_1_u = {
+                name = "One Sin and Hundreds of Good Deeds",
+                text = {
+                    "{C:attention}(#2#/2){} ...",
+                    "{C:attention}(#3#/?){} ...",
+                    "{s:0.2} ",
+                    "{C:inactive}({}{C:dark_edition}Overhauled{}{C:inactive} Effect){}",
+                }
+            },  
+            dis_j_lobc_one_sin_2_u = {
+                name = "One Sin and Hundreds of Good Deeds",
+                text = {
+                    "Played cards give {C:mult}+#1#{} Mult,",
+                    "and permenantly gain {C:mult}+2{} Mult when scored",
+                    "{C:attention}(#3#/?){} ...",
+                    "{s:0.2} ",
+                    "{C:inactive}({}{C:dark_edition}Overhauled{}{C:inactive} Effect){}",
+                }
+            },  
+            j_lobc_one_sin_u = {
+                name = "One Sin and Hundreds of Good Deeds",
+                text = {
+                    "Played cards give {C:mult}+#1#{} Mult,",
+                    "and permenantly gain {C:mult}+2{} Mult when scored",
+                    "{s:0.15} {}",
+                    "Punishment shall begin to",
+                    "rain down {C:attention}WhiteNight{}.",
+                    "{s:0.2} ",
+                    "{C:inactive}({}{C:dark_edition}Overhauled{}{C:inactive} Effect){}",
+                }
+            },  
+
+            dis_j_lobc_queen_of_hatred_1_u = {
+                name = "O-01-04",
+                text = {
+                    "{C:attention}(#2#/2){} ...",
+                    "{C:attention}(#3#/3){} ...",
+                    "{C:attention}(#4#/7){} ...",
+                    "{s:0.2} ",
+                    "{C:inactive}({}{C:dark_edition}Overhauled{}{C:inactive} Effect){}",
+                }
+            },
+            dis_j_lobc_queen_of_hatred_2_u = {
+                name = "O-01-04",
+                text = {
+                    "{X:mult,C:white} X#1# {} Mult",
+                    "{C:attention}(#3#/3){} ...",
+                    "{C:attention}(#4#/7){} ...",
+                    "{s:0.2} ",
+                    "{C:inactive}({}{C:dark_edition}Overhauled{}{C:inactive} Effect){}",
+                }
+            },
+            dis_j_lobc_queen_of_hatred_3_u = {
+                name = "O-01-04",
+                text = {
+                    "{X:mult,C:white} X#1# {} Mult",
+                    "{s:0.15} {}",
+                    "If score is at least {X:mult,C:white} X10 {} {C:attention}Blind Size{},",
+                    "this Abnormality enters {C:attention}Hysteria{}",
+                    "{C:attention}(#4#/7){} ...",
+                    "{s:0.2} ",
+                    "{C:inactive}({}{C:dark_edition}Overhauled{}{C:inactive} Effect){}",
+                }
+            },
+            j_lobc_queen_of_hatred_u = {
+                name = "The Queen of Hatred",
+                text = {
+                    "{X:mult,C:white} X#1# {} Mult, increases by {X:mult,C:white} X0.5 {}",
+                    "Mult at {C:attention}end of round{} if",
+                    "not in {C:attention}Hysteria{}",
+                    "{s:0.15} {}",
+                    "If score is at least {X:mult,C:white} X10 {} {C:attention}Blind Size{},",
+                    "this Abnormality enters {C:attention}Hysteria{}",
+                    "{s:0.15} {}",
+                    "At {X:mult,C:white} X1 {} Mult,",
+                    "this Abnormality {C:attention}breaches{} and {C:red}destroys{}",
+                    "a random {C:attention}Joker{}",
+                    "{s:0.2} ",
+                    "{C:inactive}({}{C:dark_edition}Overhauled{}{C:inactive} Effect){}",
+                }
+            },  
+        },
+        Edition = {
+            e_foil_u={
+                name="Foil",
+                text={
+                    "{C:chips}+#1#{} Chips, {C:attention}retrigger{} once",
+                    "At {C:attention}end of round{}, increases",
+                    "edition's {C:chips}Chips{} by {C:chips}X1.2{}",
+                    "{s:0.2} ",
+                    "{C:inactive}({}{C:dark_edition}Overhauled{}{C:inactive} Effect){}",
+                },
+            },
+            e_holo_u={
+                name="Holographic",
+                text={
+                    "{C:mult}+#1#{} Mult, {C:attention}retrigger{} once",
+                    "for each {C:mult}+30{} Mult",
+                    "At {C:attention}end of round{}, increases",
+                    "edition's {C:mult}Mult{} by {C:mult}+5{}",
+                    "{s:0.2} ",
+                    "{C:inactive}({}{C:dark_edition}Overhauled{}{C:inactive} Effect){}",
+                },
+            },
+            e_polychrome_u={
+                name="Polychrome",
+                text={
+                    "{X:mult,C:white}X#1#{} Mult",
+                    "At {C:attention}end of round{}, fixed",
+                    "{C:green}50%{} to convert {C:attention}adjacent{}",
+                    "cards to {C:dark_edition}Polychrome{},",
+                    "then gains {X:mult,C:white}X0.2{} Mult",
+                    "{s:0.2} ",
+                    "{C:inactive}({}{C:dark_edition}Overhauled{}{C:inactive} Effect){}",
+                },
+            },
+            e_negative_u={
+                name="Negative",
+                text={
+                    "{C:dark_edition}+#1#{} Joker slot",
+                    "{C:attention}Selling{} a {C:dark_edition}Negative{} Joker has fixed",
+                    "{C:green}50%{} to increase {C:attention}Joker slot{} by {C:attention}+1{}",
+                    "{s:0.2} ",
+                    "{C:inactive}({}{C:dark_edition}Overhauled{}{C:inactive} Effect){}",
+                },
+            },
+        },
         Spectral = {
             c_aura={
                 name="Aura",
@@ -979,15 +1184,78 @@ return { --remind me to work on this
                     "Hex, but...?",
                 }
             },
+
+            sp_ygg_spec1_upgrade = {
+                name = "Placeholder",
+                text = {
+                    "At {C:attention}end of round{}, destroys",
+                    "a {C:attention}Tarot{} card held, then creates",
+                    "a {C:dark_edition}Spectral{} card",
+                    "{C:inactive}(Must have room)",
+                    "{C:inactive}(#1#/1)",
+                }
+            },
+            sp_ygg_spec1_upgrade_name = {
+                name = "Placeholder",
+                text = {
+                    "Catching {C:dark_edition}Ghosts{}",
+                }
+            },
+            sp_ygg_spec2_upgrade = {
+                name = "Placeholder",
+                text = {
+                    "{C:dark_edition}Spectral{} card created",
+                    "from {C:attention}Catching Ghosts{}",
+                    "is {C:dark_edition}Negative{}",
+                    "{C:inactive}(#1#/1)",
+                }
+            },
+            sp_ygg_spec2_upgrade_name = {
+                name = "Placeholder",
+                text = {
+                    "That's a big {C:dark_edition}Ghost{}!",
+                }
+            },
+            sp_ygg_spec3_upgrade = {
+                name = "Placeholder",
+                text = {
+                    "Using a {C:dark_edition}Spectral{} card",
+                    "creates a {C:attention}Tarot{} card",
+                    "{C:inactive}(Must have room)",
+                    "{C:inactive}(#1#/1)",
+                }
+            },
+            sp_ygg_spec3_upgrade_name = {
+                name = "Placeholder",
+                text = {
+                    "{C:dark_edition}Ghost{} of Fortune",
+                }
+            },
+            sp_ygg_spec4_upgrade = {
+                name = "Placeholder",
+                text = {
+                    "After using {C:attention}5{}",
+                    "{C:planet}Planet{} cards, creates a",
+                    "{C:dark_edition}Spectral{} card",
+                    "{C:inactive}(Must have room)",
+                    "{C:inactive}(#1#/1)",
+                }
+            },
+            sp_ygg_spec4_upgrade_name = {
+                name = "Placeholder",
+                text = {
+                    "{C:dark_edition}Ghostly{} Planets",
+                }
+            },
             --All That Glitter
             sp_ygg_foil_upgrade = {
                 name = "Placeholder",
                 text = {
                     "{C:attention}Foil{}'s effect is {C:dark_edition}Overhauled{}",
                     "{s:0.3} ",
-                    "{C:chips}+50{} Chips, {C:attention}retrigger{}",
+                    "{C:chips}+50{} Chips, {C:attention}retrigger{} once",
                     "At {C:attention}end of round{}, increases",
-                    "edition's {C:chips}Chips{} by {C:chips}X1.5{}",
+                    "edition's {C:chips}Chips{} by {C:chips}X1.2{}",
                     "{C:inactive}(#1#/1)",
                 }
             },
@@ -995,6 +1263,80 @@ return { --remind me to work on this
                 name = "Placeholder",
                 text = {
                     "Foiled Again",
+                }
+            },
+            sp_ygg_foil_2_upgrade = {
+                name = "Placeholder",
+                text = {
+                    "{C:attention}Foil{}'s effect is {C:dark_edition}Overhauled{}",
+                    "{s:0.3} ",
+                    "{C:chips}+50{} Chips, {C:attention}retrigger{} once",
+                    "At {C:attention}end of round{}, increases",
+                    "edition's {C:chips}Chips{} by {C:chips}X1.2{}",
+                    "{C:inactive}(#1#/1)",
+                }
+            },
+            sp_ygg_foil_2_upgrade_name = {
+                name = "Placeholder",
+                text = {
+                    "Foil something",
+                }
+            },
+            sp_ygg_holo_upgrade = {
+                name = "Placeholder",
+                text = {
+                    "{C:attention}Holographic{}'s effect is {C:dark_edition}Overhauled{}",
+                    "{s:0.3} ",
+                    "{C:mult}+10{} Mult, {C:attention}retrigger{} once",
+                    "for each {C:mult}+30{} Mult",
+                    "At {C:attention}end of round{}, increases",
+                    "edition's {C:mult}Mult{} by {C:mult}+5{}",
+                    "{C:inactive}(#1#/1)",
+                }
+            },
+            sp_ygg_holo_upgrade_name = {
+                name = "Placeholder",
+                text = {
+                    "Hololivin'",
+                }
+            },
+            sp_ygg_polychrome_upgrade = {
+                name = "Placeholder",
+                text = {
+                    "{C:attention}Holographic{}'s effect is {C:dark_edition}Overhauled{}",
+                    "{s:0.3} ",
+                    "{X:mult,C:white}X1.5{} Mult",
+                    "At {C:attention}end of round{}, fixed",
+                    "{C:green}50%{} to convert {C:attention}adjacent{}",
+                    "cards to {C:dark_edition}Polychrome{},",
+                    "then gains {X:mult,C:white}X0.2{} Mult",
+                    "{C:inactive}(#1#/1)",
+                    "{s:0.7,C:inactive}(Name Credit: Nxkoo)",
+                }
+            },
+            sp_ygg_polychrome_upgrade_name = {
+                name = "Placeholder",
+                text = {
+                    "Taste the Rainbow",
+                }
+            },
+            sp_ygg_negative_upgrade = {
+                name = "Placeholder",
+                text = {
+                    "{C:attention}Negative{}'s effect is {C:dark_edition}Overhauled{}",
+                    "{s:0.3} ",
+                    "{C:dark_edition}+1{} Joker slot",
+                    "{C:attention}Selling{} a {C:dark_edition}Negative{} Joker has fixed",
+                    "{C:green}50%{} to increase edition's {C:attention}Joker slot{}",
+                    "by {C:attention}+1{}",
+                    "{C:inactive}(#1#/1)",
+                    "{s:0.7,C:inactive}(Name Credit: Ice)",
+                }
+            },
+            sp_ygg_negative_upgrade_name = {
+                name = "Placeholder",
+                text = {
+                    "{C:dark_edition}Absolute Zero",
                 }
             },
             --Difficulty Skills
@@ -1286,6 +1628,107 @@ return { --remind me to work on this
                     "Wormhole {C:attention}X{}{C:purple}P{}",
                 }
             },
+            --Lobcorp
+            undis_sp_ygg_scorched_girl_upgrade = {
+                name = "Placeholder",
+                text = {
+                    "{C:attention}Scorched Girl{}'s effect is",
+                    "{C:dark_edition}Overhauled{}",
+                    "{s:0.3} ",
+                    "{C:red,s:1.5}[REDACTED]",
+                    "{C:inactive}(#1#/1)",
+                }
+            },
+            sp_ygg_scorched_girl_upgrade = {
+                name = "Placeholder",
+                text = {
+                    "{C:attention}Scorched Girl{}'s effect is",
+                    "{C:dark_edition}Overhauled{}",
+                    "{s:0.3} ",
+                    "{C:dark_edition}+1{} Joker Slot",
+                    "When {C:attention}Blind{} is selected,",
+                    "{C:attention}-30%{} Blind Size",
+                    "{s:0.15} {}",
+                    "{C:red}Debuffs{} first hand drawn,",
+                    "and a random {C:attention}Joker{}",
+                    "when entering {C:attention}Blind{}",
+                    "{C:inactive}(#1#/1)",
+                }
+            },
+            sp_ygg_scorched_girl_upgrade_name = {
+                name = "Placeholder",
+                text = {
+                    "{s:0.8}How To Suppress 101{}",
+                    "Scorched Girl",
+                }
+            },
+            undis_sp_ygg_one_sin_upgrade = {
+                name = "Placeholder",
+                text = {
+                    "{C:attention}One Sin and Hundreds of Good Deeds{}'s effect is",
+                    "{C:dark_edition}Overhauled{}",
+                    "{s:0.3} ",
+                    "{C:red,s:1.5}[REDACTED]",
+                    "{C:inactive}(#1#/1)",
+                }
+            },
+            sp_ygg_one_sin_upgrade = {
+                name = "Placeholder",
+                text = {
+                    "{C:attention}One Sin and Hundreds of Good Deeds{}'s effect is",
+                    "{C:dark_edition}Overhauled{}",
+                    "{s:0.3} ",
+                    "Played cards give {C:mult}+3{} Mult,",
+                    "and permenantly gain {C:mult}+2{} Mult when scored",
+                    "{s:0.15} {}",
+                    "Punishment shall begin to",
+                    "rain down {C:attention}WhiteNight{}.",
+                    "{C:inactive}(#1#/1)",
+                }
+            },
+            sp_ygg_one_sin_upgrade_name = {
+                name = "Placeholder",
+                text = {
+                    "{s:0.8}How To Suppress 101{}",
+                    "One Sin and Hundreds of Good Deeds",
+                }
+            },
+            undis_sp_ygg_queen_of_hatred_upgrade = {
+                name = "Placeholder",
+                text = {
+                    "{C:attention}The Queen of Hatred{}'s effect is",
+                    "{C:dark_edition}Overhauled{}",
+                    "{s:0.3} ",
+                    "{C:red,s:1.5}[REDACTED]",
+                    "{C:inactive}(#1#/1)",
+                }
+            },
+            sp_ygg_queen_of_hatred_upgrade = {
+                name = "Placeholder",
+                text = {
+                    "{C:attention}The Queen of Hatred{}'s effect is",
+                    "{C:dark_edition}Overhauled{}",
+                    "{s:0.3} ",
+                    "{X:mult,C:white} X3 {} Mult, increases by {X:mult,C:white} X0.5 {}",
+                    "Mult at {C:attention}end of round{} if",
+                    "not in {C:attention}Hysteria{}",
+                    "{s:0.15} {}",
+                    "If score is at least {X:mult,C:white} X10 {} {C:attention}Blind Size{},",
+                    "this Abnormality enters {C:attention}Hysteria{}",
+                    "{s:0.15} {}",
+                    "At {X:mult,C:white} X1 {} Mult,",
+                    "this Abnormality {C:attention}breaches{} and {C:red}destroys{}",
+                    "a random {C:attention}Joker{}",
+                    "{C:inactive}(#1#/1)",
+                }
+            },
+            sp_ygg_queen_of_hatred_upgrade_name = {
+                name = "Placeholder",
+                text = {
+                    "{s:0.8}How To Suppress 101{}",
+                    "The Queen of Hatred",
+                }
+            },
             --MoreFluff
             sp_ygg_MoreFluff_1 = {
                 name = "Placeholder",
@@ -1341,6 +1784,7 @@ return { --remind me to work on this
     misc={
         dictionary = {
             ygg_skill_tree_text = "Skill Tree",
+            ygg_inventory_text = "Inventory",
 
             ygg_skill_tree_sec1 = "Need for Stats", --Balatro: Star Rail
             ygg_skill_tree_sec2 = "I'm Multin' it",
@@ -1353,9 +1797,24 @@ return { --remind me to work on this
             ygg_skill_tree_AKYRS = "aikoyori.", --Aikoyori's Shenanigans
             ygg_skill_tree_GRM = "Grafting", --Grim
             ygg_skill_tree_MoreFluff = "Double Rainbow", --MoreFluff
-            
+            ygg_skill_tree_lcorp = "Mirror Dungeon", --Lobotomy Corporation
+
             ygg_reset_skill_tree = "RESET SKILL TREE",
-            ygg_page = "PAGE"
+            ygg_page = "PAGE",
+
+
+
+            --Material Stuffs
+            k_YggMaterial_text = "Material",
+            ygg_card_scrap = "Card Scraps",
+            ygg_broken_spade = "Broken Spades",
+            ygg_misprinted_essence = "Misprinted Essences",
+            ygg_soul_fragment = "Soul Fragment",
+
+            ygg_common = "Common",
+            ygg_uncommon = "Uncommon",
+            ygg_rare = "Rare",
+            ygg_legendary = "Legendary",
         },
     },
 }

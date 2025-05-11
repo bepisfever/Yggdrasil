@@ -822,6 +822,170 @@ function add_skill_xp(amount, card, message_, no_mod)
     end
 '''
 
+[[patches]]
+[patches.pattern]
+target = '=[SMODS _ "src/game_object.lua"]'
+match_indent = true
+position = 'at'
+pattern = '''
+calculate = function(self, card, context)
+    if context.pre_joker or (context.main_scoring and context.cardarea == G.play) then
+        return {
+            chips = card.edition.chips
+        }
+    end
+end
+'''
+payload = '''
+calculate = function(self, card, context)
+    if context.pre_joker or (context.main_scoring and context.cardarea == G.play) then
+        return {
+            chips = card.edition.chips
+        }
+    end
+
+    if context.ygg_edition_upgrade and if_skill_obtained("ygg_foil_upgrade") then
+        card.edition.chips = card.edition.chips * 1.2
+        return {
+            message = "Upgraded!",
+            colour = G.C.CHIPS,
+        }
+    end
+end
+'''
+
+[[patches]]
+[patches.pattern]
+target = '=[SMODS _ "src/game_object.lua"]'
+match_indent = true
+position = 'at'
+pattern = '''
+calculate = function(self, card, context)
+    if context.pre_joker or (context.main_scoring and context.cardarea == G.play) then
+        return {
+            mult = card.edition.mult
+        }
+    end
+end
+'''
+payload = '''
+calculate = function(self, card, context)
+    if context.pre_joker or (context.main_scoring and context.cardarea == G.play) then
+        return {
+            mult = card.edition.mult
+        }
+    end
+
+    if context.ygg_edition_upgrade and if_skill_obtained("ygg_holo_upgrade") then
+        card.edition.mult = card.edition.mult + 5
+        return {
+            message = "Upgraded!",
+            colour = G.C.MULT,
+        }
+    end
+end
+'''
+
+[[patches]]
+[patches.pattern]
+target = '=[SMODS _ "src/game_object.lua"]'
+match_indent = true
+position = 'at'
+pattern = '''
+calculate = function(self, card, context)
+    if context.post_joker or (context.main_scoring and context.cardarea == G.play) then
+        return {
+            x_mult = card.edition.x_mult
+        }
+    end
+end
+'''
+payload = '''
+calculate = function(self, card, context)
+    if context.post_joker or (context.main_scoring and context.cardarea == G.play) then
+        return {
+            x_mult = card.edition.x_mult
+        }
+    end
+
+    if context.ygg_edition_upgrade and if_skill_obtained("ygg_polychrome_upgrade") then
+        for i,v in ipairs(G.jokers.cards) do
+            if v == card then
+                if G.jokers.cards[i+1] and not G.jokers.cards[i+1].edition and pseudorandom("ygg_poly_upgrade_check") <= 1/2 then
+                    G.jokers.cards[i+1]:set_edition("e_polychrome",true)   
+                    card.edition.x_mult = card.edition.x_mult + 0.2
+                end
+                if G.jokers.cards[i-1] and not G.jokers.cards[i-1].edition and pseudorandom("ygg_poly_upgrade_check") <= 1/2 then
+                    G.jokers.cards[i-1]:set_edition("e_polychrome",true)   
+                    card.edition.x_mult = card.edition.x_mult + 0.2
+                end
+                return
+            end
+        end
+
+        for i,v in ipairs(G.playing_cards) do
+            if v == card then
+                if G.playing_cards[i+1] and not G.playing_cards[i+1].edition and pseudorandom("ygg_poly_upgrade_check") <= 1/2 then
+                    G.playing_cards[i+1]:set_edition("e_polychrome",true)   
+                    card.edition.x_mult = card.edition.x_mult + 0.2
+                end
+                if G.playing_cards[i-1] and not G.playing_cards[i-1].edition and pseudorandom("ygg_poly_upgrade_check") <= 1/2 then
+                    G.playing_cards[i-1]:set_edition("e_polychrome",true)   
+                    card.edition.x_mult = card.edition.x_mult + 0.2
+                end
+                return
+            end
+        end
+    end
+end
+'''
+
+[[patches]]
+[patches.pattern]
+target = '=[SMODS _ "src/game_object.lua"]'
+match_indent = true
+position = 'after'
+pattern = '''
+get_weight = function(self)
+    return self.weight
+end,
+loc_vars = function(self, info_queue, card)
+    return { vars = { card.edition.card_limit } }
+end,
+'''
+payload = '''
+calculate = function(self, card, context)
+    if context.selling_card and context.card and context.card ~= card and string.sub(context.card.config.center.key,1,2) == "j_" and context.card.edition and context.card.edition.key == "e_negative" and pseudorandom("ygg_negative_roll") <= 1/2 then
+        card.edition.card_limit = card.edition.card_limit + 1
+        if card.area then card.area.config.card_limit = card.area.config.card_limit + 1 end
+        return {
+            message = "Upgraded!",
+            colour = G.C.DARK_EDITION
+        }
+    end
+end
+'''
+
+[[patches]]
+[patches.pattern]
+target = 'functions/common_events.lua'
+match_indent = true
+position = 'at'
+pattern = '''
+elseif _c.set == 'Edition' then
+    loc_vars = {cfg.extra}
+    localize{type = 'descriptions', key = _c.key, set = _c.set, nodes = desc_nodes, vars = _c.vars or loc_vars}
+'''
+payload = '''
+elseif _c.set == 'Edition' then
+    loc_vars = {cfg.extra}
+    if (_c.key == "e_foil" and if_skill_obtained("ygg_foil_upgrade")) or (_c.key == "e_holo" and if_skill_obtained("ygg_holo_upgrade")) or (_c.key == "e_polychrome" and if_skill_obtained("ygg_polychrome_upgrade")) or (_c.key == "e_negative" and if_skill_obtained("ygg_negative_upgrade")) then
+        localize{type = 'descriptions', key = _c.key.."_u", set = _c.set, nodes = desc_nodes, vars = _c.vars or loc_vars}
+    else
+        localize{type = 'descriptions', key = _c.key, set = _c.set, nodes = desc_nodes, vars = _c.vars or loc_vars}
+    end
+'''
+
 #[[patches]]
 #[patches.pattern]
 #target = 'functions/state_events.lua'

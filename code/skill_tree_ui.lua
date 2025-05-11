@@ -9,17 +9,18 @@ SkillTreePerks = {
     {text = "M3", perk_id = "BLANK"}, --This allows you to add blank
     
     Additional configs that can be added to automate some effects:
-    - buff = {j_speed = x, j_atkMulti = y, j_mult = z,...} <- Scales on cap. Adds the stat to all jokers.
-    - cash = x <- Gives money at the end of round.
-    - chips = x <- Gives Chips at context.joker_main timing. Priority is 1
-    - mult = x <- Gives Mult at context.joker_main timing. Priority is 2.
-    - xchips = x <- Gives XChips at context.joker_main timing. Priority is 3.
-    - xmult = x <- Gives XMult at context.joker_main timing. Priority is 4.
-    - played_...^ <- Gives (?) at context.individual, context.cardarea == G.play timing.
-    - hand_...^ <- Gives (?) at context.individual, context.cardarea == G.hand timing.
-    - hand_size = x <- Increases/Decreases hand size.
-    - xp_gain = x <- Increases/Decreases XP Multiplier.
-    - ante_scaling = x <- Increases/Decreases Ante needed to win.
+    - buff = {j_speed = x, j_atkMulti = y, j_mult = z,...} <- Scales on cap. Adds the stat to all jokers. B:SR exclusive thing.
+
+    - cash (num) <- Gives money at the end of round.
+    - chips (num) <- Gives Chips at context.joker_main timing. Priority is 1
+    - mult (num) <- Gives Mult at context.joker_main timing. Priority is 2.
+    - xchips (num) <- Gives XChips at context.joker_main timing. Priority is 3.
+    - xmult (num) <- Gives XMult at context.joker_main timing. Priority is 4.
+    - played_...^ (num) <- Gives (?) at context.individual, context.cardarea == G.play timing. (NOT YET IMPLEMENTED)
+    - hand_...^ (num) <- Gives (?) at context.individual, context.cardarea == G.hand timing. (NOT YET IMPLEMENTED)
+    - hand_size (num) <- Increases/Decreases hand size.
+    - xp_gain (num) <- Increases/Decreases XP Multiplier.
+    - ante_scaling (num) <- Increases/Decreases Ante needed to win.
 
     - showdown_ante_decrease (num) <- Decreases/Increases Ante when Showdown Blinds appear.
     - force_showdown_ante_decrease (num) <- showdown_ante_decrease scales on win ante, because fuck you :3
@@ -30,10 +31,36 @@ SkillTreePerks = {
     - chipsMulti (num) <- Reduces total Skill Tree's Chips and XChips.
 
     Button configs, yipee:
-    - lock_first_round: Makes it so the buffs can only be purchased during round 0.
+    - lock_first_round (boolean): Makes it so the buffs can only be purchased during round 0.
+    - exclude_with_skills (table, string): If any of the skills listed in here are obtained, disables the skill button.
+
+    1. How do you add your own skills and sections?
+    EX:
+    (I believe both me and you will figure this out :3)
+    local game_start_run_ref = Game.start_run
+    function Game:start_run(args)
+        game_start_run_ref(self, args)
+
+        if next(SMODS.find_mod("aikoyorisshenanigans")) then
+            local new_sec = "ygg_skill_tree_AKYRS"
+            if not check_if_section_exist(new_sec) then
+                SkillTreePerks[new_sec] = {
+                    {
+                        {text = "AIKO1", perk_id = "ygg_AKYRS_1", max_cap = 1, cost = 10},
+                        {text = "AIKO2", perk_id = "ygg_AKYRS_2", max_cap = 1, cost = 30},
+                        {text = "AIKO3", perk_id = "ygg_AKYRS_3", max_cap = 1, xmult = 0, cost = 0},
+                        {text = "AIKO4", perk_id = "ygg_AKYRS_4", max_cap = 1, cost = 10},
+                    },
+                }
+                add_new_section(new_sec) 
+            end
+        end
+        [...]
+    end
     ]]
 
     --Each branch should have at most 12 skills.
+    
 
     ygg_skill_tree_sec1 = {
         {
@@ -122,10 +149,19 @@ SkillTreePerks = {
             {text = "AN", perk_id = "ygg_ankh_upgrade", max_cap = 1, cost = 70},
             {text = "HEX", perk_id = "ygg_hex_upgrade", max_cap = 1, cost = 70},
         },
+        {
+            {text = "SPEC1", perk_id = "ygg_spec1_upgrade", max_cap = 1, cost = 50},
+            {text = "SPEC2", perk_id = "ygg_spec2_upgrade", max_cap = 1, cost = 80, requirement = {"ygg_spec1_upgrade"}},
+            {text = "SPEC3", perk_id = "ygg_spec3_upgrade", max_cap = 1, cost = 50, requirement = {"ygg_spec2_upgrade"}},
+            {text = "SPEC4", perk_id = "ygg_spec4_upgrade", max_cap = 1, cost = 30, requirement = {"ygg_spec3_upgrade"}},
+        },
     },
     ygg_skill_tree_sec5 = {
         {
             {text = "FOIL", perk_id = "ygg_foil_upgrade", max_cap = 1, cost = 75},
+            {text = "HOLO", perk_id = "ygg_holo_upgrade", max_cap = 1, cost = 75},
+            {text = "POLY", perk_id = "ygg_polychrome_upgrade", max_cap = 1, cost = 75},
+            {text = "NEG", perk_id = "ygg_negative_upgrade", max_cap = 1, cost = 300},
         },
     },
     ygg_skill_tree_diff = {
@@ -155,7 +191,7 @@ SkillTreeSections = {
         "ygg_skill_tree_diff","ygg_skill_tree_sec2", "ygg_skill_tree_sec3", "ygg_skill_tree_sec4",
     },
     {
-        "ygg_skill_tree_sec_sec"
+        "ygg_skill_tree_sec5", "ygg_skill_tree_sec_sec"
     },
 }
 
@@ -248,6 +284,17 @@ function if_skill_obtained(key)
     end
 end
 
+function check_if_conflict(key)
+    local skill_info = get_skill_info(key)
+    if skill_info.exclude_with_skills then
+        for _,v in pairs(skill_info.exclude_with_skills) do
+            if (((G.PROFILES[G.SETTINGS.profile].skill_perks or {})[v]) or nil) or (((G.GAME.skill_perks or {})[v]) or nil) then
+                return true
+            end
+        end
+    end
+    return false
+end
 --Skill Tree UI
 
 function G.UIDEF.skill_tree_progress()
@@ -283,7 +330,19 @@ function create_skill_perk_desc(key, perk_info)
 
     nodes[#nodes+1] = {}
     local loc_vars = {scale = 0.925, vars = {(((G.PROFILES[G.SETTINGS.profile].skill_perks or {})[string.sub(key,4,#key)] or 0) + ((G.GAME.skill_perks or {})[string.sub(key,4,#key)] or 0))}}
-    localize({type = 'descriptions', key = key, set = 'SkillPerks', nodes = nodes[#nodes], vars = loc_vars.vars, scale = loc_vars.scale, text_colour = loc_vars.text_colour, shadow = loc_vars.shadow})
+    if perk_info.config and perk_info.config.lcorp_joker_id then
+        local selectedKey = key
+        for _,v in ipairs(perk_info.config.lcorp_desc_check or {}) do
+            if lobc_get_usage_count(perk_info.config.lcorp_joker_id) < v then selectedKey = "undis_"..key break end
+        end
+
+        if perk_info.config.lcorp_joker_id == "j_lobc_one_sin" and not G.P_BLINDS["bl_lobc_whitenight"].discovered then
+            selectedKey = "undis_"..key
+        end
+        localize({type = 'descriptions', key = selectedKey, set = 'SkillPerks', nodes = nodes[#nodes], vars = loc_vars.vars, scale = loc_vars.scale, text_colour = loc_vars.text_colour, shadow = loc_vars.shadow})
+    else
+        localize({type = 'descriptions', key = key, set = 'SkillPerks', nodes = nodes[#nodes], vars = loc_vars.vars, scale = loc_vars.scale, text_colour = loc_vars.text_colour, shadow = loc_vars.shadow})
+    end
     nodes[#nodes] = desc_from_rows(nodes[#nodes])
     nodes[#nodes].config.colour = loc_vars.background_colour or nodes[#nodes].config.colour
 
@@ -319,6 +378,8 @@ function create_skill_perk_desc(key, perk_info)
 end
 
 function sp_check_if_unlocked(e)
+    if check_if_conflict(e.config.perk_info.perk_id) then return false end
+
     for _,v in ipairs(e.config.perk_info.requirement or {}) do
         if not (G.PROFILES[G.SETTINGS.profile].skill_perks or {})[v] and not (G.GAME.skill_perks or {})[v] then
             return false
@@ -360,6 +421,7 @@ function UIElement:stop_hover()
 end
 
 G.FUNCS.purchase_skill_perk = function(e)
+    if check_if_conflict(e.config.perk_id) then return end
     local current_perk_cap = (((G.PROFILES[G.SETTINGS.profile].skill_perks or {})[e.config.perk_id]) or 0) + (((G.GAME.skill_perks or {})[e.config.perk_id]) or 0)
     if current_perk_cap < e.config.perk_info.max_cap then
         if (G.PROFILES[G.SETTINGS.profile].ygg_skill_points or 0) >= e.config.perk_info.cost then
@@ -377,6 +439,7 @@ G.FUNCS.purchase_skill_perk = function(e)
                 Node.stop_hover(e)
                 Node.hover(e) 
             end
+            SMODS.calculate_context({ ygg_skill_buy = true, ygg_skill_id = e.config.perk_info.perk_id })
         elseif (G.GAME.ygg_skill_points or 0) >= e.config.perk_info.cost then
             local set_max = ((G.GAME.current_switch_skill or "1") == "1" and 1) or ((G.GAME.current_switch_skill or "1") == "2" and 5) or ((G.GAME.current_switch_skill or "1") == "3" and 10) or ((G.GAME.current_switch_skill or "1") == "4" and math.huge)
             local upgraded_times = math.min(math.min(math.floor((G.GAME.ygg_skill_points or 0)/e.config.perk_info.cost),set_max),e.config.perk_info.max_cap - current_perk_cap)
@@ -392,6 +455,7 @@ G.FUNCS.purchase_skill_perk = function(e)
                 Node.stop_hover(e)
                 Node.hover(e) 
             end
+            SMODS.calculate_context({ ygg_skill_buy = true, ygg_skill_id = e.config.perk_info.perk_id })
         elseif ((G.PROFILES[G.SETTINGS.profile].ygg_skill_points or 0) + (G.GAME.ygg_skill_points or 0)) >= e.config.perk_info.cost then
             local set_max = ((G.GAME.current_switch_skill or "1") == "1" and 1) or ((G.GAME.current_switch_skill or "1") == "2" and 5) or ((G.GAME.current_switch_skill or "1") == "3" and 10) or ((G.GAME.current_switch_skill or "1") == "4" and math.huge)
             local upgraded_times = math.min(math.min(math.floor(((G.GAME.ygg_skill_points or 0) + (G.PROFILES[G.SETTINGS.profile].ygg_skill_points or 0))/e.config.perk_info.cost),set_max),e.config.perk_info.max_cap - current_perk_cap)
@@ -413,7 +477,7 @@ G.FUNCS.purchase_skill_perk = function(e)
                 Node.stop_hover(e)
                 Node.hover(e) 
             end
-
+            SMODS.calculate_context({ ygg_skill_buy = true, ygg_skill_id = e.config.perk_info.perk_id })
             save_run()
         end 
     end
@@ -1013,6 +1077,43 @@ function create_skill_tree_menu()
     return t
 end
 
+function roll_material_rng(type)
+    local valid_pool = {}
+    for i,v in pairs(YggMaterialList) do
+        for _,mat_info in ipairs(v) do
+            if not mat_info.blind_req or mat_info.blind_req == "All" or mat_info.blind_req == type then
+                if not valid_pool[i] then valid_pool[i] = {} end
+                valid_pool[i][#valid_pool[i]+1] = mat_info
+            end
+        end 
+    end
+
+    local total_luck_change = 1
+    for _,v in pairs(G.GAME.YGG_LUCK_BUFF or {}) do
+        total_luck_change = total_luck_change * v.luck
+    end
+    local chosen_rarities = {}
+    for i,_ in pairs(valid_pool) do
+        if YggMaterialChance[i] and pseudorandom("ygg_rollrarity_"..i) <= (YggMaterialChance[i]["chance"] * total_luck_change) then
+            chosen_rarities[#chosen_rarities+1] = i
+        end
+    end
+
+    local current_priority = nil
+    local chosen_rarity = nil
+    for _,v in pairs(chosen_rarities) do
+        if not current_priority or YggMaterialChance[v]["priority"] > current_priority then
+            current_priority = YggMaterialChance[v]["priority"]
+            chosen_rarity = v
+        end
+    end
+    if not chosen_rarity then chosen_rarity = "common" end
+
+    local randomMat = pseudorandom_element(valid_pool[chosen_rarity], pseudoseed("roll_material_rng_roll"))
+    local random_amount = pseudorandom("roll_material_rng_roll_amount", randomMat["min_obtain_cap"] or 1, randomMat["max_obtain_cap"] or 1)
+    return randomMat, random_amount
+end
+
 G.FUNCS.ygg_open_skill_tree = function()
     G.SETTINGS.paused = true
     
@@ -1081,6 +1182,35 @@ function Game:start_run(args)
                 colour = G.C.CLEAR
             },
             nodes = {
+                {
+                    n = G.UIT.C,
+                    config = {
+                        align = "tm",
+                        minw = 2,
+                        padding = 0.1,
+                        r = 0.1,
+                        hover = true,
+                        colour = G.C.UI.BACKGROUND_DARK,
+                        shadow = true,
+                        button = "ygg_open_skill_tree",
+                    },
+                    nodes = {
+                        {
+                            n = G.UIT.R,
+                            config = { align = "bcm", padding = 0 },
+                            nodes = {
+                                {
+                                    n = G.UIT.T,
+                                    config = {
+                                        text = localize('ygg_inventory_text'),
+                                        scale = 0.35,
+                                        colour = G.C.UI.TEXT_LIGHT
+                                    }
+                                }
+                            }
+                        },
+                    }
+                },
                 {
                     n = G.UIT.C,
                     config = {

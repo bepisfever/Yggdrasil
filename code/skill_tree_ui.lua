@@ -1202,35 +1202,6 @@ function Game:start_run(args)
                                 {
                                     n = G.UIT.T,
                                     config = {
-                                        text = localize('ygg_inventory_text'),
-                                        scale = 0.35,
-                                        colour = G.C.UI.TEXT_LIGHT
-                                    }
-                                }
-                            }
-                        },
-                    }
-                },
-                {
-                    n = G.UIT.C,
-                    config = {
-                        align = "tm",
-                        minw = 2,
-                        padding = 0.1,
-                        r = 0.1,
-                        hover = true,
-                        colour = G.C.UI.BACKGROUND_DARK,
-                        shadow = true,
-                        button = "ygg_open_skill_tree",
-                    },
-                    nodes = {
-                        {
-                            n = G.UIT.R,
-                            config = { align = "bcm", padding = 0 },
-                            nodes = {
-                                {
-                                    n = G.UIT.T,
-                                    config = {
                                         text = localize('ygg_skill_tree_text'),
                                         scale = 0.35,
                                         colour = G.C.UI.TEXT_LIGHT

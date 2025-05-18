@@ -321,6 +321,42 @@ Yggdrasil.have_item = function(key, amt) --Check if you have that item in invent
     return false
 end
 
+Yggdrasil.item_exist = function(key, amt) --Check if you have that item in inventory, crafting AND delete zones, amt stands for amount.
+    local amount = 0
+    if amt then
+        for _,v in ipairs(G.PROFILES[G.SETTINGS.profile]["YggInventory"] or {}) do
+            if v.id == key then amount = amount + 1 end
+        end
+
+        for i = 1,3 do
+            for _,v in ipairs(G.PROFILES[G.SETTINGS.profile]["YggCrafting"..i] or {}) do
+                if v.id == key then amount = amount + 1 end
+            end
+
+            for _,v in ipairs(G.PROFILES[G.SETTINGS.profile]["YggDelete"..i] or {}) do
+                if v.id == key then amount = amount + 1 end
+            end
+        end
+
+        if amount >= amt then return true end
+    else
+        for _,v in ipairs(G.PROFILES[G.SETTINGS.profile]["YggInventory"] or {}) do
+            if v.id == key then return true end
+        end
+
+        for i = 1,3 do
+            for _,v in ipairs(G.PROFILES[G.SETTINGS.profile]["YggCrafting"..i] or {}) do
+                if v.id == key then return true end
+            end
+
+            for _,v in ipairs(G.PROFILES[G.SETTINGS.profile]["YggDelete"..i] or {}) do
+                if v.id == key then return true end
+            end
+        end
+    end
+    return false
+end
+
 Yggdrasil.amt_item_inv = function(key) --Return how many of that item you have in inventory. I would suggest using Yggdrasil.have_item instead if you are just checking whether that item exists for performance.
     local amount = 0
     for _,v in ipairs(G.PROFILES[G.SETTINGS.profile]["YggInventory"] or {}) do
@@ -485,7 +521,7 @@ function roll_material_rng(type)
                 end
 
                 if mat_info.unique then
-                    if Yggdrasil.have_item(mat_info.id) then
+                    if Yggdrasil.item_exist(mat_info.id) then
                         is_valid = false
                     end
                 end
@@ -808,6 +844,7 @@ function Card:stop_drag()
         for i = 1,3 do
             if self.ygg_oldarea == G["ygg_inventory_cardarea"..i] then cardarea = G["ygg_inventory_cardarea"..i]; cardarea_type = "Inventory" break end
             if self.ygg_oldarea == G["ygg_crafting_cardarea"..i] then cardarea = G["ygg_crafting_cardarea"..i]; cardarea_type = "Crafting"..i break end
+            if self.ygg_oldarea == G["ygg_delete_cardarea"..i] then cardarea = G["ygg_delete_cardarea"..i]; cardarea_type = "Delete"..i break end
         end
         if cardarea then
             cardarea:remove_card(self)
@@ -830,6 +867,14 @@ function Card:stop_drag()
                         if not G.PROFILES[G.SETTINGS.profile]["YggCrafting"..i] then G.PROFILES[G.SETTINGS.profile]["YggCrafting"..i] = {} end
                         if item then
                             G.PROFILES[G.SETTINGS.profile]["YggCrafting"..i][#G.PROFILES[G.SETTINGS.profile]["YggCrafting"..i]+1] = item
+                        end
+                    end
+
+                    if area == G["ygg_delete_cardarea"..i] then
+                        local item = Yggdrasil.get_item(final_key)
+                        if not G.PROFILES[G.SETTINGS.profile]["YggDelete"..i] then G.PROFILES[G.SETTINGS.profile]["YggDelete"..i] = {} end
+                        if item then
+                            G.PROFILES[G.SETTINGS.profile]["YggDelete"..i][#G.PROFILES[G.SETTINGS.profile]["YggDelete"..i]+1] = item
                         end
                     end
 
@@ -860,6 +905,51 @@ function Card:stop_drag()
                                 if not G.PROFILES[G.SETTINGS.profile]["YggCrafting"..i2] then G.PROFILES[G.SETTINGS.profile]["YggCrafting"..i2] = {} end
                                 if item then
                                     G.PROFILES[G.SETTINGS.profile]["YggCrafting"..i2][#G.PROFILES[G.SETTINGS.profile]["YggCrafting"..i2]+1] = item
+                                end
+                            end
+
+                            if area == G["ygg_delete_cardarea"..i2] then
+                                local item = Yggdrasil.get_item(final_key)
+                                if not G.PROFILES[G.SETTINGS.profile]["YggDelete"..i2] then G.PROFILES[G.SETTINGS.profile]["YggDelete"..i2] = {} end
+                                if item then
+                                    G.PROFILES[G.SETTINGS.profile]["YggDelete"..i2][#G.PROFILES[G.SETTINGS.profile]["YggDelete"..i2]+1] = item
+                                end
+                            end
+
+                            if area == G["ygg_inventory_cardarea"..i2] then
+                                local item = Yggdrasil.get_item(final_key)
+                                G.PROFILES[G.SETTINGS.profile]["YggInventory"][#G.PROFILES[G.SETTINGS.profile]["YggInventory"]+1] = item
+                            end
+                        end
+                        break
+                    elseif cardarea_type == "Delete"..i then
+                        local class_prefix = "ygg_mat"
+                        local mod_prefix = self.config.center.mod.prefix or nil
+                        local cutout_pos = #class_prefix + (#mod_prefix or - 2) + 3
+
+                        local final_key = string.sub(self.config.center.key, cutout_pos, #self.config.center.key)
+
+                        for i2,v in ipairs(G.PROFILES[G.SETTINGS.profile]["YggDelete"..i] or {}) do
+                            if v.id == final_key then
+                                table.remove(G.PROFILES[G.SETTINGS.profile]["YggDelete"..i], i2)
+                                break
+                            end
+                        end
+
+                        for i2 = 1,3 do
+                            if area == G["ygg_crafting_cardarea"..i2] then
+                                local item = Yggdrasil.get_item(final_key)
+                                if not G.PROFILES[G.SETTINGS.profile]["YggCrafting"..i2] then G.PROFILES[G.SETTINGS.profile]["YggCrafting"..i2] = {} end
+                                if item then
+                                    G.PROFILES[G.SETTINGS.profile]["YggCrafting"..i2][#G.PROFILES[G.SETTINGS.profile]["YggCrafting"..i2]+1] = item
+                                end
+                            end
+                            
+                            if area == G["ygg_delete_cardarea"..i2] then
+                                local item = Yggdrasil.get_item(final_key)
+                                if not G.PROFILES[G.SETTINGS.profile]["YggDelete"..i2] then G.PROFILES[G.SETTINGS.profile]["YggDelete"..i2] = {} end
+                                if item then
+                                    G.PROFILES[G.SETTINGS.profile]["YggDelete"..i2][#G.PROFILES[G.SETTINGS.profile]["YggDelete"..i2]+1] = item
                                 end
                             end
 
@@ -910,6 +1000,14 @@ G.FUNCS.ygg_switch_sort_type = function(e)
     end
 end
 
+G.FUNCS.ygg_switch_second_area = function(e)
+    local second_area = e.config.second_area or nil
+    if second_area then
+        G.GAME["YggSecondAreaMode"] = second_area
+        G.FUNCS.ygg_open_inventory()
+    end
+end
+
 G.FUNCS.ygg_load_text_input = function(e)
     if not e.config or not e.config.auto_selected then
         if not e.config then e.config = {} end
@@ -922,6 +1020,28 @@ G.FUNCS.ygg_load_text_input = function(e)
                 return true 
             end
         }))
+    end
+end
+
+G.FUNCS.ygg_delete_all = function()
+    for i = 1,3 do
+        if G.PROFILES[G.SETTINGS.profile]["YggDelete"..i] then
+            G.PROFILES[G.SETTINGS.profile]["YggDelete"..i] = nil
+        end
+
+        if G["ygg_delete_cardarea"..i] and G["ygg_delete_cardarea"..i].cards then
+            for _,card in ipairs(G["ygg_delete_cardarea"..i].cards or {}) do
+                G.E_MANAGER:add_event(Event({
+                    func = function() 
+                        if G["ygg_delete_cardarea"..i] and card then
+                            G["ygg_delete_cardarea"..i]:remove_card(card)
+                            card:remove() 
+                        end
+                        return true 
+                    end
+                }))
+            end
+        end
     end
 end
 
@@ -1090,6 +1210,7 @@ function create_inventory_UI(args)
 
     for i = 1,3 do
         if G["ygg_inventory_cardarea"..i] then
+            G["ygg_inventory_cardarea"..i]:remove()
             G["ygg_inventory_cardarea"..i] = nil
         end
         G["ygg_inventory_cardarea"..i] = CardArea(
@@ -1101,26 +1222,43 @@ function create_inventory_UI(args)
         G["ygg_inventory_cardarea"..i].states.collide.can = true
     end
 
-    for i = 1,3 do
-        if G["ygg_crafting_cardarea"..i] then
-            G["ygg_crafting_cardarea"..i] = nil
+    if G.GAME["YggSecondAreaMode"] and G.GAME["YggSecondAreaMode"] == "Delete" then
+        for i = 1,3 do
+            if G["ygg_delete_cardarea"..i] then
+                G["ygg_delete_cardarea"..i]:remove()
+                G["ygg_delete_cardarea"..i] = nil
+            end
+            G["ygg_delete_cardarea"..i] = CardArea(
+                G.ROOM.T.x + 0.2 * G.ROOM.T.w / 2, G.ROOM.T.h,
+                4.25 * G.CARD_W,
+                0.95 * G.CARD_H,
+                {card_limit = 5, type = 'title', highlight_limit = 0}
+            )
+            G["ygg_delete_cardarea"..i].states.collide.can = true
         end
-        G["ygg_crafting_cardarea"..i] = CardArea(
+    else
+        for i = 1,3 do
+            if G["ygg_crafting_cardarea"..i] then
+                G["ygg_crafting_cardarea"..i]:remove()
+                G["ygg_crafting_cardarea"..i] = nil
+            end
+            G["ygg_crafting_cardarea"..i] = CardArea(
+                G.ROOM.T.x + 0.2 * G.ROOM.T.w / 2, G.ROOM.T.h,
+                4.25 * G.CARD_W,
+                0.95 * G.CARD_H,
+                {card_limit = 5, type = 'title', highlight_limit = 0}
+            )
+            G["ygg_crafting_cardarea"..i].states.collide.can = true
+        end
+
+        G["ygg_crafting_show"] = CardArea(
             G.ROOM.T.x + 0.2 * G.ROOM.T.w / 2, G.ROOM.T.h,
             4.25 * G.CARD_W,
             0.95 * G.CARD_H,
             {card_limit = 5, type = 'title', highlight_limit = 0}
         )
-        G["ygg_crafting_cardarea"..i].states.collide.can = true
+        G["ygg_crafting_show"].states.collide.can = false
     end
-
-    G["ygg_crafting_show"] = CardArea(
-        G.ROOM.T.x + 0.2 * G.ROOM.T.w / 2, G.ROOM.T.h,
-        4.25 * G.CARD_W,
-        0.95 * G.CARD_H,
-        {card_limit = 5, type = 'title', highlight_limit = 0}
-    )
-    G["ygg_crafting_show"].states.collide.can = false
 
     if YggdrasilDebugCraftingMode then
         for i = 1,3 do
@@ -1323,6 +1461,7 @@ function create_inventory_UI(args)
                                 local card = Card(cardarea_to_insert.T.x + cardarea_to_insert.T.w / 2, cardarea_to_insert.T.y,
                                     G.CARD_W, G.CARD_H, G.P_CARDS.empty,
                                     G.P_CENTERS[key])
+                                card.children.back:remove()
                                 card.children.back = Sprite(card.T.x, card.T.y, card.T.w, card.T.h, G.ASSET_ATLAS["ygg_placeholder_mat"], { x = 0, y = 0 })
                                 card.children.back.states.hover = card.states.hover
                                 card.children.back.states.click = card.states.click
@@ -1339,24 +1478,51 @@ function create_inventory_UI(args)
         end
 
         for i = 1,3 do
-            if G.PROFILES[G.SETTINGS.profile]["YggCrafting"..i] then
-                for _,v in ipairs(G.PROFILES[G.SETTINGS.profile]["YggCrafting"..i]) do
-                    local skill_to_insert = v
-                    if skill_to_insert then
-                        local saved_skill_to_insert = skill_to_insert
-                        local key = "ygg_mat_"..saved_skill_to_insert.mod_prefix.."_"..saved_skill_to_insert.id
-                        local cardarea_to_insert = G["ygg_crafting_cardarea"..i]
-                        if cardarea_to_insert then
-                            local card = Card(cardarea_to_insert.T.x + cardarea_to_insert.T.w / 2, cardarea_to_insert.T.y,
-                                G.CARD_W, G.CARD_H, G.P_CARDS.empty,
-                                G.P_CENTERS[key])
-                            card.children.back = Sprite(card.T.x, card.T.y, card.T.w, card.T.h, G.ASSET_ATLAS["ygg_placeholder_mat"], { x = 0, y = 0 })
-                            card.children.back.states.hover = card.states.hover
-                            card.children.back.states.click = card.states.click
-                            card.children.back.states.drag = card.states.drag
-                            card.children.back.states.collide.can = false
-                            card.children.back:set_role({major = card, role_type = 'Glued', draw_major = card})
-                            cardarea_to_insert:emplace(card) 
+            if G.GAME["YggSecondAreaMode"] and G.GAME["YggSecondAreaMode"] == "Delete" then
+                if G.PROFILES[G.SETTINGS.profile]["YggDelete"..i] then
+                    for _,v in ipairs(G.PROFILES[G.SETTINGS.profile]["YggDelete"..i]) do
+                        local skill_to_insert = v
+                        if skill_to_insert then
+                            local saved_skill_to_insert = skill_to_insert
+                            local key = "ygg_mat_"..saved_skill_to_insert.mod_prefix.."_"..saved_skill_to_insert.id
+                            local cardarea_to_insert = G["ygg_delete_cardarea"..i]
+                            if cardarea_to_insert then
+                                local card = Card(cardarea_to_insert.T.x + cardarea_to_insert.T.w / 2, cardarea_to_insert.T.y,
+                                    G.CARD_W, G.CARD_H, G.P_CARDS.empty,
+                                    G.P_CENTERS[key])
+                                card.children.back:remove()
+                                card.children.back = Sprite(card.T.x, card.T.y, card.T.w, card.T.h, G.ASSET_ATLAS["ygg_placeholder_mat"], { x = 0, y = 0 })
+                                card.children.back.states.hover = card.states.hover
+                                card.children.back.states.click = card.states.click
+                                card.children.back.states.drag = card.states.drag
+                                card.children.back.states.collide.can = false
+                                card.children.back:set_role({major = card, role_type = 'Glued', draw_major = card})
+                                cardarea_to_insert:emplace(card) 
+                            end
+                        end
+                    end
+                end
+            else
+                if G.PROFILES[G.SETTINGS.profile]["YggCrafting"..i] then
+                    for _,v in ipairs(G.PROFILES[G.SETTINGS.profile]["YggCrafting"..i]) do
+                        local skill_to_insert = v
+                        if skill_to_insert then
+                            local saved_skill_to_insert = skill_to_insert
+                            local key = "ygg_mat_"..saved_skill_to_insert.mod_prefix.."_"..saved_skill_to_insert.id
+                            local cardarea_to_insert = G["ygg_crafting_cardarea"..i]
+                            if cardarea_to_insert then
+                                local card = Card(cardarea_to_insert.T.x + cardarea_to_insert.T.w / 2, cardarea_to_insert.T.y,
+                                    G.CARD_W, G.CARD_H, G.P_CARDS.empty,
+                                    G.P_CENTERS[key])
+                                card.children.back:remove()
+                                card.children.back = Sprite(card.T.x, card.T.y, card.T.w, card.T.h, G.ASSET_ATLAS["ygg_placeholder_mat"], { x = 0, y = 0 })
+                                card.children.back.states.hover = card.states.hover
+                                card.children.back.states.click = card.states.click
+                                card.children.back.states.drag = card.states.drag
+                                card.children.back.states.collide.can = false
+                                card.children.back:set_role({major = card, role_type = 'Glued', draw_major = card})
+                                cardarea_to_insert:emplace(card) 
+                            end
                         end
                     end
                 end
@@ -1366,6 +1532,70 @@ function create_inventory_UI(args)
 
     if not G.GAME["YggSearchOptionInput"] then G.GAME["YggSearchOptionInput"] = "" end
     if not G.GAME["YggSearchOption"] then G.GAME["YggSearchOption"] = "" end
+
+    local second_area_nodes = {
+        {n = G.UIT.R, config = {align = "tm", padding = 0.2}, nodes = {
+            {n = G.UIT.O, config = {align = "tm",object = DynaText({scale = 0.75, string = localize('ygg_crafting_area_text'), maxw = 9, colours = { G.C.WHITE }, float = true, silent = true, shadow = true})}}
+        }},
+        {n = G.UIT.R, config = {align = "tr", padding = 0.02}, nodes = {
+            {n = G.UIT.C, config = {align = "tr", minw = 0.5, minh = 0.5, padding = 0.1, r = 0.1, hover = true, colour = G.C.RED, shadow = true, button = "ygg_switch_second_area", second_area = "Delete"}, nodes = {
+                {n = G.UIT.R, config = { align = "cm", padding = 0.05 }, nodes = {
+                    {n = G.UIT.T, config = {text = localize("ygg_delete_text"), scale = 0.4, colour = G.C.UI.TEXT_LIGHT}}
+                    }
+                },
+                }
+            },   
+        }},
+        {n = G.UIT.R, config = {align = "tm", padding = cardarea_padding}, nodes = {
+            {n = G.UIT.O, config = {align = "tm", object = G["ygg_crafting_cardarea1"]}}
+        }},
+        {n = G.UIT.R, config = {align = "tm", padding = cardarea_padding}, nodes = {
+            {n = G.UIT.O, config = {align = "tm", object = G["ygg_crafting_cardarea2"]}}
+        }},
+        {n = G.UIT.R, config = {align = "tm", padding = cardarea_padding}, nodes = {
+            {n = G.UIT.O, config = {align = "tm", object = G["ygg_crafting_cardarea3"]}}
+        }},
+        {n = G.UIT.R, config = {align = "tm", padding = cardarea_padding}, nodes = {
+            {n = G.UIT.O, config = {align = "tm", object = DynaText({scale = 0.4, string = localize('ygg_craft_guide'), maxw = 9, colours = { G.C.GREY }, silent = true})}},
+        }},
+        {n = G.UIT.R, config = {align = "cm", padding = cardarea_padding, colour = {G.C.GREY[1], G.C.GREY[2], G.C.GREY[3],0.3}, r = 0.3}, nodes = {
+            {n = G.UIT.O, config = {align = "tm", object = G["ygg_crafting_show"]}}
+        }},
+    }
+    if G.GAME["YggSecondAreaMode"] and G.GAME["YggSecondAreaMode"] == "Delete" then
+        second_area_nodes = {
+            {n = G.UIT.R, config = {align = "tm", padding = 0.2}, nodes = {
+                {n = G.UIT.O, config = {align = "tm",object = DynaText({scale = 0.75, string = localize('ygg_delete_area_text'), maxw = 9, colours = { G.C.WHITE }, float = true, silent = true, shadow = true})}}
+            }},
+            {n = G.UIT.R, config = {align = "tr", padding = 0.02}, nodes = {
+                {n = G.UIT.C, config = {align = "tr", minw = 0.5, minh = 0.5, padding = 0.1, r = 0.1, hover = true, colour = G.C.RED, shadow = true, button = "ygg_switch_second_area", second_area = "Craft"}, nodes = {
+                    {n = G.UIT.R, config = { align = "cm", padding = 0.05 }, nodes = {
+                        {n = G.UIT.T, config = {text = localize("ygg_craft_text"), scale = 0.4, colour = G.C.UI.TEXT_LIGHT}}
+                        }
+                    },
+                    }
+                },   
+            }},
+            {n = G.UIT.R, config = {align = "tm", padding = cardarea_padding}, nodes = {
+                {n = G.UIT.O, config = {align = "tm", object = G["ygg_delete_cardarea1"]}}
+            }},
+            {n = G.UIT.R, config = {align = "tm", padding = cardarea_padding}, nodes = {
+                {n = G.UIT.O, config = {align = "tm", object = G["ygg_delete_cardarea2"]}}
+            }},
+            {n = G.UIT.R, config = {align = "tm", padding = cardarea_padding}, nodes = {
+                {n = G.UIT.O, config = {align = "tm", object = G["ygg_delete_cardarea3"]}}
+            }},
+            {n = G.UIT.R, config = {align = "cm", padding = 0.02}, nodes = {
+                {n = G.UIT.C, config = {align = "cm", minw = 1.8, minh = 1.2, padding = 0.1, r = 0.1, hover = true, colour = G.C.RED, shadow = true, button = "ygg_delete_all"}, nodes = {
+                    {n = G.UIT.R, config = { align = "cm", padding = 0.05 }, nodes = {
+                        {n = G.UIT.T, config = {text = string.upper(localize("ygg_delete_text")), scale = 0.7, colour = G.C.UI.TEXT_LIGHT}}
+                        }
+                    },
+                    }
+                },   
+            }},
+        }
+    end
 
     return {n=G.UIT.ROOT, config = {align = "cm", minw = G.ROOM.T.w*5, minh = G.ROOM.T.h*5,padding = 0.1, r = 0.1, colour = args.bg_colour or {G.C.GREY[1], G.C.GREY[2], G.C.GREY[3],0.7}}, nodes={
       {n=G.UIT.R, config={align = "cm", minh = 1,r = 0.3, padding = 0.07, minw = 1, colour = args.outline_colour or G.C.JOKER_GREY, emboss = 0.1}, nodes={
@@ -1560,26 +1790,7 @@ function create_inventory_UI(args)
                                     }
                                 },
                                 {n=G.UIT.C, config={align = "tm",padding = args.padding or 0.05, r = 0.3, minw = area_minw, minh = area_minh, colour = G.C.BLACK}, nodes= --Crafting Area
-                                    {
-                                        {n = G.UIT.R, config = {align = "tm", padding = 0.2}, nodes = {
-                                            {n = G.UIT.O, config = {align = "tm",object = DynaText({scale = 0.75, string = localize('ygg_crafting_area_text'), maxw = 9, colours = { G.C.WHITE }, float = true, silent = true, shadow = true})}}
-                                        }},
-                                        {n = G.UIT.R, config = {align = "tm", padding = cardarea_padding}, nodes = {
-                                            {n = G.UIT.O, config = {align = "tm", object = G["ygg_crafting_cardarea1"]}}
-                                        }},
-                                        {n = G.UIT.R, config = {align = "tm", padding = cardarea_padding}, nodes = {
-                                            {n = G.UIT.O, config = {align = "tm", object = G["ygg_crafting_cardarea2"]}}
-                                        }},
-                                        {n = G.UIT.R, config = {align = "tm", padding = cardarea_padding}, nodes = {
-                                            {n = G.UIT.O, config = {align = "tm", object = G["ygg_crafting_cardarea3"]}}
-                                        }},
-                                        {n = G.UIT.R, config = {align = "tm", padding = cardarea_padding}, nodes = {
-                                            {n = G.UIT.O, config = {align = "tm", object = DynaText({scale = 0.4, string = localize('ygg_craft_guide'), maxw = 9, colours = { G.C.GREY }, silent = true})}},
-                                        }},
-                                        {n = G.UIT.R, config = {align = "cm", padding = cardarea_padding, colour = {G.C.GREY[1], G.C.GREY[2], G.C.GREY[3],0.3}, r = 0.3}, nodes = {
-                                            {n = G.UIT.O, config = {align = "tm", object = G["ygg_crafting_show"]}}
-                                        }},
-                                    }
+                                    second_area_nodes
                                 },
 
                             }

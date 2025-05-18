@@ -30,14 +30,6 @@ match_indent = true
 [[patches]]
 [patches.pattern]
 target = '=[SMODS _ "src/utils.lua"]'
-pattern = 'if not individual or not individual.object then return ret, post_trig end'
-position = "at"
-payload = 'if not individual or not individual.object or not individual.object.calculate or type(individual.object.calculate) ~= "function" then return ret, post_trig end'
-match_indent = true
-
-[[patches]]
-[patches.pattern]
-target = '=[SMODS _ "src/utils.lua"]'
 pattern = 'local eff, triggered = individual.object:calculate(context)'
 position = "before"
 payload = 'if not individual or not individual.object then return ret, post_trig end'

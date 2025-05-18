@@ -1225,7 +1225,6 @@ function Game:start_run(args)
                         },
                     }
                 },
-
                 {
                     n = G.UIT.C,
                     config = {

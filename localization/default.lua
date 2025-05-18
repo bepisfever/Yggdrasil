@@ -2013,6 +2013,10 @@ return { --remind me to work on this
             ygg_skill_tree_text = "Skill Tree",
             ygg_inventory_text = "Inventory",
             ygg_crafting_area_text = "Crafting Area",
+            ygg_delete_area_text = "Delete Area",
+
+            ygg_delete_text = "Delete",
+            ygg_craft_text = "Craft",
 
             ygg_skill_tree_sec1 = "Need for Stats", --Balatro: Star Rail
             ygg_skill_tree_sec2 = "I'm Multin' it",

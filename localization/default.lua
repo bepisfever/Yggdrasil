@@ -1,5 +1,21 @@
 return { --remind me to work on this
     descriptions = {
+        UIPopUp = {
+            ygg_rstb_name = {
+                name = "Placeholder",
+                text = {
+                    "Information"
+                },
+            },
+            ygg_rstb = {
+                name = "Placeholder",
+                text = {
+                    "You can only {C:attention}reset{}",
+                    "when {C:attention}Round{} is below",
+                    "or equal {C:attention}0{}",
+                },
+            },
+        },
         YggMaterial = {
             ygg_mat_ygg_card_scrap = {
                 name = "Card Scrap",
@@ -8,6 +24,212 @@ return { --remind me to work on this
                     "{s:0.15} ",
                     "{C:inactive}Pieces of cards that were torn and",
                     "{C:inactive}thrown in the trash",
+                }
+            },
+            ygg_mat_ygg_half_a_chip = {
+                name = "Half a Chip",
+                text = {
+                    "{C:inactive}(Rarity: Common){}",
+                    "{s:0.15} ",
+                    "{C:inactive}Legends said that someone asked for 3",
+                    "{C:inactive}and a half{} {C:chips}Chips{}{C:inactive}, and the other half",
+                    "{C:inactive}remained unused"
+                }
+            },
+            ygg_mat_ygg_broken_spade = {
+                name = "Broken Spade",
+                text = {
+                    "{C:inactive}(Rarity: {}{V:1}Uncommon{}{C:inactive}){}",
+                    "{s:0.15} ",
+                    "{C:inactive}An arrow head which seems to have",
+                    "{C:inactive}been discarded for the more favored",
+                    "{C:inactive}suits"
+                }
+            },
+            ygg_mat_ygg_harmony_core = {
+                name = "Harmony Core",
+                text = {
+                    "{C:inactive}(Rarity: {}{V:1}Uncommon{}{C:inactive}){}",
+                    "{s:0.15} ",
+                    "{C:inactive}A battery with perfectly balanced",
+                    "{C:inactive}power flow, suitable for stabilizing",
+                    "{C:inactive}Relics"
+                }
+            },
+            ygg_mat_ygg_potassium = {
+                name = "Potassium",
+                text = {
+                    "{C:inactive}(Rarity: {}{V:1}Uncommon{}{C:inactive}){}",
+                    "{s:0.15} ",
+                    "{C:inactive}potassium.",
+                    "{C:inactive}You know exactly what this is used",
+                    "{C:inactive}for"
+                }
+            },
+            ygg_mat_ygg_misprinted_essence = {
+                name = "Misprinted Essence",
+                text = {
+                    "{C:inactive}(Rarity: {}{V:1}Rare{}{C:inactive}){}",
+                    "{s:0.15} ",
+                    "{C:inactive}Essences of what was once a Joker,",
+                    "{C:inactive}now no more than dust of flickering",
+                    "{C:inactive}data",
+                }
+            },
+            ygg_mat_ygg_potassium_overload = {
+                name = "Potassium Overload",
+                text = {
+                    "{C:inactive}(Rarity: {}{V:1}Rare{}{C:inactive}){}",
+                    "{s:0.15} ",
+                    "{C:inactive}Too much potassium condensed into",
+                    "{C:inactive}a small vial. Perhaps it can be used to",
+                    "{C:inactive}upgrade a certain banana",
+                }
+            },
+            ygg_mat_ygg_soul_fragment = {
+                name = "Soul Fragment",
+                text = {
+                    "{C:inactive}(Rarity: {}{V:1}Legendary{}{C:inactive}){}",
+                    "{s:0.15} ",
+                    "{C:inactive}Shards of what seemed to come from a prison",
+                    "{C:inactive}holding spirits with immense power",
+                }
+            },
+            ygg_mat_ygg_fixed_joker = {
+                name = "Fixed Joker",
+                text = {
+                    "{C:inactive}(Rarity: Common){}",
+                    "{s:0.15} ",
+                    "While in {C:attention}Inventory{},",
+                    "{C:mult}+3{} Mult",
+                    "{s:0.15} ",
+                    "{C:inactive}A replica of the infamous Jimbo,",
+                    "{C:inactive}almost perfect except for the face",
+                    "{s:0.15} ",
+                    "{C:inactive}(Only one copy can exist)",
+                }
+            },
+            ygg_mat_ygg_fixed_blue_joker = {
+                name = "Fixed Blue Joker",
+                text = {
+                    "{C:inactive}(Rarity: Common){}",
+                    "{s:0.15} ",
+                    "While in {C:attention}Inventory{},",
+                    "{C:chips}+20{} Chips",
+                    "{s:0.15} ",
+                    "{C:inactive}cue the blue da ba de de",
+                    "{C:inactive}song or something idk",
+                    "{s:0.15} ",
+                    "{C:inactive}(Only one copy can exist)",
+                }
+            },
+            ygg_mat_ygg_gros_michel = {
+                name = "Gros Michel",
+                text = {
+                    "{C:inactive}(Rarity: {}{V:1}Uncommon{}{C:inactive}){}",
+                    "{s:0.15} ",
+                    "While in {C:attention}Inventory{},",
+                    "{C:mult}+10{} Mult, {C:green}20%{} to {C:attention}disable{}",
+                    "at the end of round",
+                    "{C:inactive}(Currently: #1#)",
+                    "{s:0.15} ",
+                    "{C:inactive}A fresh banana out of a tree, its potential",
+                    "{C:inactive}has yet to be fully released",
+                    "{s:0.15} ",
+                    "{C:inactive}(Only one copy can exist)",
+                }
+            },
+            ygg_mat_ygg_harmony_joker = {
+                name = "Harmony Joker",
+                text = {
+                    "{C:inactive}(Rarity: {}{V:1}Uncommon{}{C:inactive}){}",
+                    "{s:0.15} ",
+                    "While in {C:attention}Inventory{},",
+                    "{C:chips}+20{} Chips, {C:mult}+5{} Mult",
+                    "{s:0.15} ",
+                    "{C:inactive}A perfect harmony of {}{C:chips}Blue{}{C:inactive} and",
+                    "{C:mult}Red{}{C:inactive}, morphed into a Joker",
+                    "{s:0.15} ",
+                    "{C:inactive}(Only one copy can exist)",
+                }
+            },
+            ygg_mat_ygg_cavendish = {
+                name = "Cavendish",
+                text = {
+                    "{C:inactive}(Rarity: {}{V:1}Rare{}{C:inactive}){}",
+                    "{s:0.15} ",
+                    "While in {C:attention}Inventory{},",
+                    "{X:mult,C:white}X1.5{} Mult, {C:green}1%{} to {C:attention}disable{}",
+                    "at the end of round",
+                    "{C:inactive}(Currently: #1#)",
+                    "{s:0.15} ",
+                    "{C:inactive}The ultimate form of bananas, all hail",
+                    "{C:inactive}Cavendish",
+                    "{s:0.15} ",
+                    "{C:inactive}(Only one copy can exist)",
+                }
+            },
+            ygg_mat_ygg_soul_engine = {
+                name = "Soul Engine",
+                text = {
+                    "{C:inactive}(Rarity: {}{V:1}Legendary{}{C:inactive}){}",
+                    "{s:0.15} ",
+                    "While in {C:attention}Inventory{},",
+                    "all {C:attention}Relics{} give {C:mult}X1.5{}",
+                    "more {C:mult}+Mult{}",
+                    "{s:0.15} ",
+                    "{C:inactive}An ancient engine running on the souls of",
+                    "{C:inactive}the condemned, boosting the performance",
+                    "{C:inactive}of various Relics",
+                    "{s:0.15} ",
+                    "{C:inactive}(Only one copy can exist)",
+                }
+            },
+            ygg_mat_ygg_chains_of_eternity = {
+                name = "Chains of Eternity",
+                text = {
+                    "{C:inactive}(Rarity: {}{V:1}Legendary{}{C:inactive}){}",
+                    "{s:0.15} ",
+                    "While in {C:attention}Inventory{},",
+                    "{C:attention}Eternal{} Jokers give",
+                    "{X:mult,C:white}X2{} Mult",
+                    "{s:0.15} ",
+                    "{C:inactive}Chains used to bound monsters capable",
+                    "{C:inactive}of wrecking havoc on the universe,",
+                    "{C:inactive}its material is indestructible",
+                    "{s:0.15} ",
+                    "{C:inactive}(Only one copy can exist)",
+                }
+            },
+            ygg_mat_ygg_astronaut_helmet = {
+                name = "Astronaut Helmet",
+                text = {
+                    "{C:inactive}(Rarity: {}{V:1}Uncommon{}{C:inactive}){}",
+                    "{s:0.15} ",
+                    "While in {C:attention}Inventory{},",
+                    "{C:planet}Planet{} cards held give",
+                    "{C:mult}+10{} Mult",
+                    "{s:0.15} ",
+                    "{C:inactive}The first ever jester to step on the moon,",
+                    "{C:inactive}Jimeil Armstrong, has left his helmet",
+                    "{C:inactive}on there to forever mark the first step of jesters",
+                    "{s:0.15} ",
+                    "{C:inactive}(Only one copy can exist)",
+                }
+            },
+            ygg_mat_ygg_sharp_spear = {
+                name = "Sharp Spear",
+                text = {
+                    "{C:inactive}(Rarity: {}{V:1}Uncommon{}{C:inactive}){}",
+                    "{s:0.15} ",
+                    "While in {C:attention}Inventory{},",
+                    "scored {C:spades}Spade{} cards give",
+                    "{C:mult}+2{} Mult",
+                    "{s:0.15} ",
+                    "{C:inactive}A repaired spear head, once used during",
+                    "{C:inactive}the ancient battles of Balala",
+                    "{s:0.15} ",
+                    "{C:inactive}(Only one copy can exist)",
                 }
             },
         },
@@ -26,6 +248,12 @@ return { --remind me to work on this
                     "{C:white}(Rarity: {}{V:1}#3#{}{C:white})",
                 },
             },
+            ygg_locked_test = {
+                name = "Placeholder",
+                text = {
+                    "?"
+                },
+            },
             ygg_test_name = {
                 name = "Placeholder",
                 text = {
@@ -40,7 +268,6 @@ return { --remind me to work on this
                     "{s:1.5}:3{}"
                 }
             },
-
 
             dis_j_lobc_scorched_girl_1_u = {
                 name = "Scorched Girl",
@@ -1785,6 +2012,7 @@ return { --remind me to work on this
         dictionary = {
             ygg_skill_tree_text = "Skill Tree",
             ygg_inventory_text = "Inventory",
+            ygg_crafting_area_text = "Crafting Area",
 
             ygg_skill_tree_sec1 = "Need for Stats", --Balatro: Star Rail
             ygg_skill_tree_sec2 = "I'm Multin' it",
@@ -1806,15 +2034,33 @@ return { --remind me to work on this
 
             --Material Stuffs
             k_YggMaterial_text = "Material",
+    
             ygg_card_scrap = "Card Scraps",
+            ygg_half_a_chip = "Half a Chip",
             ygg_broken_spade = "Broken Spades",
+            ygg_harmony_core = "Harmony Core",
             ygg_misprinted_essence = "Misprinted Essences",
             ygg_soul_fragment = "Soul Fragment",
+            ygg_potassium = "Potassium",
+            ygg_potassium_overload = "Potassium Overload",
+            ygg_chains_of_eternity = "Chains of Eternity",
+
+            ygg_sort_rarity = "Sort by Rarity",
+            ygg_sort_date = "Sort by Date",
 
             ygg_common = "Common",
             ygg_uncommon = "Uncommon",
             ygg_rare = "Rare",
             ygg_legendary = "Legendary",
+
+            ygg_craft_guide = "DRAG TO INVENTORY TO CRAFT",
+
+            --Others
+            ygg_active = "Active",
+            ygg_inactive = "Inactive",
+
+            ygg_disabled = "Disabled!",
+            ygg_enabled = "Enabled!",
         },
     },
 }

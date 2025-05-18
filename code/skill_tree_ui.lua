@@ -200,6 +200,7 @@ DisabledSkills = {
 }
 YggdrasilDefaultButton = true
 YggdrasilDebugMode = false
+YggdrasilDebugCraftingMode = false
 
 function check_if_section_exist(sec)
     for _,v in ipairs(SkillTreeSections) do
@@ -318,40 +319,57 @@ function G.UIDEF.skill_tree_progress()
     }}
 end
 
-function create_skill_perk_desc(key, perk_info)
+function create_skill_perk_desc(key, perk_info, specific)
     local nodes = {}
-    nodes[#nodes+1] = {}
-    local loc_vars = {scale = 1.5}
-    localize({type = 'descriptions', key = key.."_name", set = 'SkillPerks', nodes = nodes[#nodes], vars = loc_vars.vars, scale = loc_vars.scale, text_colour = G.C.WHITE, shadow = true, float = true})
-    nodes[#nodes] = desc_from_rows(nodes[#nodes])
-    nodes[#nodes].config.colour = G.C.CLEAR
-    nodes[#nodes].config.minh = loc_vars.minh or 0.2
-    nodes[#nodes].config.align = "bm"
 
-    nodes[#nodes+1] = {}
-    local loc_vars = {scale = 0.925, vars = {(((G.PROFILES[G.SETTINGS.profile].skill_perks or {})[string.sub(key,4,#key)] or 0) + ((G.GAME.skill_perks or {})[string.sub(key,4,#key)] or 0))}}
-    if perk_info.config and perk_info.config.lcorp_joker_id then
-        local selectedKey = key
-        for _,v in ipairs(perk_info.config.lcorp_desc_check or {}) do
-            if lobc_get_usage_count(perk_info.config.lcorp_joker_id) < v then selectedKey = "undis_"..key break end
-        end
+    if specific == "reset_skill_tree_button" then
+        nodes[#nodes+1] = {}
+        local loc_vars = {scale = 1.5}
+        localize({type = 'descriptions', key = "ygg_rstb_name", set = 'UIPopUp', nodes = nodes[#nodes], vars = loc_vars.vars, scale = loc_vars.scale, text_colour = G.C.WHITE, shadow = true, float = true})
+        nodes[#nodes] = desc_from_rows(nodes[#nodes])
+        nodes[#nodes].config.colour = G.C.CLEAR
+        nodes[#nodes].config.minh = loc_vars.minh or 0.2
+        nodes[#nodes].config.align = "bm"
 
-        if perk_info.config.lcorp_joker_id == "j_lobc_one_sin" and not G.P_BLINDS["bl_lobc_whitenight"].discovered then
-            selectedKey = "undis_"..key
-        end
-        localize({type = 'descriptions', key = selectedKey, set = 'SkillPerks', nodes = nodes[#nodes], vars = loc_vars.vars, scale = loc_vars.scale, text_colour = loc_vars.text_colour, shadow = loc_vars.shadow})
+        nodes[#nodes+1] = {}
+        local loc_vars = {scale = 0.925}
+        localize({type = 'descriptions', key = "ygg_rstb", set = 'UIPopUp', nodes = nodes[#nodes], vars = loc_vars.vars, scale = loc_vars.scale, text_colour = loc_vars.text_colour, shadow = loc_vars.shadow})
+        nodes[#nodes] = desc_from_rows(nodes[#nodes])
+        nodes[#nodes].config.colour = loc_vars.background_colour or nodes[#nodes].config.colour
     else
-        localize({type = 'descriptions', key = key, set = 'SkillPerks', nodes = nodes[#nodes], vars = loc_vars.vars, scale = loc_vars.scale, text_colour = loc_vars.text_colour, shadow = loc_vars.shadow})
-    end
-    nodes[#nodes] = desc_from_rows(nodes[#nodes])
-    nodes[#nodes].config.colour = loc_vars.background_colour or nodes[#nodes].config.colour
+        nodes[#nodes+1] = {}
+        local loc_vars = {scale = 1.5}
+        localize({type = 'descriptions', key = key.."_name", set = 'SkillPerks', nodes = nodes[#nodes], vars = loc_vars.vars, scale = loc_vars.scale, text_colour = G.C.WHITE, shadow = true, float = true})
+        nodes[#nodes] = desc_from_rows(nodes[#nodes])
+        nodes[#nodes].config.colour = G.C.CLEAR
+        nodes[#nodes].config.minh = loc_vars.minh or 0.2
+        nodes[#nodes].config.align = "bm"
 
-    nodes[#nodes+1] = {}
-    local loc_vars = {scale = 0.925, vars = {perk_info.cost}}
-    localize({type = 'descriptions', key = "sp_ygg_cost", set = 'SkillPerks', nodes = nodes[#nodes], vars = loc_vars.vars, scale = loc_vars.scale, text_colour = loc_vars.text_colour})
-    nodes[#nodes] = desc_from_rows(nodes[#nodes])
-    nodes[#nodes].config.colour = G.C.WHITE
-    nodes[#nodes].config.minh = loc_vars.minh or 0.1
+        nodes[#nodes+1] = {}
+        local loc_vars = {scale = 0.925, vars = {(((G.PROFILES[G.SETTINGS.profile].skill_perks or {})[string.sub(key,4,#key)] or 0) + ((G.GAME.skill_perks or {})[string.sub(key,4,#key)] or 0))}}
+        if perk_info.config and perk_info.config.lcorp_joker_id then
+            local selectedKey = key
+            for _,v in ipairs(perk_info.config.lcorp_desc_check or {}) do
+                if lobc_get_usage_count(perk_info.config.lcorp_joker_id) < v then selectedKey = "undis_"..key break end
+            end
+
+            if perk_info.config.lcorp_joker_id == "j_lobc_one_sin" and not G.P_BLINDS["bl_lobc_whitenight"].discovered then
+                selectedKey = "undis_"..key
+            end
+            localize({type = 'descriptions', key = selectedKey, set = 'SkillPerks', nodes = nodes[#nodes], vars = loc_vars.vars, scale = loc_vars.scale, text_colour = loc_vars.text_colour, shadow = loc_vars.shadow})
+        else
+            localize({type = 'descriptions', key = key, set = 'SkillPerks', nodes = nodes[#nodes], vars = loc_vars.vars, scale = loc_vars.scale, text_colour = loc_vars.text_colour, shadow = loc_vars.shadow})
+        end
+        nodes[#nodes] = desc_from_rows(nodes[#nodes])
+        nodes[#nodes].config.colour = loc_vars.background_colour or nodes[#nodes].config.colour
+
+        nodes[#nodes+1] = {}
+        local loc_vars = {scale = 0.925, vars = {perk_info.cost}}
+        localize({type = 'descriptions', key = "sp_ygg_cost", set = 'SkillPerks', nodes = nodes[#nodes], vars = loc_vars.vars, scale = loc_vars.scale, text_colour = loc_vars.text_colour})
+        nodes[#nodes] = desc_from_rows(nodes[#nodes])
+        nodes[#nodes].config.colour = G.C.WHITE
+        nodes[#nodes].config.minh = loc_vars.minh or 0.1
+    end
 
     return
         {n = G.UIT.ROOT, 
@@ -405,6 +423,11 @@ function UIElement:hover()
 
     if self.config.loc_tooltip then
         self.config.h_popup = create_skill_perk_desc(self.config.loc_tooltip, self.config.perk_info)
+        self.config.h_popup_config = {align="tm", offset = {x=0,y=-0.1}, parent = self}
+    end
+
+    if self.config and self.config.id and self.config.id == "reset_skill_tree_button" then
+        self.config.h_popup = create_skill_perk_desc(nil, nil, self.config.id)
         self.config.h_popup_config = {align="tm", offset = {x=0,y=-0.1}, parent = self}
     end
 
@@ -1021,6 +1044,7 @@ function create_skill_tree_UI(args)
                                     hover = true,
                                     colour = G.C.RED,
                                     shadow = true,
+                                    id = "reset_skill_tree_button",
                                     button = "reset_skill_tree",
                                     func = "check_valid_reset",
                                 },
@@ -1077,43 +1101,6 @@ function create_skill_tree_menu()
     return t
 end
 
-function roll_material_rng(type)
-    local valid_pool = {}
-    for i,v in pairs(YggMaterialList) do
-        for _,mat_info in ipairs(v) do
-            if not mat_info.blind_req or mat_info.blind_req == "All" or mat_info.blind_req == type then
-                if not valid_pool[i] then valid_pool[i] = {} end
-                valid_pool[i][#valid_pool[i]+1] = mat_info
-            end
-        end 
-    end
-
-    local total_luck_change = 1
-    for _,v in pairs(G.GAME.YGG_LUCK_BUFF or {}) do
-        total_luck_change = total_luck_change * v.luck
-    end
-    local chosen_rarities = {}
-    for i,_ in pairs(valid_pool) do
-        if YggMaterialChance[i] and pseudorandom("ygg_rollrarity_"..i) <= (YggMaterialChance[i]["chance"] * total_luck_change) then
-            chosen_rarities[#chosen_rarities+1] = i
-        end
-    end
-
-    local current_priority = nil
-    local chosen_rarity = nil
-    for _,v in pairs(chosen_rarities) do
-        if not current_priority or YggMaterialChance[v]["priority"] > current_priority then
-            current_priority = YggMaterialChance[v]["priority"]
-            chosen_rarity = v
-        end
-    end
-    if not chosen_rarity then chosen_rarity = "common" end
-
-    local randomMat = pseudorandom_element(valid_pool[chosen_rarity], pseudoseed("roll_material_rng_roll"))
-    local random_amount = pseudorandom("roll_material_rng_roll_amount", randomMat["min_obtain_cap"] or 1, randomMat["max_obtain_cap"] or 1)
-    return randomMat, random_amount
-end
-
 G.FUNCS.ygg_open_skill_tree = function()
     G.SETTINGS.paused = true
     
@@ -1121,11 +1108,8 @@ G.FUNCS.ygg_open_skill_tree = function()
         definition = create_skill_tree_menu(),
     }
 end
---Load the new UI buttons.
-local game_start_run_ref = Game.start_run
-function Game:start_run(args)
-    game_start_run_ref(self, args)
 
+function load_cross_mod_content()
     if next(SMODS.find_mod("aikoyorisshenanigans")) then --Aikoyori Shenanigan's cross-mod, from yours truly
         local new_sec = "ygg_skill_tree_AKYRS"
         if not check_if_section_exist(new_sec) then
@@ -1170,6 +1154,36 @@ function Game:start_run(args)
         end
     end
 
+    if next(SMODS.find_mod("hsr")) then --Balatro: Star Rail, my own mod :3
+        local new_sec = "ygg_skill_tree_sec1"
+        if not check_if_section_exist(new_sec) then
+            add_new_section(new_sec) 
+        end
+    end
+
+    --[[
+    if next(SMODS.find_mod("LobotomyCorp")) then --LCorp's cross-mod, holy.
+        local new_sec = "ygg_skill_tree_lcorp"
+        if not check_if_section_exist(new_sec) then
+            SkillTreePerks[new_sec] = {
+                {
+                    {text = "S.G", perk_id = "ygg_scorched_girl_upgrade", max_cap = 1, config = {lcorp_joker_id = "j_lobc_scorched_girl", lcorp_desc_check = {2,4}}, cost = 20},
+                    {text = "O.S", perk_id = "ygg_one_sin_upgrade", max_cap = 1, config = {lcorp_joker_id = "j_lobc_one_sin", lcorp_desc_check = {2}}, cost = 10},
+                    {text = "QOH", perk_id = "ygg_queen_of_hatred_upgrade", max_cap = 1, config = {lcorp_joker_id = "j_lobc_queen_of_hatred", lcorp_desc_check = {2,4,7}}, cost = 35},
+                },
+            }
+            add_new_section(new_sec) 
+        end
+    end
+    ]]
+end
+--Load the new UI buttons.
+local game_start_run_ref = Game.start_run
+function Game:start_run(args)
+    game_start_run_ref(self, args)
+
+    load_cross_mod_content()
+
     self.ygg_extra_buttons = YggdrasilDefaultButton and UIBox {
         definition = {
             n = G.UIT.ROOT,
@@ -1192,7 +1206,7 @@ function Game:start_run(args)
                         hover = true,
                         colour = G.C.UI.BACKGROUND_DARK,
                         shadow = true,
-                        button = "ygg_open_skill_tree",
+                        button = "ygg_open_inventory",
                     },
                     nodes = {
                         {
@@ -1215,7 +1229,7 @@ function Game:start_run(args)
         },
         config = {
             align = "cardarea_add_to_highlighted_ref",
-            offset = { x = 7.8, y = -0.75 },
+            offset = { x = 5.5, y = -0.75 },
             major = G.jokers,
             bond = 'Weak'
         }

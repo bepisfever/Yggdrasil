@@ -1,0 +1,175 @@
+[manifest]
+version = "1.0.0"
+dump_lua = true
+priority = 1
+
+# Scorched Girl
+[[patches]]
+[patches.pattern]
+target = '=[SMODS LobotomyCorp "indiv_jokers/scorched_girl.lua"]'
+pattern = '''
+localize{type = 'descriptions', key = desc_key, set = self.set, nodes = desc_nodes, vars = vars}
+'''
+position = 'at'
+payload = '''
+if if_skill_obtained("ygg_scorched_girl_upgrade") then
+    localize{type = 'descriptions', key = desc_key.."_u", set = self.set, nodes = desc_nodes, vars = vars}
+else
+    localize{type = 'descriptions', key = desc_key, set = self.set, nodes = desc_nodes, vars = vars}
+end
+'''
+match_indent = false
+
+[[patches]]
+[patches.pattern]
+target = '=[SMODS LobotomyCorp "indiv_jokers/scorched_girl.lua"]'
+pattern = '''
+if context.end_of_round and not context.blueprint and context.main_eval then
+    for _, v in ipairs(G.playing_cards) do
+        SMODS.debuff_card(v, false, 'scorched_girl_debuff')
+    end
+'''
+position = 'after'
+payload = '''
+        for _, v in ipairs(G.jokers.cards) do
+            SMODS.debuff_card(v, false, 'scorched_girl_debuff')
+        end
+'''
+match_indent = false
+
+[[patches]]
+[patches.pattern]
+target = '=[SMODS LobotomyCorp "indiv_jokers/scorched_girl.lua"]'
+pattern = '''
+G.E_MANAGER:add_event(Event({
+    func = function() 
+        card:juice_up()
+        -- i took this from TheAutumnCircus' Mr. Bones' Stamp
+        local chips = (G.GAME.blind.chips * ((100 - card.ability.extra)/100))
+        if type(chips) == 'table' then chips:ceil() else chips = math.ceil(chips) end
+        G.GAME.blind.chips = chips
+        G.GAME.blind.chip_text = number_format(G.GAME.blind.chips)
+        G.FUNCS.blind_chip_UI_scale(G.hand_text_area.blind_chips)
+        G.HUD_blind:recalculate() 
+        G.hand_text_area.blind_chips:juice_up()
+        play_sound('chips2')
+    return true
+    end
+}))
+'''
+position = 'after'
+payload = '''
+        G.E_MANAGER:add_event(Event({
+            func = function() 
+                local valid_pool = {}
+                for _,v in ipairs(G.jokers.cards) do
+                    if v ~= card and not v.debuff then valid_pool[#valid_pool+1] = v end
+                end
+                if #valid_pool > 0 then
+                    local rad_joker = pseudorandom_element(valid_pool, pseudoseed("ygg_scorched_girl_pick"))
+                    if rad_joker then
+                        SMODS.debuff_card(rad_joker, true, 'scorched_girl_debuff')
+                    end
+                end
+            return true
+            end
+        }))
+'''
+match_indent = false
+
+[[patches]]
+[patches.pattern]
+target = '=[SMODS LobotomyCorp "indiv_jokers/scorched_girl.lua"]'
+pattern = '''
+joker.calculate = function(self, card, context)
+'''
+position = 'after'
+payload = '''
+    if context.ygg_skill_buy and context.ygg_skill_id == "ygg_scorched_girl_upgrade" then
+        if not card.ability["ygg_checked"] then G.jokers:change_size(1); card.ability["ygg_checked"] = true end
+    end
+'''
+match_indent = false
+
+[[patches]]
+[patches.pattern]
+target = '=[SMODS LobotomyCorp "indiv_jokers/scorched_girl.lua"]'
+pattern = '''
+joker.remove_from_deck = function(self, card, from_debuff)
+'''
+position = 'after'
+payload = '''
+    if card.ability["ygg_checked"] then
+        G.jokers:change_size(-1)
+    end
+    for _, v in ipairs(G.jokers.cards) do
+        SMODS.debuff_card(v, false, 'scorched_girl_debuff')
+    end
+'''
+match_indent = false
+
+[[patches]]
+[patches.pattern]
+target = '=[SMODS LobotomyCorp "indiv_jokers/scorched_girl.lua"]'
+pattern = '''
+joker.remove_from_deck = function(self, card, from_debuff)
+'''
+position = 'before'
+payload = '''
+joker.add_to_deck = function(self, card, from_debuff)
+    if if_skill_obtained("ygg_scorched_girl_upgrade") then
+        card.ability["ygg_checked"] = true
+        G.jokers:change_size(1)
+    end
+end
+'''
+match_indent = false
+
+# One Sin and Hundreds of Good Deeds
+[[patches]]
+[patches.pattern]
+target = '=[SMODS LobotomyCorp "indiv_jokers/one_sin.lua"]'
+pattern = '''
+localize{type = 'descriptions', key = desc_key, set = self.set, nodes = desc_nodes, vars = vars}
+'''
+position = 'at'
+payload = '''
+if if_skill_obtained("ygg_one_sin_upgrade") then
+    localize{type = 'descriptions', key = desc_key.."_u", set = self.set, nodes = desc_nodes, vars = vars}
+else
+    localize{type = 'descriptions', key = desc_key, set = self.set, nodes = desc_nodes, vars = vars}
+end
+'''
+match_indent = false
+
+[[patches]]
+[patches.pattern]
+target = '=[SMODS LobotomyCorp "indiv_jokers/one_sin.lua"]'
+pattern = '''
+if context.individual and context.cardarea == G.play then
+'''
+position = 'after'
+payload = '''
+        if if_skill_obtained("ygg_one_sin_upgrade") then
+            context.other_card.ability.perma_mult = (context.other_card.ability.perma_mult or 0) + 2
+        end
+'''
+match_indent = false
+
+# The Queen of Hatred
+[[patches]]
+[patches.pattern]
+target = '=[SMODS LobotomyCorp "indiv_jokers/queen_of_hatred.lua"]'
+pattern = '''
+localize{type = 'descriptions', key = desc_key, set = self.set, nodes = desc_nodes, vars = vars}
+'''
+position = 'at'
+payload = '''
+if if_skill_obtained("ygg_queen_of_hatred_upgrade") then
+    localize{type = 'descriptions', key = desc_key.."_u", set = self.set, nodes = desc_nodes, vars = vars}
+    info_queue[#info_queue + 1] = {key = 'lobc_queen_of_hatred_u_info1', set = 'Other'}
+else
+    localize{type = 'descriptions', key = desc_key, set = self.set, nodes = desc_nodes, vars = vars}
+end
+'''
+match_indent = false

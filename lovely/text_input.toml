@@ -1,0 +1,21 @@
+[manifest]
+version = "1.0.0"
+dump_lua = true
+priority = 1
+
+[[patches]]
+[patches.pattern]
+target = 'functions/button_callbacks.lua'
+match_indent = true
+position = 'at'
+pattern = '''
+if args.key == '[' or args.key == ']' then return end
+if args.key == '0' then args.key = 'o' end
+'''
+payload = '''
+local ygg_hook_config = G.CONTROLLER.text_input_hook.config
+if not ygg_hook_config or not ygg_hook_config.ygg_input then
+    if args.key == '0' then args.key = 'o' end
+end
+if args.key == '[' or args.key == ']' then return end
+'''

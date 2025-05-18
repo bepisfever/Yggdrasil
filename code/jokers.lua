@@ -232,13 +232,22 @@ SMODS.Joker {
       if not context.retrigger_joker and not context.blueprint then
          card.ability.current_mult = gains["mult"]
          if context.joker_main then
+            SMODS.calculate_context({mat_joker_main = true})
             if if_skill_obtained("ygg_mult7") then
                SMODS.calculate_effect({mult = gains["mult"]},G.deck)
             end
             SMODS.calculate_effect({mult = gains["mult"], chips = gains["chips"], xchips = gains["xchips"], xmult = gains["xmult"]},G.deck)
          end
 
+         if context.other_joker then
+            SMODS.calculate_context({mat_other_joker = context.other_joker})
+         end
+         if context.other_consumeable then
+            SMODS.calculate_context({mat_other_consumeable = context.other_consumeable})
+         end
+
          if context.end_of_round and context.main_eval then
+            SMODS.calculate_context({mat_end_of_round = true})
             if if_skill_obtained("ygg_spec1_upgrade") then
                local tarot_pool = {}
                for _,v in ipairs(G.consumeables.cards) do
@@ -265,6 +274,7 @@ SMODS.Joker {
          end
 
          if context.individual and context.cardarea == G.play then
+            SMODS.calculate_context({mat_individual = true, cardarea = G.play, other_card = context.other_card})
             if if_skill_obtained("ygg_AKYRS_2") and AKYRS then
                if context.other_card:get_letter_with_pretend() == "y" or context.other_card:get_letter_with_pretend() == "Y" then
                   return{

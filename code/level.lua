@@ -138,13 +138,16 @@ end
 
 function skill_tree_save()
     G.PROFILES[G.SETTINGS.profile].ygg_level = (G.PROFILES[G.SETTINGS.profile].ygg_level or 1) + (G.GAME.ygg_level or 0)
+    G.GAME.ygg_level = 0
     G.PROFILES[G.SETTINGS.profile].ygg_skill_points = (G.PROFILES[G.SETTINGS.profile].ygg_skill_points or 0) + (G.GAME.ygg_skill_points or 0)
+    G.GAME.ygg_skill_points = 0
 
     if not G.PROFILES[G.SETTINGS.profile].skill_perks then G.PROFILES[G.SETTINGS.profile].skill_perks = {} end
-
     for i,v in pairs(G.GAME.skill_perks or {}) do
         G.PROFILES[G.SETTINGS.profile].skill_perks[i] = (G.PROFILES[G.SETTINGS.profile].skill_perks[i] or 0) + v
     end
+
+    G.GAME.skill_perks = {}
 end
 
 local hookTo = Game.update_game_over
@@ -153,6 +156,13 @@ function Game:update_game_over(dt) --Adding levels earned from current run to th
         skill_tree_save()
     end
     hookTo(self, dt)
+end
+
+local hookTo = win_game
+function win_game() --Adding levels earned from current run to the profile.
+    local ret = hookTo()
+    skill_tree_save()
+    return ret
 end
 
 --All methods of obtaining XP.
@@ -407,10 +417,10 @@ end
 
 local get_typeref = Blind.get_type
 function Blind.get_type(self) --Ensuring that defeating a Boss Blind (replacing Big Blinds) won't reset to Small Blind.
-    if (G.GAME.round_resets.blind_states.Small == "Defeated" or G.GAME.round_resets.blind_states.Small == "Skipped") and (G.GAME.round_resets.blind_states.Big == "Current") and if_skill_obtained("ygg_diff4") then
+    if (G.GAME.round_resets.blind_states.Small == "Defeated" or G.GAME.round_resets.blind_states.Small == "Skipped") and (G.GAME.round_resets.blind_states.Big == "Current" or G.GAME.round_resets.blind_states.Big == "Select") and if_skill_obtained("ygg_diff4") then
         return "Big"
     end
-    if G.GAME.round_resets.blind_states.Small == "Current" and if_skill_obtained("ygg_diff4_add") then
+    if (G.GAME.round_resets.blind_states.Small == "Current" or G.GAME.round_resets.blind_states.Small == "Select") and if_skill_obtained("ygg_diff4_add") then
         return "Small"
     end
     return get_typeref(self)

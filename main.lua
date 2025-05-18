@@ -9,7 +9,7 @@ local allFolders = {
 
 local allFiles = {
     ["none"] = {},
-    ["code"] = {"bepismodded", "bepis_shenanigans", "keybinds", "level", "skill_tree_ui", "jokers"},
+    ["code"] = {"bepismodded", "bepis_shenanigans", "keybinds", "level", "skill_tree_ui", "loot_system", "materials", "jokers"},
 } --Same goes with this.
 
 to_big = to_big or function(x) return x end

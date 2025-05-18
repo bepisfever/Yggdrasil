@@ -972,3 +972,20 @@ Yggdrasil.most_played_hand_planet_key = function(random_pick)
     end
     return ret
 end
+
+Yggdrasil.remove_space = function(str)
+    return string.gsub(str, "%s+", "")
+end
+
+Yggdrasil.remove_underline = function(str)
+    return string.gsub(str, "_", "")
+end
+
+Yggdrasil.get_table_length = function(tab)
+    local num = 0
+    for _,_ in pairs(tab) do
+        num = num + 1
+    end
+
+    return num
+end

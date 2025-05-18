@@ -562,9 +562,9 @@ function UIElement:hover()
     if self.config.id == "select_blind_button" then
         --self.config.ref_table
         local check = nil
-        if self.config.ref_table.key == "bl_small" then
+        if self.config.ref_table.key == "bl_small" or self.config.ref_table.small then
             check = "Small"
-        elseif self.config.ref_table.key == "bl_big" then
+        elseif self.config.ref_table.key == "bl_big" or self.config.ref_table.big then
             check = "Big"
         elseif self.config.ref_table.boss then
             check = "Boss"

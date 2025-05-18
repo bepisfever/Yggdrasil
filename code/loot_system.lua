@@ -95,7 +95,7 @@ YggCraftingRecipes = {
     c_soul = {
         recipe = {
             {"cs", "cs", "cs"},
-            {"cs", "cf", "cs"},
+            {"cs", "sf", "cs"},
             {"cs", "cs", "cs"},
         },
         config = {

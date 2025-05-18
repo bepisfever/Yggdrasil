@@ -308,13 +308,13 @@ end
 Yggdrasil.have_item = function(key, amt) --Check if you have that item in inventory, amt stands for amount.
     local amount = 0
     if amt then
-        for _,v in ipairs(G.PROFILES[G.SETTINGS.profile]["YggInventory"]) do
+        for _,v in ipairs(G.PROFILES[G.SETTINGS.profile]["YggInventory"] or {}) do
             if v.id == key then amount = amount + 1 end
         end
 
         if amount >= amt then return true end
     else
-        for _,v in ipairs(G.PROFILES[G.SETTINGS.profile]["YggInventory"]) do
+        for _,v in ipairs(G.PROFILES[G.SETTINGS.profile]["YggInventory"] or {}) do
             if v.id == key then return true end
         end
     end
@@ -323,7 +323,7 @@ end
 
 Yggdrasil.amt_item_inv = function(key) --Return how many of that item you have in inventory. I would suggest using Yggdrasil.have_item instead if you are just checking whether that item exists for performance.
     local amount = 0
-    for _,v in ipairs(G.PROFILES[G.SETTINGS.profile]["YggInventory"]) do
+    for _,v in ipairs(G.PROFILES[G.SETTINGS.profile]["YggInventory"] or {}) do
         if v.id == key then amount = amount + 1 end
     end
 

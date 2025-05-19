@@ -566,7 +566,7 @@ function UIElement:hover()
             check = "Small"
         elseif self.config.ref_table.key == "bl_big" or self.config.ref_table.big then
             check = "Big"
-        elseif self.config.ref_table.boss then
+        else
             check = "Boss"
         end
 
@@ -616,6 +616,7 @@ end_round = function()
     local ret = hookTo()
 
     local blindtype = G.GAME.blind:get_type()
+    if blindtype ~= "Small" and blindtype ~= "Big" and blindtype ~= "Boss" then blindtype = "Boss" end
     for _,v in ipairs(G.GAME["loot_table"][blindtype.."Loots"]) do
         if not G.PROFILES[G.SETTINGS.profile]["YggInventory"] then G.PROFILES[G.SETTINGS.profile]["YggInventory"] = {} end
         for _ = 1, v.amount do

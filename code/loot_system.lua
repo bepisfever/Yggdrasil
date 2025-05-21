@@ -2689,12 +2689,12 @@ function SMODS.calculate_context(context, return_table)
         if Yggdrasil.have_item("misprinted_talisman") then
             for _ = 1, Yggdrasil.amt_item_inv("misprinted_talisman") do
                 local function func()
-                    SMODS.calculate_effect({xmult = (1 + (pseudorandom("ygg_misprinted_talisman", -1, 5) * 0.1)) * gains_multi["xmult"]}, context.other_card)
+                    SMODS.calculate_effect({xmult = (1 + (pseudorandom("ygg_misprinted_talisman", -1, 5) * 0.1)) * gains_multi["xmult"]}, G.deck)
                 end
                 func()
                 if retrigger_times > 0 then
                     for _ = 1, retrigger_times do
-                        SMODS.calculate_effect({message = localize("k_again_ex")}, context.other_card)
+                        SMODS.calculate_effect({message = localize("k_again_ex")}, G.deck)
                         func()
                     end
                 end

@@ -315,6 +315,34 @@ function create_skill_perk_desc(key, perk_info, specific)
         localize({type = 'descriptions', key = "ygg_rstb", set = 'UIPopUp', nodes = nodes[#nodes], vars = loc_vars.vars, scale = loc_vars.scale, text_colour = loc_vars.text_colour, shadow = loc_vars.shadow})
         nodes[#nodes] = desc_from_rows(nodes[#nodes])
         nodes[#nodes].config.colour = loc_vars.background_colour or nodes[#nodes].config.colour
+    elseif specific == "ygg_search_option" then
+        nodes[#nodes+1] = {}
+        local loc_vars = {scale = 1.5}
+        localize({type = 'descriptions', key = "ygg_yso_name", set = 'UIPopUp', nodes = nodes[#nodes], vars = loc_vars.vars, scale = loc_vars.scale, text_colour = G.C.WHITE, shadow = true, float = true})
+        nodes[#nodes] = desc_from_rows(nodes[#nodes])
+        nodes[#nodes].config.colour = G.C.CLEAR
+        nodes[#nodes].config.minh = loc_vars.minh or 0.2
+        nodes[#nodes].config.align = "bm"
+
+        nodes[#nodes+1] = {}
+        local loc_vars = {scale = 0.925}
+        localize({type = 'descriptions', key = "ygg_yso", set = 'UIPopUp', nodes = nodes[#nodes], vars = loc_vars.vars, scale = loc_vars.scale, text_colour = loc_vars.text_colour, shadow = loc_vars.shadow})
+        nodes[#nodes] = desc_from_rows(nodes[#nodes])
+        nodes[#nodes].config.colour = loc_vars.background_colour or nodes[#nodes].config.colour
+    elseif specific == "ygg_auto_delete" then
+        nodes[#nodes+1] = {}
+        local loc_vars = {scale = 1.5}
+        localize({type = 'descriptions', key = "ygg_yad_name", set = 'UIPopUp', nodes = nodes[#nodes], vars = loc_vars.vars, scale = loc_vars.scale, text_colour = G.C.WHITE, shadow = true, float = true})
+        nodes[#nodes] = desc_from_rows(nodes[#nodes])
+        nodes[#nodes].config.colour = G.C.CLEAR
+        nodes[#nodes].config.minh = loc_vars.minh or 0.2
+        nodes[#nodes].config.align = "bm"
+
+        nodes[#nodes+1] = {}
+        local loc_vars = {scale = 0.925}
+        localize({type = 'descriptions', key = "ygg_yad", set = 'UIPopUp', nodes = nodes[#nodes], vars = loc_vars.vars, scale = loc_vars.scale, text_colour = loc_vars.text_colour, shadow = loc_vars.shadow})
+        nodes[#nodes] = desc_from_rows(nodes[#nodes])
+        nodes[#nodes].config.colour = loc_vars.background_colour or nodes[#nodes].config.colour
     else
         nodes[#nodes+1] = {}
         local loc_vars = {scale = 1.5}

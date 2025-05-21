@@ -1,15 +1,15 @@
 --G.GAME.stake (num)
 
 --Welcome to the most bs thing I ever worked on.
-
+G.E_MANAGER.queues.yggdrasil = {} --referenced from Galdur, credits to Eremel :3
 YggMaterialChance = {
     --[[
     ALL rarities should be listed here. Priority is important.
     ]]
-
     uncommon = {chance = 1/4, priority = 1},
     rare = {chance = 1/10, priority = 2},
-    legendary = {chance = 1/25, priority = 3}
+    legendary = {chance = 1/25, priority = 3},
+    exotic = {chance = 1/100, priority = 4},
 }
 YggMaterialList = {
     --[[
@@ -30,13 +30,15 @@ YggMaterialList = {
     - mod_prefix (str): The mod prefix of the material's object.
     - unique (bool): This material/relic will not appear if it's already in the inventory.
     ]]
-
     common = {
         {id = "card_scrap", craft_id = "cs", min_obtain_cap = 1, max_obtain_cap = 3, blind_req = "All", rarity = "common", mod_prefix = "ygg"},
         {id = "half_a_chip", craft_id = "hac", min_obtain_cap = 1, max_obtain_cap = 3, blind_req = "All", rarity = "common", mod_prefix = "ygg"},
     },
     uncommon = {
         {id = "broken_spade", craft_id = "bs", min_obtain_cap = 1, max_obtain_cap = 1, blind_req = "Small", rarity = "uncommon", mod_prefix = "ygg"},
+        {id = "shattered_heart", craft_id = "sh", min_obtain_cap = 1, max_obtain_cap = 1, blind_req = "Small", rarity = "uncommon", mod_prefix = "ygg"},
+        {id = "fractured_diamond", craft_id = "fd", min_obtain_cap = 1, max_obtain_cap = 1, blind_req = "Small", rarity = "uncommon", mod_prefix = "ygg"},
+        {id = "dead_clover", craft_id = "dc", min_obtain_cap = 1, max_obtain_cap = 1, blind_req = "Small", rarity = "uncommon", mod_prefix = "ygg"},
         {id = "harmony_core", craft_id = "hc", min_obtain_cap = 1, max_obtain_cap = 1, blind_req = "Big", rarity = "uncommon", mod_prefix = "ygg"},
         {id = "potassium", craft_id = "pota", min_obtain_cap = 1, max_obtain_cap = 1, blind_req = "Boss", rarity = "uncommon", mod_prefix = "ygg"},
         {id = "astronaut_helmet", craft_id = "ast_h", min_obtain_cap = 1, max_obtain_cap = 1, blind_req = "Big", rarity = "uncommon", mod_prefix = "ygg", unique = true},
@@ -49,6 +51,9 @@ YggMaterialList = {
         {id = "soul_fragment", craft_id = "sf", min_obtain_cap = 1, max_obtain_cap = 1, blind_req = "Boss", rarity = "legendary", mod_prefix = "ygg"},
         {id = "chains_of_eternity", craft_id = "coe", min_obtain_cap = 1, max_obtain_cap = 1, blind_req = "Boss", rarity = "legendary", mod_prefix = "ygg", unique = true},
     },
+    exotic = {
+        {id = "vial_of_rainbow", craft_id = "vor", min_obtain_cap = 1, max_obtain_cap = 1, blind_req = "Boss", rarity = "exotic", mod_prefix = "ygg"},
+    },
 
     --Type sorting here.
     relic = {
@@ -57,21 +62,29 @@ YggMaterialList = {
         {id = "harmony_joker", craft_id = "hj", rarity = "uncommon", mod_prefix = "ygg"},
         {id = "gros_michel", craft_id = "g_m", rarity = "uncommon", mod_prefix = "ygg"},
         {id = "sharp_spear", craft_id = "s_p", rarity = "uncommon", mod_prefix = "ygg"},
+        {id = "cupid_bow", craft_id = "c_b", rarity = "uncommon", mod_prefix = "ygg"},
+        {id = "diamond_staff", craft_id = "d_s", rarity = "uncommon", mod_prefix = "ygg"},
+        {id = "clover_talisman", craft_id = "c_t", rarity = "uncommon", mod_prefix = "ygg"},
         {id = "cavendish", craft_id = "cav", rarity = "rare", mod_prefix = "ygg"},
+        {id = "misprinted_talisman", craft_id = "mt", rarity = "rare", mod_prefix = "ygg"},
         {id = "soul_engine", craft_id = "soul_e", rarity = "legendary", mod_prefix = "ygg"},
+        {id = "rainbow_element", craft_id = "r_e", rarity = "exotic", mod_prefix = "ygg"},
         {id = "chains_of_eternity", craft_id = "coe", min_obtain_cap = 1, max_obtain_cap = 1, blind_req = "Boss", rarity = "legendary", mod_prefix = "ygg", unique = true},
         {id = "astronaut_helmet", craft_id = "ast_h", min_obtain_cap = 1, max_obtain_cap = 1, blind_req = "Big", rarity = "uncommon", mod_prefix = "ygg", unique = true},
     },
-
     material = {
         {id = "card_scrap", craft_id = "cs", min_obtain_cap = 1, max_obtain_cap = 3, blind_req = "All", rarity = "common", mod_prefix = "ygg"},
         {id = "half_a_chip", craft_id = "hac", min_obtain_cap = 1, max_obtain_cap = 3, blind_req = "All", rarity = "common", mod_prefix = "ygg"},
         {id = "broken_spade", craft_id = "bs", min_obtain_cap = 1, max_obtain_cap = 1, blind_req = "Small", rarity = "uncommon", mod_prefix = "ygg"},
+        {id = "shattered_heart", craft_id = "sh", min_obtain_cap = 1, max_obtain_cap = 1, blind_req = "Small", rarity = "uncommon", mod_prefix = "ygg"},
         {id = "harmony_core", craft_id = "hc", min_obtain_cap = 1, max_obtain_cap = 1, blind_req = "Big", rarity = "uncommon", mod_prefix = "ygg"},
         {id = "potassium", craft_id = "pota", min_obtain_cap = 1, max_obtain_cap = 1, blind_req = "Boss", rarity = "uncommon", mod_prefix = "ygg"},
+        {id = "fractured_diamond", craft_id = "fd", min_obtain_cap = 1, max_obtain_cap = 1, blind_req = "Small", rarity = "uncommon", mod_prefix = "ygg"},
+        {id = "dead_clover", craft_id = "dc", min_obtain_cap = 1, max_obtain_cap = 1, blind_req = "Small", rarity = "uncommon", mod_prefix = "ygg"},
         {id = "misprinted_essence", craft_id = "me", min_obtain_cap = 1, max_obtain_cap = 1, blind_req = "Big", rarity = "rare", mod_prefix = "ygg"},
         {id = "potassium_overload", craft_id = "pota_o", min_obtain_cap = 1, max_obtain_cap = 1, blind_req = "Boss", rarity = "rare", mod_prefix = "ygg"},
         {id = "soul_fragment", craft_id = "sf", min_obtain_cap = 1, max_obtain_cap = 1, blind_req = "Boss", rarity = "legendary", mod_prefix = "ygg"},
+        {id = "vial_of_rainbow", craft_id = "vor", min_obtain_cap = 1, max_obtain_cap = 1, blind_req = "Boss", rarity = "exotic", mod_prefix = "ygg"},
     },
 }
 YggCraftingRecipes = {
@@ -92,7 +105,8 @@ YggCraftingRecipes = {
     },
     ]]
 
-    c_soul = {
+    {
+        card_key = "c_soul",
         recipe = {
             {"cs", "cs", "cs"},
             {"cs", "sf", "cs"},
@@ -104,7 +118,8 @@ YggCraftingRecipes = {
             specific_area = "consumeables"
         }
     },
-    j_joker = {
+    {
+        card_key = "j_joker",
         recipe = {
             {"cs", "cs"},
             {"cs", "cs"},
@@ -115,7 +130,8 @@ YggCraftingRecipes = {
             specific_area = "jokers"
         }
     },
-    ygg_mat_ygg_fixed_joker = {
+    {
+        card_key = "ygg_mat_ygg_fixed_joker",
         recipe = {
             {"cs", "cs", "cs"},
             {"cs", "cs", "cs"},
@@ -126,7 +142,8 @@ YggCraftingRecipes = {
             unique = true
         }
     },
-    ygg_mat_ygg_gros_michel = {
+    {
+        card_key = "ygg_mat_ygg_gros_michel",
         recipe = {
             {"cs", "cs", "cs"},
             {"cs", "pota", "cs"},
@@ -137,7 +154,8 @@ YggCraftingRecipes = {
             unique = true
         }
     },
-    ygg_mat_ygg_sharp_spear = {
+    {
+        card_key = "ygg_mat_ygg_sharp_spear",
         recipe = {
             {"bs", "bs"},
             {"bs", "bs"},
@@ -147,7 +165,41 @@ YggCraftingRecipes = {
             unique = true
         }
     },
-    ygg_mat_ygg_cavendish = {
+    {
+        card_key = "ygg_mat_ygg_cupid_bow",
+        recipe = {
+            {"sh", "sh"},
+            {"sh", "sh"},
+        },
+        config = {
+            amount = 1,
+            unique = true
+        }
+    },
+    {
+        card_key = "ygg_mat_ygg_diamond_staff",
+        recipe = {
+            {"fd", "fd"},
+            {"fd", "fd"},
+        },
+        config = {
+            amount = 1,
+            unique = true
+        }
+    },
+    {
+        card_key = "ygg_mat_ygg_clover_talisman",
+        recipe = {
+            {"dc", "dc"},
+            {"dc", "dc"},
+        },
+        config = {
+            amount = 1,
+            unique = true
+        }
+    },
+    {
+        card_key = "ygg_mat_ygg_cavendish",
         recipe = {
             {"pota_o", "g_m"}
         },
@@ -157,7 +209,8 @@ YggCraftingRecipes = {
             no_order = true
         }
     },
-    ygg_mat_ygg_fixed_blue_joker = {
+    {
+        card_key = "ygg_mat_ygg_fixed_blue_joker",
         recipe = {
             {"hac", "hac", "hac"},
             {"hac", "fj", "hac"},
@@ -168,7 +221,8 @@ YggCraftingRecipes = {
             unique = true
         }
     },
-    ygg_mat_ygg_soul_engine = {
+    {
+        card_key = "ygg_mat_ygg_soul_engine",
         recipe = {
             {"cs", "cs", "cs"},
             {"cs", "sf", "cs"},
@@ -179,7 +233,8 @@ YggCraftingRecipes = {
             unique = true
         }
     },
-    ygg_mat_ygg_harmony_joker = {
+    {
+        card_key = "ygg_mat_ygg_harmony_joker",
         recipe = {
             {"fbj", "fj", "hc"}
         },
@@ -189,7 +244,30 @@ YggCraftingRecipes = {
             no_order = true
         }
     },
-}
+    {
+        card_key = "ygg_mat_ygg_rainbow_element",
+        recipe = {
+            {"s_p","c_b","d_s","c_t","vor"}
+        },
+        config = {
+            amount = 1,
+            unique = true,
+            no_order = true
+        }
+    },
+    {
+        card_key = "ygg_mat_ygg_misprinted_talisman",
+        recipe = {
+            {"cs", "cs"},
+            {"cs", "me"},
+        },
+        config = {
+            amount = 1,
+            unique = true
+        }
+    }
+} 
+
 YggRelicEffects = {
     --[[
     Format:
@@ -237,6 +315,25 @@ YggRelicEffects = {
         }
     }
 }
+
+Yggdrasil.get_type_table = function() --Returns a table with items in type tables only.
+    local valid_list = {}
+    for rarity, v in pairs(YggMaterialList) do
+        local valid = true
+        if rarity == "common" then valid = false end
+        if valid then
+            for rarity2,_ in pairs(YggMaterialChance) do
+                if rarity2 == rarity then valid = false break end
+            end
+        end
+
+        if valid then
+            valid_list[rarity] = v
+        end
+    end
+
+    return valid_list
+end
 
 Yggdrasil.reset_inventory = function() --Does exactly like what it says.
     G.PROFILES[G.SETTINGS.profile]["YggInventory"] = {}
@@ -302,7 +399,7 @@ Yggdrasil.get_tk_from_ck = function(craft_key) --Get key/id from craft key/id.
         end
     end
 
-    return nil
+    return craft_key
 end
 
 Yggdrasil.have_item = function(key, amt) --Check if you have that item in inventory, amt stands for amount.
@@ -366,7 +463,7 @@ Yggdrasil.amt_item_inv = function(key) --Return how many of that item you have i
     return amount
 end
 
-Yggdrasil.insert_loot_to_blind = function(key, blind, amt)
+Yggdrasil.insert_loot_to_blind = function(key, blind, amt) --To insert loots to blinds' loot table, should be obvious eonugh.
     local found_mat = nil
 
     for _,rarity_list in pairs(YggMaterialList) do
@@ -402,6 +499,58 @@ Yggdrasil.insert_loot_to_blind = function(key, blind, amt)
             print("blind type isn't correct (needs to be Small, Big, or Boss)")
         end
     end
+end
+
+Yggdrasil.check_mat_conflict = function() --Check the entire YggMaterialList for every conflict in id and craft_id. Useful for debugging.
+    local conflict_ids = {}
+    local conflict_craft_ids = {}
+
+    local valid_list = Yggdrasil.get_type_table()
+
+    for _,v in pairs(valid_list) do
+        for _,mat in ipairs(v) do
+            if not conflict_craft_ids[mat.craft_id] then conflict_craft_ids[mat.craft_id] = {} end
+            conflict_craft_ids[mat.craft_id][#conflict_craft_ids[mat.craft_id]+1] = mat.id
+
+            if not conflict_ids[mat.id] then conflict_ids[mat.id] = {} end
+            conflict_ids[mat.id][#conflict_ids[mat.id]+1] = mat.craft_id
+        end
+    end
+
+    for craft_id,v in pairs(conflict_craft_ids) do
+        if #v > 1 then
+            local add_text = ""
+            for _,id in ipairs(v) do
+                add_text = add_text..id..","
+            end
+            add_text = string.sub(add_text,1,(#add_text-1))
+            print("[Yggdrasil] Confict in craft_id ("..craft_id.."): "..add_text)
+        end
+    end
+
+    for id,v in pairs(conflict_ids) do
+        if #v > 1 then
+            local add_text = ""
+            for _,craft_id in ipairs(v) do
+                add_text = add_text..craft_id..","
+            end
+            add_text = string.sub(add_text,1,(#add_text-1))
+            print("[Yggdrasil] Confict in id ("..id.."): "..add_text)
+        end
+    end
+end
+
+Yggdrasil.get_type_of_item = function(key) --Get the type of the item from its key. (ex: material, relic, etc.)
+    local list = Yggdrasil.get_type_table()
+
+    for typ, typeTable in pairs(list) do
+        for _, mat_info in ipairs(typeTable) do
+            if mat_info.id == key then return typ end
+        end
+    end
+    
+    print("[Yggdrasil, get_type_of_item] Couldn't get item's type, are you sure the key is correct? ("..key..")")
+    return nil
 end
 
 --thank you cardsleeves 
@@ -562,6 +711,7 @@ function UIElement:hover()
     if self.config.id == "select_blind_button" then
         --self.config.ref_table
         local check = nil
+        if self.config.ref_table.small then print(":3") end
         if self.config.ref_table.key == "bl_small" or self.config.ref_table.small then
             check = "Small"
         elseif self.config.ref_table.key == "bl_big" or self.config.ref_table.big then
@@ -579,6 +729,16 @@ function UIElement:hover()
         else
             self.config.h_popup = nil
         end
+    end
+
+    if self.config.id == "ygg_search_option" or self.config.id == "ygg_recipe_search" then
+        self.config.h_popup = create_skill_perk_desc(nil, nil, "ygg_search_option") --im lazy so reusing this :3
+        self.config.h_popup_config = {align="tm", offset = {x=0,y=-0.2}, parent = self}
+    end
+
+    if self.config.id == "ygg_auto_delete" then
+        self.config.h_popup = create_skill_perk_desc(nil, nil, self.config.id) --im lazy so reusing this :3
+        self.config.h_popup_config = {align="tm", offset = {x=0,y=-0.2}, parent = self}
     end
 
     self.config.is_hovered = true
@@ -606,6 +766,8 @@ local game_start_run_ref = Game.start_run
 function Game:start_run(args)
     game_start_run_ref(self, args)
 
+    Yggdrasil.check_mat_conflict()
+
     if not G.GAME["loot_table"] then
         reset_blind_loots()
     end
@@ -616,11 +778,27 @@ end_round = function()
     local ret = hookTo()
 
     local blindtype = G.GAME.blind:get_type()
-    if blindtype ~= "Small" and blindtype ~= "Big" and blindtype ~= "Boss" then blindtype = "Boss" end
+    if not blindtype then blindtype = "Boss" end
     for _,v in ipairs(G.GAME["loot_table"][blindtype.."Loots"]) do
         if not G.PROFILES[G.SETTINGS.profile]["YggInventory"] then G.PROFILES[G.SETTINGS.profile]["YggInventory"] = {} end
+        local rarities_to_delete = {}
+        if G.GAME["YggAutoDelete"] and type(G.GAME["YggAutoDelete"]) == "string" then            
+            local delete_text = string.lower(Yggdrasil.remove_space(G.GAME["YggAutoDelete"]))
+            local begin_pos = 1
+
+            for i = 1 ,#delete_text do
+                local char = string.sub(delete_text,i,i) 
+                if char == "," or i == #delete_text then
+                    rarities_to_delete[string.gsub(string.sub(delete_text,begin_pos,i),",","")] = true
+                    begin_pos = i
+                end
+            end
+        end
+        
         for _ = 1, v.amount do
-            G.PROFILES[G.SETTINGS.profile]["YggInventory"][#G.PROFILES[G.SETTINGS.profile]["YggInventory"]+1] = v.info
+            if not rarities_to_delete[v.info.rarity] then
+                G.PROFILES[G.SETTINGS.profile]["YggInventory"][#G.PROFILES[G.SETTINGS.profile]["YggInventory"]+1] = v.info
+            end
         end
     end
     reset_blind_loots(blindtype)
@@ -716,7 +894,11 @@ function Card:stop_drag()
             end
         end
 
-        if YggCraftingRecipes[self.config.center.key]["config"] and YggCraftingRecipes[self.config.center.key]["config"]["unique"] then
+        local found_recipe = nil
+        for _,v in ipairs(YggCraftingRecipes) do
+            if v.card_key and v.card_key == self.config.center.key then found_recipe = v end
+        end
+        if found_recipe["config"] and found_recipe["config"]["unique"] then
             local already_exist = false
 
             for _,v in ipairs(G.PROFILES[G.SETTINGS.profile]["YggInventory"]) do
@@ -745,8 +927,8 @@ function Card:stop_drag()
 
             local recipe_list = nil
             local materials = {}
-            for key,recipe_info in pairs(YggCraftingRecipes) do
-                if key == self.config.center.key then recipe_list = recipe_info["recipe"] end
+            for _,recipe_info in pairs(YggCraftingRecipes) do
+                if recipe_info.card_key == self.config.center.key then recipe_list = recipe_info["recipe"] end
             end
             if recipe_list then
                 for _,row in ipairs(recipe_list) do
@@ -788,7 +970,11 @@ function Card:stop_drag()
                 end
 
                 G["ygg_crafting_show"]:remove_card(self)
-                if not YggCraftingRecipes[self.config.center.key]["config"].immediate_emplace then
+                local found_recipe = nil
+                for _,v in ipairs(YggCraftingRecipes) do
+                    if v.card_key and v.card_key == self.config.center.key then found_recipe = v end
+                end
+                if not found_recipe["config"].immediate_emplace then
                     local item = Yggdrasil.get_item(Yggdrasil.get_true_key(self))
                     if item then
                         G.PROFILES[G.SETTINGS.profile]["YggInventory"][#G.PROFILES[G.SETTINGS.profile]["YggInventory"]+1] = item
@@ -803,11 +989,11 @@ function Card:stop_drag()
                     }))
                     area:align_cards()
                 else
-                    for _ = 1, YggCraftingRecipes[self.config.center.key]["config"].amount or 1 do
-                        if not YggCraftingRecipes[self.config.center.key]["config"].specific_area then
+                    for _ = 1, found_recipe["config"].amount or 1 do
+                        if not found_recipe["config"].specific_area then
                             SMODS.add_card({key = self.config.center.key})
                         else
-                            SMODS.add_card({key = self.config.center.key, area = G[YggCraftingRecipes[self.config.center.key]["config"].specific_area]})
+                            SMODS.add_card({key = self.config.center.key, area = G[found_recipe["config"].specific_area]})
                         end
                     end
                     G.E_MANAGER:add_event(Event({
@@ -839,7 +1025,14 @@ function Card:stop_drag()
         end
     end
 
-    if area and area ~= self.area then
+    local valid_area = false
+    for i = 1,3 do
+        if area == G["ygg_inventory_cardarea"..i] then valid_area = true break end
+        if area == G["ygg_crafting_cardarea"..i] then valid_area = true break end
+        if area == G["ygg_delete_cardarea"..i] then valid_area = true break end
+    end
+
+    if area and area ~= self.area and valid_area then
         local cardarea = nil
         local cardarea_type = nil
         for i = 1,3 do
@@ -993,6 +1186,22 @@ G.FUNCS.to_previous_inventory_page = function(e)
     G.FUNCS.ygg_open_inventory()
 end
 
+G.FUNCS.to_next_recipe_page = function(e)
+    G.GAME["YggRecipePage"] = (G.GAME["YggRecipePage"] or 1) + 1
+    if G.GAME["YggRecipePage"] > (e.config.page) then
+        G.GAME["YggRecipePage"] = 1
+    end
+    G.FUNCS.ygg_open_inventory()
+end
+
+G.FUNCS.to_previous_recipe_page = function(e)
+    G.GAME["YggRecipePage"] = (G.GAME["YggRecipePage"] or 1) - 1
+    if G.GAME["YggRecipePage"] <= 0 then
+        G.GAME["YggRecipePage"] = (e.config.page)
+    end
+    G.FUNCS.ygg_open_inventory()
+end
+
 G.FUNCS.ygg_switch_sort_type = function(e)
     local sort_type = e.config.sort_type or nil
     if sort_type then
@@ -1044,6 +1253,24 @@ G.FUNCS.ygg_delete_all = function()
             end
         end
     end
+end
+
+G.FUNCS.ygg_clear_text = function()
+    G.GAME["YggSearchOption"] = ""
+    G.GAME["YggSearchOptionInput"] = ""
+    G.FUNCS.ygg_open_inventory()
+end
+
+G.FUNCS.ygg_clear_delete_text = function()
+    G.GAME["YggAutoDelete"] = ""
+    G.GAME["YggAutoDeleteInput"] = ""
+    G.FUNCS.ygg_open_inventory()
+end
+
+G.FUNCS.ygg_clear_recipe_text = function()
+    G.GAME["YggRecipe"] = ""
+    G.GAME["YggRecipeInput"] = ""
+    G.FUNCS.ygg_open_inventory()
 end
 
 --[[
@@ -1200,6 +1427,12 @@ function ygg_create_text_input(args)
     return t
 end
 
+local hookTo = G.FUNCS.exit_overlay_menu
+G.FUNCS.exit_overlay_menu = function()
+    G.E_MANAGER:clear_queue('yggdrasil')
+    hookTo()
+end
+
 function create_inventory_UI(args)
     args = args or {}
     local back_func = args.back_func or "exit_overlay_menu"
@@ -1208,6 +1441,41 @@ function create_inventory_UI(args)
     local area_minh = 7
     local cardarea_padding = -0.5
     local true_page = nil
+    local true_recipe_page = nil
+
+    local function clear_ygg_areas()
+        for i = 1,3 do
+            if G["ygg_delete_cardarea"..i] then
+                G["ygg_delete_cardarea"..i]:remove()
+                G["ygg_delete_cardarea"..i] = nil
+            end
+            if G["ygg_inventory_cardarea"..i] then
+                G["ygg_inventory_cardarea"..i]:remove()
+                G["ygg_inventory_cardarea"..i] = nil
+            end
+            if G["ygg_crafting_cardarea"..i] then
+                G["ygg_crafting_cardarea"..i]:remove()
+                G["ygg_crafting_cardarea"..i] = nil
+            end
+            if G["ygg_recipe_cardarea"..i] then
+                G["ygg_recipe_cardarea"..i]:remove()
+                G["ygg_recipe_cardarea"..i] = nil
+            end
+            if G["ygg_placeholder_cardarea"..i] then
+                G["ygg_placeholder_cardarea"..i]:remove()
+                G["ygg_placeholder_cardarea"..i] = nil
+            end
+        end
+
+        if G["ygg_recipe_cardarea4"] then
+            G["ygg_recipe_cardarea4"]:remove()
+            G["ygg_recipe_cardarea4"] = nil
+        end
+        if G["ygg_crafting_show"] then G["ygg_crafting_show"]:remove(); G["ygg_crafting_show"] = nil end
+    end
+
+    clear_ygg_areas()
+    G.E_MANAGER:clear_queue('yggdrasil')
 
     for i = 1,3 do
         if G["ygg_inventory_cardarea"..i] then
@@ -1237,6 +1505,45 @@ function create_inventory_UI(args)
             )
             G["ygg_delete_cardarea"..i].states.collide.can = true
         end
+    elseif G.GAME["YggSecondAreaMode"] and G.GAME["YggSecondAreaMode"] == "Recipes" then
+        local testing = true
+        for i = 1,3 do
+            if G["ygg_recipe_cardarea"..i] then
+                G["ygg_recipe_cardarea"..i]:remove()
+                G["ygg_recipe_cardarea"..i] = nil
+            end
+            G["ygg_recipe_cardarea"..i] = CardArea(
+                G.ROOM.T.x + 0.2 * G.ROOM.T.w / 2, G.ROOM.T.h,
+                4.25 * G.CARD_W/1.35,
+                0.95 * G.CARD_H,
+                {card_limit = 5, type = 'title', highlight_limit = 0}
+            )
+            G["ygg_recipe_cardarea"..i].states.collide.can = testing
+        end
+        for i = 1,2 do
+            if G["ygg_placeholder_cardarea"..i] then
+                G["ygg_placeholder_cardarea"..i]:remove()
+                G["ygg_placeholder_cardarea"..i] = nil
+            end
+            G["ygg_placeholder_cardarea"..i] = CardArea(
+                G.ROOM.T.x + 0.2 * G.ROOM.T.w / 2, G.ROOM.T.h,
+                4.25 * G.CARD_W/4.5,
+                0.95 * G.CARD_H,
+                {card_limit = 5, type = 'title', highlight_limit = 0}
+            )
+            G["ygg_placeholder_cardarea"..i].states.collide.can = false
+        end
+        if G["ygg_recipe_cardarea4"] then
+            G["ygg_recipe_cardarea4"]:remove()
+            G["ygg_recipe_cardarea4"] = nil
+        end
+        G["ygg_recipe_cardarea4"] = CardArea(
+            G.ROOM.T.x + 0.2 * G.ROOM.T.w / 2, G.ROOM.T.h,
+            4.25 * G.CARD_W/4.5,
+            0.95 * G.CARD_H,
+            {card_limit = 5, type = 'title', highlight_limit = 0}
+        )
+        G["ygg_recipe_cardarea4"].states.collide.can = testing
     else
         for i = 1,3 do
             if G["ygg_crafting_cardarea"..i] then
@@ -1252,6 +1559,7 @@ function create_inventory_UI(args)
             G["ygg_crafting_cardarea"..i].states.collide.can = true
         end
 
+        if G["ygg_crafting_show"] then G["ygg_crafting_show"]:remove(); G["ygg_crafting_show"] = nil end
         G["ygg_crafting_show"] = CardArea(
             G.ROOM.T.x + 0.2 * G.ROOM.T.w / 2, G.ROOM.T.h,
             4.25 * G.CARD_W,
@@ -1261,12 +1569,13 @@ function create_inventory_UI(args)
         G["ygg_crafting_show"].states.collide.can = false
     end
 
-    if YggdrasilDebugCraftingMode then
+    if YggdrasilDebugCraftingMode then --please dont turn this on
         for i = 1,3 do
             for _, key in ipairs({"ygg_mat_ygg_card_scrap","ygg_mat_ygg_card_scrap","ygg_mat_ygg_card_scrap","ygg_mat_ygg_card_scrap","ygg_mat_ygg_card_scrap"}) do
                 local card = Card(G["ygg_inventory_cardarea"..i].T.x + G["ygg_inventory_cardarea"..i].T.w / 2, G["ygg_inventory_cardarea"..i].T.y,
                     G.CARD_W, G.CARD_H, G.P_CARDS.empty,
                     G.P_CENTERS[key])
+                card.children.back:remove()
                 card.children.back = Sprite(card.T.x, card.T.y, card.T.w, card.T.h, G.ASSET_ATLAS["ygg_placeholder_mat"], { x = 0, y = 0 })
                 card.children.back.states.hover = card.states.hover
                 card.children.back.states.click = card.states.click
@@ -1473,7 +1782,7 @@ function create_inventory_UI(args)
                             end
                         return true 
                         end
-                    }))
+                    }), "yggdrasil")
                 end
             end
         end
@@ -1503,6 +1812,8 @@ function create_inventory_UI(args)
                         end
                     end
                 end
+            elseif G.GAME["YggSecondAreaMode"] and G.GAME["YggSecondAreaMode"] == "Recipes" then
+                --code here idk
             else
                 if G.PROFILES[G.SETTINGS.profile]["YggCrafting"..i] then
                     for _,v in ipairs(G.PROFILES[G.SETTINGS.profile]["YggCrafting"..i]) do
@@ -1531,47 +1842,205 @@ function create_inventory_UI(args)
         end
     end
 
+    if (G.GAME["YggRecipePage"] or 1) == 0 then G.GAME["YggRecipePage"] = 1 end
+
+    if G.GAME["YggSecondAreaMode"] and G.GAME["YggSecondAreaMode"] == "Recipes" then --Recipe searching code.
+        local valid_recipe_list = YggCraftingRecipes
+        local fixed_recipe_list = YggCraftingRecipes --its not actually fixed but im lazy to change the name lol
+
+        if G.GAME["YggRecipe"] and type(G.GAME["YggRecipe"]) == "string" then
+            local search = string.lower(Yggdrasil.remove_space(G.GAME["YggRecipe"]))
+
+            if string.find(search, "(rarity=", nil, true) then
+                local start_type, end_type = string.find(search, "(rarity=", nil, true)
+                
+                local end_pos = end_type
+                for i = end_type, #search do
+                    if string.sub(search, i, i) == ")" or i == #search then
+                        end_pos = i
+                        break
+                    end
+                end
+
+                local rarity_cube = string.sub(search, start_type, end_pos)
+                local actual_rarity = string.gsub(rarity_cube, "%(rarity=", "")
+                actual_rarity = string.gsub(actual_rarity, "%)", "")
+
+                if YggMaterialList[actual_rarity] then
+                    local temp_recipe = {}
+
+                    for _,v in ipairs(fixed_recipe_list) do
+                        if v.card_key then
+                            if not v.config.immediate_emplace then
+                                local true_key = Yggdrasil.get_true_key(nil,v.card_key,(v.config.mod_prefix or "ygg"))
+                                if true_key then
+                                    local item = Yggdrasil.get_item(true_key)
+                                    if item.rarity == actual_rarity then
+                                        --print(true_key)
+                                        temp_recipe[#temp_recipe+1] = v
+                                    end
+                                end
+                            end
+                        end
+                    end
+
+                    fixed_recipe_list = temp_recipe
+                end
+
+                local temp_search_option = nil
+                if rarity_cube == "(rarity="..actual_rarity then
+                    temp_search_option = string.gsub(search,"%(rarity="..actual_rarity,"")
+                elseif rarity_cube == "(rarity="..actual_rarity..")" then
+                    temp_search_option = string.gsub(search,"%(rarity="..actual_rarity.."%)","")
+                else
+                    print("something went wrong with yggdrasil's rarity sorting in search bar - please show this message to BepisFever in Balatro discord, thanks and sorry.")
+                end
+
+                search = temp_search_option
+            end
+
+            if string.find(search, "(type=", nil, true) then
+                local start_type, end_type = string.find(search, "(type=", nil, true)
+                
+                local end_pos = end_type
+                for i = end_type, #search do
+                    if string.sub(search, i, i) == ")" or i == #search then
+                        end_pos = i
+                        break
+                    end
+                end
+
+                local rarity_cube = string.sub(search, start_type, end_pos)
+                local actual_rarity = string.gsub(rarity_cube, "%(type=", "")
+                actual_rarity = string.gsub(actual_rarity, "%)", "")
+
+                if YggMaterialList[actual_rarity] then
+                    local temp_recipe = {}
+
+                    for _,v in ipairs(fixed_recipe_list) do
+                        if v.card_key then
+                            if not v.config.immediate_emplace then
+                                local true_key = Yggdrasil.get_true_key(nil,v.card_key,(v.config.mod_prefix or "ygg"))
+                                if true_key then
+                                    local type = Yggdrasil.get_type_of_item(true_key)
+                                    if type == actual_rarity then
+                                        temp_recipe[#temp_recipe+1] = v
+                                    end
+                                end
+                            end
+                        end
+                    end
+
+                    fixed_recipe_list = temp_recipe
+                end
+
+                local temp_search_option = nil
+                if rarity_cube == "(type="..actual_rarity then
+                    temp_search_option = string.gsub(search,"%(type="..actual_rarity,"")
+                elseif rarity_cube == "(type="..actual_rarity..")" then
+                    temp_search_option = string.gsub(search,"%(type="..actual_rarity.."%)","")
+                else
+                    print("something went wrong with yggdrasil's type sorting in search bar - please show this message to BepisFever in Balatro discord, thanks and sorry.")
+                end
+
+                search = temp_search_option
+            end
+
+            local temp_list = {}
+            for _,v in ipairs(fixed_recipe_list) do
+                if string.find(string.lower(Yggdrasil.remove_underline(v.card_key)), search) then
+                    temp_list[#temp_list+1] = v
+                end
+            end
+            fixed_recipe_list = temp_list
+
+            valid_recipe_list = fixed_recipe_list
+        end
+
+        true_recipe_page = #valid_recipe_list
+        G.GAME["YggRecipePage"] = math.min((G.GAME["YggRecipePage"] or 1), true_recipe_page)
+
+        local recipe_to_choose = valid_recipe_list[(G.GAME["YggRecipePage"] or 1)]
+        if recipe_to_choose then
+            local key = recipe_to_choose.card_key
+            local card = SMODS.add_card({key = key, no_edition = true, area = G["ygg_recipe_cardarea4"]})
+            --[[card.children.back.states.hover = false
+            card.children.back.states.click = false]]
+            card.children.back.states.drag.can = false
+            card.children.back.states.collide.can = false
+
+            for line,mats in ipairs(recipe_to_choose.recipe) do
+                for _,mat in ipairs(mats) do
+                    local id = Yggdrasil.get_tk_from_ck(mat)
+                    local mat_info = Yggdrasil.get_item(id)
+                    local key2 = "ygg_mat_"..mat_info.mod_prefix.."_"..id
+
+                    G.E_MANAGER:add_event(Event({
+                        func = function() 
+                            local material = SMODS.add_card({key = key2, no_edition = true, area = G["ygg_recipe_cardarea"..line]})
+                            material.children.back.states.drag.can = false
+                            material.children.back.states.collide.can = false
+                            return true 
+                        end
+                    }), "yggdrasil")
+                end
+            end
+
+            G.E_MANAGER:add_event(Event({
+                func = function() 
+                    for i = 1,3 do
+                        if G["ygg_recipe_cardarea"..i] and G["ygg_recipe_cardarea"..i].cards then
+                            for _,c in ipairs(G["ygg_recipe_cardarea"..i].cards) do
+                                c.children.back.states.drag.can = false
+                                c.children.back.states.collide.can = false
+                            end
+                        end
+                    end
+                    return true 
+                end
+            }), "yggdrasil")
+        end
+    end
+
     if not G.GAME["YggSearchOptionInput"] then G.GAME["YggSearchOptionInput"] = "" end
     if not G.GAME["YggSearchOption"] then G.GAME["YggSearchOption"] = "" end
-
-    local second_area_nodes = {
-        {n = G.UIT.R, config = {align = "tm", padding = 0.2}, nodes = {
-            {n = G.UIT.O, config = {align = "tm",object = DynaText({scale = 0.75, string = localize('ygg_crafting_area_text'), maxw = 9, colours = { G.C.WHITE }, float = true, silent = true, shadow = true})}}
-        }},
-        {n = G.UIT.R, config = {align = "tr", padding = 0.02}, nodes = {
-            {n = G.UIT.C, config = {align = "tr", minw = 0.5, minh = 0.5, padding = 0.1, r = 0.1, hover = true, colour = G.C.RED, shadow = true, button = "ygg_switch_second_area", second_area = "Delete"}, nodes = {
-                {n = G.UIT.R, config = { align = "cm", padding = 0.05 }, nodes = {
-                    {n = G.UIT.T, config = {text = localize("ygg_delete_text"), scale = 0.4, colour = G.C.UI.TEXT_LIGHT}}
-                    }
-                },
-                }
-            },   
-        }},
-        {n = G.UIT.R, config = {align = "tm", padding = cardarea_padding}, nodes = {
-            {n = G.UIT.O, config = {align = "tm", object = G["ygg_crafting_cardarea1"]}}
-        }},
-        {n = G.UIT.R, config = {align = "tm", padding = cardarea_padding}, nodes = {
-            {n = G.UIT.O, config = {align = "tm", object = G["ygg_crafting_cardarea2"]}}
-        }},
-        {n = G.UIT.R, config = {align = "tm", padding = cardarea_padding}, nodes = {
-            {n = G.UIT.O, config = {align = "tm", object = G["ygg_crafting_cardarea3"]}}
-        }},
-        {n = G.UIT.R, config = {align = "tm", padding = cardarea_padding}, nodes = {
-            {n = G.UIT.O, config = {align = "tm", object = DynaText({scale = 0.4, string = localize('ygg_craft_guide'), maxw = 9, colours = { G.C.GREY }, silent = true})}},
-        }},
-        {n = G.UIT.R, config = {align = "cm", padding = cardarea_padding, colour = {G.C.GREY[1], G.C.GREY[2], G.C.GREY[3],0.3}, r = 0.3}, nodes = {
-            {n = G.UIT.O, config = {align = "tm", object = G["ygg_crafting_show"]}}
-        }},
-    }
-    if G.GAME["YggSecondAreaMode"] and G.GAME["YggSecondAreaMode"] == "Delete" then
+    if not G.GAME["YggRecipeInput"] then G.GAME["YggRecipeInput"] = "" end
+    if not G.GAME["YggRecipe"] then G.GAME["YggRecipe"] = "" end
+    if not G.GAME["YggAutoDeleteInput"] then G.GAME["YggAutoDeleteInput"] = "" end
+    if not G.GAME["YggAutoDelete"] then G.GAME["YggAutoDelete"] = "" end
+    
+    local second_area_nodes = {}
+    if G.GAME["YggSecondAreaMode"] and G.GAME["YggSecondAreaMode"] == "Delete" then --Delete Area
         second_area_nodes = {
             {n = G.UIT.R, config = {align = "tm", padding = 0.2}, nodes = {
                 {n = G.UIT.O, config = {align = "tm",object = DynaText({scale = 0.75, string = localize('ygg_delete_area_text'), maxw = 9, colours = { G.C.WHITE }, float = true, silent = true, shadow = true})}}
             }},
             {n = G.UIT.R, config = {align = "tr", padding = 0.02}, nodes = {
+                ygg_create_text_input({w = 3, prompt_text = G.GAME["YggAutoDelete"], id = "ygg_auto_delete", extended_corpus = true, ref_table = G.GAME, ref_value = 'YggAutoDeleteInput',
+                    callback = function(_)
+                        G.GAME["YggAutoDelete"] = G.GAME["YggAutoDeleteInput"]
+                        G.FUNCS.ygg_open_inventory()
+                    end
+                }),
+                {n = G.UIT.C, config = {align = "tr", minw = 0.5, minh = 0.5, padding = 0.1, r = 0.1, hover = true, colour = G.C.RED, shadow = true, button = "ygg_clear_delete_text"}, nodes = {
+                    {n = G.UIT.R, config = { align = "cm", padding = 0.05 }, nodes = {
+                        {n = G.UIT.T, config = {text = localize("ygg_clear"), scale = 0.4, colour = G.C.UI.TEXT_LIGHT}}
+                        }
+                    },
+                    }
+                },   
+            }},
+            {n = G.UIT.R, config = {align = "tr", padding = 0.02}, nodes = {
                 {n = G.UIT.C, config = {align = "tr", minw = 0.5, minh = 0.5, padding = 0.1, r = 0.1, hover = true, colour = G.C.RED, shadow = true, button = "ygg_switch_second_area", second_area = "Craft"}, nodes = {
                     {n = G.UIT.R, config = { align = "cm", padding = 0.05 }, nodes = {
                         {n = G.UIT.T, config = {text = localize("ygg_craft_text"), scale = 0.4, colour = G.C.UI.TEXT_LIGHT}}
+                        }
+                    },
+                    }
+                },
+                {n = G.UIT.C, config = {align = "tr", minw = 0.5, minh = 0.5, padding = 0.1, r = 0.1, hover = true, colour = G.C.RED, shadow = true, button = "ygg_switch_second_area", second_area = "Recipes"}, nodes = {
+                    {n = G.UIT.R, config = { align = "cm", padding = 0.05 }, nodes = {
+                        {n = G.UIT.T, config = {text = localize("ygg_recipes_text"), scale = 0.4, colour = G.C.UI.TEXT_LIGHT}}
                         }
                     },
                     }
@@ -1594,6 +2063,204 @@ function create_inventory_UI(args)
                     },
                     }
                 },   
+            }},
+        }
+    elseif G.GAME["YggSecondAreaMode"] and G.GAME["YggSecondAreaMode"] == "Recipes" then --Recipe Area
+        second_area_nodes = {
+            {n = G.UIT.R, config = {align = "tm", padding = 0.2}, nodes = {
+                {n = G.UIT.O, config = {align = "tm",object = DynaText({scale = 0.75, string = localize('ygg_recipe_area_text'), maxw = 9, colours = { G.C.WHITE }, float = true, silent = true, shadow = true})}}
+            }},
+            {n = G.UIT.R, config = {align = "tr", padding = 0.02}, nodes = {
+                ygg_create_text_input({w = 3, prompt_text = G.GAME["YggRecipe"], id = "ygg_recipe_search", extended_corpus = true, ref_table = G.GAME, ref_value = 'YggRecipeInput',
+                    callback = function(_)
+                        G.GAME["YggRecipe"] = G.GAME["YggRecipeInput"]
+                        G.FUNCS.ygg_open_inventory()
+                    end
+                }),
+                {n = G.UIT.C, config = {align = "tr", minw = 0.5, minh = 0.5, padding = 0.1, r = 0.1, hover = true, colour = G.C.RED, shadow = true, button = "ygg_clear_recipe_text"}, nodes = {
+                    {n = G.UIT.R, config = { align = "cm", padding = 0.05 }, nodes = {
+                        {n = G.UIT.T, config = {text = localize("ygg_clear"), scale = 0.4, colour = G.C.UI.TEXT_LIGHT}}
+                        }
+                    },
+                    }
+                },   
+            }},
+            {n = G.UIT.R, config = {align = "tr", padding = 0.02}, nodes = {
+                {n = G.UIT.C, config = {align = "tr", minw = 0.5, minh = 0.5, padding = 0.1, r = 0.1, hover = true, colour = G.C.RED, shadow = true, button = "ygg_switch_second_area", second_area = "Craft"}, nodes = {
+                    {n = G.UIT.R, config = { align = "cm", padding = 0.05 }, nodes = {
+                        {n = G.UIT.T, config = {text = localize("ygg_craft_text"), scale = 0.4, colour = G.C.UI.TEXT_LIGHT}}
+                        }
+                    },
+                    }
+                }, 
+                {n = G.UIT.C, config = {align = "tr", minw = 0.5, minh = 0.5, padding = 0.1, r = 0.1, hover = true, colour = G.C.RED, shadow = true, button = "ygg_switch_second_area", second_area = "Delete"}, nodes = {
+                    {n = G.UIT.R, config = { align = "cm", padding = 0.05 }, nodes = {
+                        {n = G.UIT.T, config = {text = localize("ygg_delete_text"), scale = 0.4, colour = G.C.UI.TEXT_LIGHT}}
+                        }
+                    },
+                    }
+                },     
+            }},
+            {n = G.UIT.R, config = {align = "tm", padding = 0.2}, nodes = {
+                {n = G.UIT.C, config = {align = "tm", padding = 0.2}, nodes = {
+                    {n = G.UIT.R, config = {align = "tm", padding = cardarea_padding}, nodes = {
+                        {n = G.UIT.O, config = {align = "tm", object = G["ygg_recipe_cardarea1"]}}
+                    }},
+                    {n = G.UIT.R, config = {align = "tm", padding = cardarea_padding}, nodes = {
+                        {n = G.UIT.O, config = {align = "tm", object = G["ygg_recipe_cardarea2"]}}
+                    }},
+                    {n = G.UIT.R, config = {align = "tm", padding = cardarea_padding}, nodes = {
+                        {n = G.UIT.O, config = {align = "tm", object = G["ygg_recipe_cardarea3"]}}
+                    }},
+                }},
+                {n=G.UIT.C, config={align = "cm",padding = args.padding or 0.2, minw = 1}, nodes= 
+                    {
+                        {n = G.UIT.O, config = {align = "tm",object = DynaText({scale = 0.75, string = ">", maxw = 9, colours = { G.C.WHITE }, float = true, silent = true, shadow = true})}}
+                    }
+                },
+                {n = G.UIT.C, config = {align = "tm", padding = 0.2}, nodes = {
+                    {n = G.UIT.R, config = {align = "tm", padding = cardarea_padding}, nodes = {
+                        {n = G.UIT.O, config = {align = "tm", object = G["ygg_placeholder_cardarea1"]}}
+                    }},
+                    {n = G.UIT.R, config = {align = "tm", padding = cardarea_padding}, nodes = {
+                        {n = G.UIT.O, config = {align = "tm", object = G["ygg_recipe_cardarea4"]}}
+                    }},
+                    {n = G.UIT.R, config = {align = "tm", padding = cardarea_padding}, nodes = {
+                        {n = G.UIT.O, config = {align = "tm", object = G["ygg_placeholder_cardarea2"]}}
+                    }},
+                }},
+            }},
+            {n = G.UIT.R, config = {align = "cm", padding = 0.02}, nodes = {
+                {
+                    n = G.UIT.C,
+                    config = {
+                        align = "cm",
+                        minw = 0.5,
+                        minh = 0.5,
+                        padding = 0.1,
+                        r = 0.1,
+                        hover = true,
+                        colour = G.C.RED,
+                        shadow = true,
+                        button = "to_previous_recipe_page",
+                        page = true_recipe_page
+                    },
+                    nodes = {
+                        {
+                            n = G.UIT.R,
+                            config = { align = "cm", padding = 0.05 },
+                            nodes = {
+                                {
+                                    n = G.UIT.T,
+                                    config = {
+                                        text = "<",
+                                        scale = 0.4,
+                                        colour = G.C.UI.TEXT_LIGHT
+                                    }
+                                }
+                            }
+                        },
+                    }
+                },   
+
+                {
+                    n = G.UIT.C,
+                    config = {
+                        align = "cm",
+                        minw = 1,
+                        minh = 0.5,
+                        padding = 0.1,
+                        r = 0.1,
+                        hover = true,
+                        colour = G.C.RED,
+                        shadow = true,
+                    },
+                    nodes = {
+                        {
+                            n = G.UIT.R,
+                            config = { align = "cm", padding = 0.05 },
+                            nodes = {
+                                {
+                                    n = G.UIT.T,
+                                    config = {
+                                        text = localize("ygg_page").." "..(G.GAME["YggRecipePage"] or 1).."/"..(true_recipe_page),
+                                        scale = 0.4,
+                                        colour = G.C.UI.TEXT_LIGHT
+                                    }
+                                }
+                            }
+                        },
+                    }
+                },   
+
+                {
+                    n = G.UIT.C,
+                    config = {
+                        align = "cm",
+                        minw = 0.5,
+                        minh = 0.5,
+                        padding = 0.1,
+                        r = 0.1,
+                        hover = true,
+                        colour = G.C.RED,
+                        shadow = true,
+                        button = "to_next_recipe_page",
+                        page = true_recipe_page
+                    },
+                    nodes = {
+                        {
+                            n = G.UIT.R,
+                            config = { align = "cm", padding = 0.05 },
+                            nodes = {
+                                {
+                                    n = G.UIT.T,
+                                    config = {
+                                        text = ">",
+                                        scale = 0.4,
+                                        colour = G.C.UI.TEXT_LIGHT
+                                    }
+                                }
+                            }
+                        },
+                    }
+                },   
+            }},
+        }
+    else --Crafting Area
+        second_area_nodes = {
+            {n = G.UIT.R, config = {align = "tm", padding = 0.2}, nodes = {
+                {n = G.UIT.O, config = {align = "tm",object = DynaText({scale = 0.75, string = localize('ygg_crafting_area_text'), maxw = 9, colours = { G.C.WHITE }, float = true, silent = true, shadow = true})}}
+            }},
+            {n = G.UIT.R, config = {align = "tr", padding = 0.02}, nodes = {
+                {n = G.UIT.C, config = {align = "tr", minw = 0.5, minh = 0.5, padding = 0.1, r = 0.1, hover = true, colour = G.C.RED, shadow = true, button = "ygg_switch_second_area", second_area = "Delete"}, nodes = {
+                    {n = G.UIT.R, config = { align = "cm", padding = 0.05 }, nodes = {
+                        {n = G.UIT.T, config = {text = localize("ygg_delete_text"), scale = 0.4, colour = G.C.UI.TEXT_LIGHT}}
+                        }
+                    },
+                    }
+                },
+                {n = G.UIT.C, config = {align = "tr", minw = 0.5, minh = 0.5, padding = 0.1, r = 0.1, hover = true, colour = G.C.RED, shadow = true, button = "ygg_switch_second_area", second_area = "Recipes"}, nodes = {
+                    {n = G.UIT.R, config = { align = "cm", padding = 0.05 }, nodes = {
+                        {n = G.UIT.T, config = {text = localize("ygg_recipes_text"), scale = 0.4, colour = G.C.UI.TEXT_LIGHT}}
+                        }
+                    },
+                    }
+                },
+            }},
+            {n = G.UIT.R, config = {align = "tm", padding = cardarea_padding}, nodes = {
+                {n = G.UIT.O, config = {align = "tm", object = G["ygg_crafting_cardarea1"]}}
+            }},
+            {n = G.UIT.R, config = {align = "tm", padding = cardarea_padding}, nodes = {
+                {n = G.UIT.O, config = {align = "tm", object = G["ygg_crafting_cardarea2"]}}
+            }},
+            {n = G.UIT.R, config = {align = "tm", padding = cardarea_padding}, nodes = {
+                {n = G.UIT.O, config = {align = "tm", object = G["ygg_crafting_cardarea3"]}}
+            }},
+            {n = G.UIT.R, config = {align = "tm", padding = cardarea_padding}, nodes = {
+                {n = G.UIT.O, config = {align = "tm", object = DynaText({scale = 0.4, string = localize('ygg_craft_guide'), maxw = 9, colours = { G.C.GREY }, silent = true})}},
+            }},
+            {n = G.UIT.R, config = {align = "cm", padding = cardarea_padding, colour = {G.C.GREY[1], G.C.GREY[2], G.C.GREY[3],0.3}, r = 0.3}, nodes = {
+                {n = G.UIT.O, config = {align = "tm", object = G["ygg_crafting_show"]}}
             }},
         }
     end
@@ -1619,6 +2286,13 @@ function create_inventory_UI(args)
                                                     G.FUNCS.ygg_open_inventory()
                                                 end
                                             }),
+                                            {n = G.UIT.C, config = {align = "tr", minw = 0.5, minh = 0.5, padding = 0.1, r = 0.1, hover = true, colour = G.C.RED, shadow = true, button = "ygg_clear_text"}, nodes = {
+                                                {n = G.UIT.R, config = { align = "cm", padding = 0.05 }, nodes = {
+                                                    {n = G.UIT.T, config = {text = localize("ygg_clear"), scale = 0.4, colour = G.C.UI.TEXT_LIGHT}}
+                                                    }
+                                                },
+                                                }
+                                            },   
                                         }},
                                         {n = G.UIT.R, config = {align = "tr", padding = 0.02}, nodes = {
                                             {
@@ -1790,7 +2464,7 @@ function create_inventory_UI(args)
                                         }},
                                     }
                                 },
-                                {n=G.UIT.C, config={align = "tm",padding = args.padding or 0.05, r = 0.3, minw = area_minw, minh = area_minh, colour = G.C.BLACK}, nodes= --Crafting Area
+                                {n=G.UIT.C, config={align = "tm",padding = args.padding or 0.05, r = 0.3, minw = area_minw, minh = area_minh, colour = G.C.BLACK}, nodes= --Second Area
                                     second_area_nodes
                                 },
 
@@ -1827,6 +2501,7 @@ end
 
 G.FUNCS.ygg_open_inventory = function()
     G.SETTINGS.paused = true
+    Yggdrasil.cleanup_dead_elements(G, "MOVEABLES")
     
     G.FUNCS.overlay_menu{
         definition = create_inventory_menu(),
@@ -1840,7 +2515,8 @@ function Game:update(dt)
     if G["ygg_crafting_show"] and G["ygg_crafting_show"].cards then
         local available_crafting_recipes = {}
 
-        for card_key, card_info in pairs(YggCraftingRecipes) do
+        for _, card_info in pairs(YggCraftingRecipes) do
+            local card_key = card_info.card_key
             local recipe_valid = true
             if card_info.config and card_info.config.no_order then
                 local needed_mats = {}
@@ -2009,6 +2685,21 @@ function SMODS.calculate_context(context, return_table)
                 end
             end
         end
+
+        if Yggdrasil.have_item("misprinted_talisman") then
+            for _ = 1, Yggdrasil.amt_item_inv("misprinted_talisman") do
+                local function func()
+                    SMODS.calculate_effect({xmult = (1 + (pseudorandom("ygg_misprinted_talisman", -1, 5) * 0.1)) * gains_multi["xmult"]}, context.other_card)
+                end
+                func()
+                if retrigger_times > 0 then
+                    for _ = 1, retrigger_times do
+                        SMODS.calculate_effect({message = localize("k_again_ex")}, context.other_card)
+                        func()
+                    end
+                end
+            end
+        end
     end
     
     if context.mat_end_of_round then
@@ -2027,19 +2718,151 @@ function SMODS.calculate_context(context, return_table)
         ygg_calculate_multi()
 
         if Yggdrasil.have_item("sharp_spear") then
-            for i = 1, Yggdrasil.amt_item_inv("sharp_spear") do
+            for _ = 1, Yggdrasil.amt_item_inv("sharp_spear") do
                 if context.other_card:is_suit("Spades") then
-                    SMODS.calculate_effect({mult = 3 * gains_multi["mult"]}, context.other_card)
+                    SMODS.calculate_effect({chips = 15 * gains_multi["mult"]}, context.other_card)
                     if retrigger_times > 0 then
                         for _ = 1, retrigger_times do
                             SMODS.calculate_effect({message = localize("k_again_ex")}, context.other_card)
-                            SMODS.calculate_effect({mult = 3 * gains_multi["mult"]}, context.other_card)
+                            SMODS.calculate_effect({chips = 15 * gains_multi["mult"]}, context.other_card)
                         end
                     end
                 end 
             end
         end
+
+        if Yggdrasil.have_item("cupid_bow") then
+            for _ = 1, Yggdrasil.amt_item_inv("cupid_bow") do
+                if context.other_card:is_suit("Hearts") then
+                    SMODS.calculate_effect({xmult = 1.1 * gains_multi["xmult"]}, context.other_card)
+                    if retrigger_times > 0 then
+                        for _ = 1, retrigger_times do
+                            SMODS.calculate_effect({message = localize("k_again_ex")}, context.other_card)
+                            SMODS.calculate_effect({xmult = 1.1 * gains_multi["xmult"]}, context.other_card)
+                        end
+                    end
+                end 
+            end
+        end
+
+        if Yggdrasil.have_item("clover_talisman") then
+            for _ = 1, Yggdrasil.amt_item_inv("sharp_spear") do
+                if context.other_card:is_suit("Clubs") then
+                    SMODS.calculate_effect({mult = 2 * gains_multi["mult"]}, context.other_card)
+                    if retrigger_times > 0 then
+                        for _ = 1, retrigger_times do
+                            SMODS.calculate_effect({message = localize("k_again_ex")}, context.other_card)
+                            SMODS.calculate_effect({mult = 2 * gains_multi["mult"]}, context.other_card)
+                        end
+                    end
+                end 
+            end
+        end
+
+        if Yggdrasil.have_item("diamond_staff") then
+            for _ = 1, Yggdrasil.amt_item_inv("sharp_spear") do
+                if context.other_card:is_suit("Diamonds") then
+                    SMODS.calculate_effect({dollars = 0.5}, context.other_card)
+                    if retrigger_times > 0 then
+                        for _ = 1, retrigger_times do
+                            SMODS.calculate_effect({message = localize("k_again_ex")}, context.other_card)
+                            SMODS.calculate_effect({dollars = 0.5}, context.other_card)
+                        end
+                    end
+                end 
+            end
+        end
+
+        if Yggdrasil.have_item("rainbow_element") then
+            for _ = 1, Yggdrasil.amt_item_inv("rainbow_element") do
+                if context.other_card:is_suit("Diamonds") then
+                    local amt = 5
+                    for _,v in ipairs(context.scoring_hand) do
+                        if v:is_suit("Diamonds") and v ~= context.other_card then amt = amt + 1 end
+                    end
+                    local function func() 
+                        SMODS.calculate_effect({dollars = amt}, context.other_card)
+                    end
+                    
+                    func()
+                    if retrigger_times > 0 then
+                        for _ = 1, retrigger_times do
+                            SMODS.calculate_effect({message = localize("k_again_ex")}, context.other_card)
+                            func()
+                        end
+                    end
+                end 
+
+                if context.other_card:is_suit("Clubs") then
+                    local amt = 25
+                    for _,v in ipairs(context.scoring_hand) do
+                        if v:is_suit("Diamonds") and v ~= context.other_card then amt = amt + 5 end
+                    end
+                    local function func() 
+                        SMODS.calculate_effect({mult = amt * gains_multi["mult"]}, context.other_card)
+                    end
+                    
+                    func()
+                    if retrigger_times > 0 then
+                        for _ = 1, retrigger_times do
+                            SMODS.calculate_effect({message = localize("k_again_ex")}, context.other_card)
+                            func()
+                        end
+                    end
+                end
+
+                if context.other_card:is_suit("Spades") then
+                    local amt = 2
+                    for _,v in ipairs(context.scoring_hand) do
+                        if v:is_suit("Spades") and v ~= context.other_card then amt = amt + 0.2 end
+                    end
+                    local function func() 
+                        SMODS.calculate_effect({xchips = amt * gains_multi["xchips"]}, context.other_card)
+                    end
+                    
+                    func()
+                    if retrigger_times > 0 then
+                        for _ = 1, retrigger_times do
+                            SMODS.calculate_effect({message = localize("k_again_ex")}, context.other_card)
+                            func()
+                        end
+                    end
+                end
+
+                if context.other_card:is_suit("Hearts") then
+                    local amt = 2
+                    for _,v in ipairs(context.scoring_hand) do
+                        if v:is_suit("Hearts") and v ~= context.other_card then amt = amt + 0.2 end
+                    end
+                    local function func() 
+                        SMODS.calculate_effect({xmult = amt * gains_multi["xchips"]}, context.other_card)
+                    end
+                    
+                    func()
+                    if retrigger_times > 0 then
+                        for _ = 1, retrigger_times do
+                            SMODS.calculate_effect({message = localize("k_again_ex")}, context.other_card)
+                            func()
+                        end
+                    end
+                end
+            end
+
+
+        end
     end
+
+    --[[if context.mat_repetition then  (Might be better to handle these in the dummy joker instead.)
+        if context.cardarea == G.play then
+            if Yggdrasil.have_item("rainbow_element") then
+                for _ = 1, Yggdrasil.amt_item_inv("rainbow_element") do
+                    if context.other_card:is_suit("Hearts") and context.other_card:is_suit("Spades") and context.other_card:is_suit("Clubs") and context.other_card:is_suit("Diamonds") then
+                        SMODS.calculate_effect({repetitions = 1, card = context.other_card}, context.other_card)
+                    end
+                end
+            end
+        end
+    end]]
 
     if context.mat_other_consumeable then
         ygg_calculate_multi()

@@ -53,6 +53,10 @@ function Game:update(dt) --Bunch of stuff relating to XP and Levels.
         self.C.ygg_legendary[3] = 0.6+0.2*(1- math.sin(self.TIMERS.REAL*1.3))
         self.C.ygg_legendary[2] = math.min(self.C.ygg_legendary[3], self.C.ygg_legendary[1])
 
+        self.C.ygg_exotic[1] = 0.6+0.2*math.sin(self.TIMERS.REAL*1.3)
+        self.C.ygg_exotic[3] = 0.6+0.2*(1- math.sin(self.TIMERS.REAL*1.3))
+        self.C.ygg_exotic[2] = math.min(self.C.ygg_exotic[3], self.C.ygg_exotic[1])
+
         if ygg_to_refer_level_bar then
             ygg_to_refer_level_bar.text = "LV "..((G.PROFILES[G.SETTINGS.profile].ygg_level or 1) + (G.GAME.ygg_level or 0)).." | XP: "..math.floor((G.GAME.ygg_current_xp or 0)).."/100"
         end

@@ -15,6 +15,42 @@ return { --remind me to work on this
                     "or equal {C:attention}0{}",
                 },
             },
+            ygg_yso_name = {
+                name = "Placeholder",
+                text = {
+                    "Information"
+                },
+            },
+            ygg_yso = {
+                name = "Placeholder",
+                text = {
+                    "- (type={C:inactive}x{}) to {C:attention}filter{}",
+                    "a specific {C:attention}Item Type{}",
+                    "- (rarity={C:inactive}x{}) to {C:attention}filter{}",
+                    "a specific {C:attention}Rarity{}",
+                    "{s:0.15} ",
+                    "{C:inactive}(Location, capitalization",
+                    "{C:inactive}and space do not matter)",
+                },
+            },
+            ygg_yad_name = {
+                name = "Placeholder",
+                text = {
+                    "Information"
+                },
+            },
+            ygg_yad = {
+                name = "Placeholder",
+                text = {
+                    "Type in {C:attention}rarity{} names to {C:attention}auto-delete{}",
+                    "all obtained {C:attention}items{} with that {C:attention}rarity{}",
+                    "Use \",\" to separate different rarities",
+                    "{C:inactive}(Example: common,uncommon)",
+                    "{s:0.15} ",
+                    "{C:inactive}(Location, capitalization",
+                    "{C:inactive}and space do not matter)",
+                },
+            },
         },
         YggMaterial = {
             ygg_mat_ygg_card_scrap = {
@@ -46,6 +82,37 @@ return { --remind me to work on this
                     "{C:inactive}suits"
                 }
             },
+            ygg_mat_ygg_dead_clover = {
+                name = "Dead Clover",
+                text = {
+                    "{C:inactive}(Rarity: {}{V:1}Uncommon{}{C:inactive}){}",
+                    "{s:0.15} ",
+                    "{C:inactive}Representative of Clubs, it seems to have",
+                    "{C:inactive}died after receiving no sunlight since",
+                    "{C:inactive}forever"
+                }
+            },
+            ygg_mat_ygg_fractured_diamond = {
+                name = "Fractured Diamond",
+                text = {
+                    "{C:inactive}(Rarity: {}{V:1}Uncommon{}{C:inactive}){}",
+                    "{s:0.15} ",
+                    "{C:inactive}Once a beautiful diamond, proudfully",
+                    "{C:inactive}shining under the sunlight, now dusty",
+                    "{C:inactive}and cracked after years of mistreat"
+                }
+            },
+            ygg_mat_ygg_shattered_heart = {
+                name = "Shattered Heart",
+                text = {
+                    "{C:inactive}(Rarity: {}{V:1}Uncommon{}{C:inactive}){}",
+                    "{s:0.15} ",
+                    "{C:inactive}It is said that someone's heart was",
+                    "{C:inactive}broken during Valentine's Day specifically,",
+                    "{C:inactive}leading to this",
+                    "{C:inactive,s:0.7}(rip)"
+                }
+            },
             ygg_mat_ygg_harmony_core = {
                 name = "Harmony Core",
                 text = {
@@ -65,6 +132,7 @@ return { --remind me to work on this
                     "{C:inactive}You know exactly what this is used",
                     "{C:inactive}for"
                 }
+
             },
             ygg_mat_ygg_misprinted_essence = {
                 name = "Misprinted Essence",
@@ -93,6 +161,16 @@ return { --remind me to work on this
                     "{s:0.15} ",
                     "{C:inactive}Shards of what seemed to come from a prison",
                     "{C:inactive}holding spirits with immense power",
+                }
+            },
+            ygg_mat_ygg_vial_of_rainbow = {
+                name = "Vial of Rainbow",
+                text = {
+                    "{C:inactive}(Rarity: {}{V:1}Exotic{}{C:inactive}){}",
+                    "{s:0.15} ",
+                    "{C:inactive}A small vial containing the very essence",
+                    "{C:inactive}of rainbows themselves, used to power up",
+                    "{C:inactive}Relics that demand harmony of multiple elements"
                 }
             },
             ygg_mat_ygg_fixed_joker = {
@@ -169,6 +247,21 @@ return { --remind me to work on this
                     "{C:inactive}(Only one copy can exist)",
                 }
             },
+            ygg_mat_ygg_misprinted_talisman = {
+                name = "Misprinted Talisman",
+                text = {
+                    "{C:inactive}(Rarity: {}{V:1}Rare{}{C:inactive}){}",
+                    "{s:0.15} ",
+                    "While in {C:attention}Inventory{}, randomly give from",
+                    "{X:mult,C:white}X0.9{} Mult to {X:mult,C:white}X1.5{} Mult",
+                    "{C:inactive}(Currently: #1#)",
+                    "{s:0.15} ",
+                    "{C:inactive}mis    // :3   print",
+                    "{C:inactive}print...?",
+                    "{s:0.15} ",
+                    "{C:inactive}(Only one copy can exist)",
+                }
+            },
             ygg_mat_ygg_soul_engine = {
                 name = "Soul Engine",
                 text = {
@@ -224,10 +317,82 @@ return { --remind me to work on this
                     "{s:0.15} ",
                     "While in {C:attention}Inventory{},",
                     "scored {C:spades}Spade{} cards give",
-                    "{C:mult}+2{} Mult",
+                    "{C:chips}+15{} Chips",
                     "{s:0.15} ",
                     "{C:inactive}A repaired spear head, once used during",
                     "{C:inactive}the ancient battles of Balala",
+                    "{s:0.15} ",
+                    "{C:inactive}(Only one copy can exist)",
+                }
+            },
+            ygg_mat_ygg_cupid_bow = {
+                name = "Cupid Bow",
+                text = {
+                    "{C:inactive}(Rarity: {}{V:1}Uncommon{}{C:inactive}){}",
+                    "{s:0.15} ",
+                    "While in {C:attention}Inventory{},",
+                    "scored {C:hearts}Hearts{} cards give",
+                    "{X:mult,C:white}X1.1{} Mult",
+                    "{s:0.15} ",
+                    "{C:inactive}Forged from the desires for a faithful love,",
+                    "{C:inactive}this bow will bring happiness to dead worlds",
+                    "{s:0.15} ",
+                    "{C:inactive}(Only one copy can exist)",
+                }
+            },
+            ygg_mat_ygg_diamond_staff = {
+                name = "Diamond Staff",
+                text = {
+                    "{C:inactive}(Rarity: {}{V:1}Uncommon{}{C:inactive}){}",
+                    "{s:0.15} ",
+                    "While in {C:attention}Inventory{},",
+                    "scored {C:diamonds}Diamonds{} cards give",
+                    "{C:money}+$0.5{}",
+                    "{s:0.15} ",
+                    "{C:inactive}A staff made out of pure diamond,",
+                    "{C:inactive}basking in its former glory once again",
+                    "{s:0.15} ",
+                    "{C:inactive}(Only one copy can exist)",
+                }
+            },
+            ygg_mat_ygg_clover_talisman = {
+                name = "Clover Talisman",
+                text = {
+                    "{C:inactive}(Rarity: {}{V:1}Uncommon{}{C:inactive}){}",
+                    "{s:0.15} ",
+                    "While in {C:attention}Inventory{},",
+                    "scored {C:clubs}Clubs{} cards give",
+                    "{C:mult}+2{} Mult",
+                    "{s:0.15} ",
+                    "{C:inactive}A talisman in shape of a clover,",
+                    "{C:inactive}promising to give whoever wears it",
+                    "{C:inactive}eternal{} {C:green}Luck{}",
+                    "{s:0.15} ",
+                    "{C:inactive}(Only one copy can exist)",
+                }
+            },
+            ygg_mat_ygg_rainbow_element = {
+                name = "Rainbow Element",
+                text = {
+                    "{C:inactive}(Rarity: {}{V:1}Exotic{}{C:inactive}){}",
+                    "{s:0.15} ",
+                    "While in {C:attention}Inventory{}, scored cards give",
+                    "different buffs depending on their {C:attention}suit{}:",
+                    "{s:0.15} ",
+                    "-{C:hearts}Hearts{}: {X:mult,C:white}X2{} Mult, increases by {X:mult,C:white}X0.2{} Mult",
+                    "for each other scored {C:hearts}Hearts{} card",
+                    "-{C:spades}Spades{}: {X:chips,C:white}X2{} Chips, increases by {X:chips,C:white}X0.2{} Chips",
+                    "for each other scored {C:spades}Spades{} card",
+                    "-{C:clubs}Clubs{}: {C:mult}+25{} Mult, increases by {C:mult}+5{} Mult",
+                    "for each other scored {C:clubs}Clubs{} card",
+                    "-{C:diamonds}Diamonds{}: {C:money}+$5{}, increases by {C:money}+$1{}",
+                    "for each other scored {C:diamonds}Diamonds{} card",
+                    "{s:0.15} ",
+                    "If scored card counts as {C:attention}all{} suits, {C:attention}retrigger{} it {C:attention}once{}",
+                    "{s:0.15} ",
+                    "{C:inactive}The core of all and everything, the staple of",
+                    "{C:inactive}the existence of many, now materialized into",
+                    "{C:inactive}an orb wieldable for immense strength",
                     "{s:0.15} ",
                     "{C:inactive}(Only one copy can exist)",
                 }
@@ -2014,9 +2179,11 @@ return { --remind me to work on this
             ygg_inventory_text = "Inventory",
             ygg_crafting_area_text = "Crafting Area",
             ygg_delete_area_text = "Delete Area",
+            ygg_recipe_area_text = "Recipes Area",
 
             ygg_delete_text = "Delete",
             ygg_craft_text = "Craft",
+            ygg_recipes_text = "Recipes",
 
             ygg_skill_tree_sec1 = "Need for Stats", --Balatro: Star Rail
             ygg_skill_tree_sec2 = "I'm Multin' it",
@@ -2038,11 +2205,16 @@ return { --remind me to work on this
 
             --Material Stuffs
             k_YggMaterial_text = "Material",
-    
+            k_YggRelic_text = "Relic",
+
             ygg_card_scrap = "Card Scraps",
             ygg_half_a_chip = "Half a Chip",
-            ygg_broken_spade = "Broken Spades",
+            ygg_broken_spade = "Broken Spade",
+            ygg_shattered_heart = "Shattered Heart",
+            ygg_dead_clover = "Dead Clover",
+            ygg_fractured_diamond = "Fractured Diamond",
             ygg_harmony_core = "Harmony Core",
+            ygg_vial_of_rainbow = "Vial of Rainbow",
             ygg_misprinted_essence = "Misprinted Essences",
             ygg_soul_fragment = "Soul Fragment",
             ygg_potassium = "Potassium",
@@ -2056,6 +2228,7 @@ return { --remind me to work on this
             ygg_uncommon = "Uncommon",
             ygg_rare = "Rare",
             ygg_legendary = "Legendary",
+            ygg_exotic = "Exotic",
 
             ygg_craft_guide = "DRAG TO INVENTORY TO CRAFT",
 
@@ -2065,6 +2238,11 @@ return { --remind me to work on this
 
             ygg_disabled = "Disabled!",
             ygg_enabled = "Enabled!",
+
+            ygg_clear = "Clear",
+
+            --Credits
+            ygg_credit1 = "Art by Tachonky (@mr.cr33ps)",
         },
     },
 }

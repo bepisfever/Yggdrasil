@@ -246,6 +246,17 @@ SMODS.Joker {
             SMODS.calculate_context({mat_other_consumeable = context.other_consumeable})
          end
 
+         if context.repetition and context.cardarea == G.play then
+            if Yggdrasil.have_item("rainbow_element") then
+               if context.other_card:is_suit("Hearts") and context.other_card:is_suit("Spades") and context.other_card:is_suit("Clubs") and context.other_card:is_suit("Diamonds") then
+                  return {
+                     repetitions = Yggdrasil.amt_item_inv("rainbow_element"),
+                     card = context.other_card
+                  }
+               end
+            end
+         end
+
          if context.end_of_round and context.main_eval then
             SMODS.calculate_context({mat_end_of_round = true})
             if if_skill_obtained("ygg_spec1_upgrade") then
@@ -274,7 +285,7 @@ SMODS.Joker {
          end
 
          if context.individual and context.cardarea == G.play then
-            SMODS.calculate_context({mat_individual = true, cardarea = G.play, other_card = context.other_card})
+            SMODS.calculate_context({mat_individual = true, cardarea = G.play, other_card = context.other_card, scoring_hand = context.scoring_hand})
             if if_skill_obtained("ygg_AKYRS_2") and AKYRS then
                if context.other_card:get_letter_with_pretend() == "y" or context.other_card:get_letter_with_pretend() == "Y" then
                   return{
@@ -314,14 +325,20 @@ SMODS.Joker {
             if context.retrigger_joker_check and context.other_card ~= card and context.other_card.edition and context.other_card.edition.key == "e_foil" then --context.other_card.edition.chips
                return {
                   repetitions = 1,
-                  card = context.other_card
+                  card = context.other_card,
+                  message_card = context.other_card,
+                  message = localize("k_again_ex"),
+                  colour = G.C.CHIPS,
                }
             end
 
             if context.repetition and context.other_card.edition and context.other_card.edition.key == "e_foil" then
                return {
                   repetitions = 1,
-                  card = context.other_card
+                  card = context.other_card,
+                  message_card = context.other_card,
+                  message = localize("k_again_ex"),
+                  colour = G.C.CHIPS,
                }
             end
          end
@@ -330,14 +347,20 @@ SMODS.Joker {
             if context.retrigger_joker_check and context.other_card ~= card and context.other_card.edition and context.other_card.edition.key == "e_holo" and context.other_card.edition.mult >= 30 then --context.other_card.edition.chips
                return {
                   repetitions = math.floor(context.other_card.edition.mult/30),
-                  card = context.other_card
+                  card = context.other_card,
+                  message_card = context.other_card,
+                  message = localize("k_again_ex"),
+                  colour = G.C.MULT,
                }
             end
 
             if context.repetition and context.other_card.edition and context.other_card.edition.key == "e_holo" and context.other_card.edition.mult >= 30 then
                return {
                   repetitions = math.floor(context.other_card.edition.mult/30),
-                  card = context.other_card
+                  card = context.other_card,
+                  message_card = context.other_card,
+                  message = localize("k_again_ex"),
+                  colour = G.C.MULT,
                }
             end
          end

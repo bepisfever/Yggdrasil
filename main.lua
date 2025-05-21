@@ -46,6 +46,7 @@ G.C.ygg_common = HEX("FFFFFF")
 G.C.ygg_uncommon = HEX("4BC292")
 G.C.ygg_rare = HEX('FE5F55')
 G.C.ygg_legendary = {0,0,0,1}
+G.C.ygg_exotic = {0,0,0,1}
 
 --[[SMODS.Gradient({ keeping blud hostage until i need to add gradients :3
     key = "PENDULUM_NORMAL",

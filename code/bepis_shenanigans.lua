@@ -989,3 +989,19 @@ Yggdrasil.get_table_length = function(tab)
 
     return num
 end
+
+--THIS IS BIG, THANK YOU SLEEPYG11 WTF
+function Yggdrasil.cleanup_dead_elements(ref_table, ref_key)
+    local new_values = {}
+    local target = ref_table[ref_key]
+    if not target then
+        return
+    end
+    for k, v in pairs(target) do
+        if not v.REMOVED and not v.removed then
+            new_values[#new_values + 1] = v
+        end
+    end
+    ref_table[ref_key] = new_values
+    return new_values
+end

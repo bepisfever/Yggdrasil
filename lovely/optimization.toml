@@ -1,0 +1,22 @@
+[manifest]
+version = "1.0.0"
+dump_lua = true
+priority = 1
+
+# I AM FOREVER IN DEBT, SLEEPYG11
+[[patches]]
+[patches.pattern]
+target = 'functions/button_callbacks.lua'
+pattern = '''
+G.FUNCS.exit_overlay_menu = function()
+  if not G.OVERLAY_MENU then return end
+  G.CONTROLLER.locks.frame_set = true
+  G.CONTROLLER.locks.frame = true
+  G.CONTROLLER:mod_cursor_context_layer(-1000)
+  G.OVERLAY_MENU:remove()
+'''
+position = 'after'
+payload = '''
+  Yggdrasil.cleanup_dead_elements(G, "MOVEABLES")
+'''
+match_indent = false

@@ -202,6 +202,10 @@ YggdrasilDefaultButton = true
 YggdrasilDebugMode = false
 YggdrasilDebugCraftingMode = false
 
+YggdrasilSkillTreeText = {
+    text = ""
+}
+
 function check_if_section_exist(sec)
     for _,v in ipairs(SkillTreeSections) do
         for _,v2 in ipairs(v) do
@@ -370,6 +374,15 @@ function create_skill_perk_desc(key, perk_info, specific)
         nodes[#nodes] = desc_from_rows(nodes[#nodes])
         nodes[#nodes].config.colour = loc_vars.background_colour or nodes[#nodes].config.colour
 
+        if perk_info.lock_first_round then
+            nodes[#nodes+1] = {}
+            local loc_vars = {scale = 0.925, vars = {perk_info.cost}}
+            localize({type = 'descriptions', key = "sp_ygg_lock_first_round", set = 'SkillPerks', nodes = nodes[#nodes], vars = loc_vars.vars, scale = loc_vars.scale, text_colour = loc_vars.text_colour})
+            nodes[#nodes] = desc_from_rows(nodes[#nodes])
+            nodes[#nodes].config.colour = G.C.WHITE
+            nodes[#nodes].config.minh = loc_vars.minh or 0.1
+        end
+
         nodes[#nodes+1] = {}
         local loc_vars = {scale = 0.925, vars = {perk_info.cost}}
         localize({type = 'descriptions', key = "sp_ygg_cost", set = 'SkillPerks', nodes = nodes[#nodes], vars = loc_vars.vars, scale = loc_vars.scale, text_colour = loc_vars.text_colour})
@@ -457,6 +470,7 @@ G.FUNCS.purchase_skill_perk = function(e)
         if (G.PROFILES[G.SETTINGS.profile].ygg_skill_points or 0) >= e.config.perk_info.cost then
             local set_max = ((G.GAME.current_switch_skill or "1") == "1" and 1) or ((G.GAME.current_switch_skill or "1") == "2" and 5) or ((G.GAME.current_switch_skill or "1") == "3" and 10) or ((G.GAME.current_switch_skill or "1") == "4" and math.huge)
             local upgraded_times = math.min(math.min(math.floor((G.PROFILES[G.SETTINGS.profile].ygg_skill_points or 0)/e.config.perk_info.cost),set_max),e.config.perk_info.max_cap - current_perk_cap)
+            play_sound('gold_seal', 1.2, 0.4)
 
             if not G.PROFILES[G.SETTINGS.profile].skill_perks then G.PROFILES[G.SETTINGS.profile].skill_perks = {} end
             G.PROFILES[G.SETTINGS.profile].skill_perks[e.config.perk_id] = (G.PROFILES[G.SETTINGS.profile].skill_perks[e.config.perk_id] or 0) + upgraded_times
@@ -473,6 +487,7 @@ G.FUNCS.purchase_skill_perk = function(e)
         elseif (G.GAME.ygg_skill_points or 0) >= e.config.perk_info.cost then
             local set_max = ((G.GAME.current_switch_skill or "1") == "1" and 1) or ((G.GAME.current_switch_skill or "1") == "2" and 5) or ((G.GAME.current_switch_skill or "1") == "3" and 10) or ((G.GAME.current_switch_skill or "1") == "4" and math.huge)
             local upgraded_times = math.min(math.min(math.floor((G.GAME.ygg_skill_points or 0)/e.config.perk_info.cost),set_max),e.config.perk_info.max_cap - current_perk_cap)
+            play_sound('gold_seal', 1.2, 0.4)
 
             if not G.GAME.skill_perks then G.GAME.skill_perks = {} end
             G.GAME.skill_perks[e.config.perk_id] = (G.GAME.skill_perks[e.config.perk_id] or 0) + upgraded_times
@@ -489,7 +504,8 @@ G.FUNCS.purchase_skill_perk = function(e)
         elseif ((G.PROFILES[G.SETTINGS.profile].ygg_skill_points or 0) + (G.GAME.ygg_skill_points or 0)) >= e.config.perk_info.cost then
             local set_max = ((G.GAME.current_switch_skill or "1") == "1" and 1) or ((G.GAME.current_switch_skill or "1") == "2" and 5) or ((G.GAME.current_switch_skill or "1") == "3" and 10) or ((G.GAME.current_switch_skill or "1") == "4" and math.huge)
             local upgraded_times = math.min(math.min(math.floor(((G.GAME.ygg_skill_points or 0) + (G.PROFILES[G.SETTINGS.profile].ygg_skill_points or 0))/e.config.perk_info.cost),set_max),e.config.perk_info.max_cap - current_perk_cap)
-
+            play_sound('gold_seal', 1.2, 0.4)
+            
             if not G.GAME.skill_perks then G.GAME.skill_perks = {} end
             if not G.PROFILES[G.SETTINGS.profile].skill_perks then G.PROFILES[G.SETTINGS.profile].skill_perks = {} end
 
@@ -1034,7 +1050,7 @@ function create_skill_tree_UI(args)
                             },   
                         }},
                         {n = G.UIT.R, config = {align = "cm", padding = 0.2}, nodes = {
-                            {n = G.UIT.O, config = {object = DynaText({scale = 0.75, string = localize('ygg_skill_tree_text').." ("..((G.PROFILES[G.SETTINGS.profile].ygg_skill_points or 0) + (G.GAME.ygg_skill_points or 0)).." SP)", maxw = 9, colours = { G.C.WHITE }, float = true, silent = true, shadow = true})}}
+                            {n = G.UIT.O, config = {object = DynaText({scale = 0.75,  string = {{ref_table = YggdrasilSkillTreeText, ref_value = "text"}}, maxw = 9, colours = { G.C.WHITE }, float = true, silent = true, shadow = true})}}
                         }},
                         {n = G.UIT.R, config = {align = "tm", padding = 0.02}, nodes = {
                             {n = G.UIT.O, config = {object = DynaText({scale = 0.4, string = localize(G.GAME.ygg_chosen_skill_tree_sec or 'ygg_skill_tree_diff'), maxw = 9, colours = { G.C.WHITE }, float = true, silent = true})}}
@@ -1270,6 +1286,14 @@ function Game:start_run(args)
             bond = 'Weak'
         }
     }
+end
+
+local hookTo = Game.update
+function Game:update(dt) --SP Text.
+    hookTo(self, dt)
+    if YggdrasilSkillTreeText and G.GAME then
+        YggdrasilSkillTreeText.text = localize('ygg_skill_tree_text').." ("..((G.PROFILES[G.SETTINGS.profile].ygg_skill_points or 0) + (G.GAME.ygg_skill_points or 0)).." SP)"
+    end
 end
 
 --G.localization.descriptions.Joker <-- then something something here

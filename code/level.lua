@@ -468,7 +468,22 @@ function Card:use_consumeable(area, copier)
                 SMODS.add_card({set = "Tarot"})
                 return true
             end
-         })) 
+        })) 
+    end
+
+    if self.config.center.set == "Planet" and if_skill_obtained("ygg_spec4_upgrade") then
+        G.GAME.ygg_planet_counter = (G.GAME.ygg_planet_counter or 0) + 1
+        if G.GAME.ygg_planet_counter >= 5 and (#G.consumeables.cards - 1) < G.consumeables.config.card_limit then
+            G.GAME.ygg_planet_counter = 0
+            G.E_MANAGER:add_event(Event({
+                trigger = "before",
+                delay = 0.2,
+                func = function()
+                    SMODS.add_card({set = "Spectral"})
+                    return true
+                end
+            })) 
+        end
     end
 
     local ret = hookTo(self, area, copier)

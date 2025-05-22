@@ -634,6 +634,12 @@ return { --remind me to work on this
                     "Cost: {C:red}#1#{} Skill Point",
                 }
             },
+            sp_ygg_lock_first_round = {
+                name = "Cost",
+                text = {
+                    "Can only be {C:attention}purchased{} on {C:attention}<={}Round {C:attention}0{}",
+                }
+            },
 
             sp_ygg_trailblaze = {
                 name = "Trailblaze",

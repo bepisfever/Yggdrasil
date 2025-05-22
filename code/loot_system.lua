@@ -9,7 +9,7 @@ YggMaterialChance = {
     uncommon = {chance = 1/4, priority = 1},
     rare = {chance = 1/10, priority = 2},
     legendary = {chance = 1/25, priority = 3},
-    exotic = {chance = 1/100, priority = 4},
+    exotic = {chance = 1/200, priority = 4},
 }
 YggMaterialList = {
     --[[
@@ -876,6 +876,10 @@ end
 
 local toHook = Card.stop_drag
 function Card:stop_drag()
+    if G.ygg_hold_lshift and not self.ability.is_material then
+        local c = toHook(self)
+        return c
+    end
     if self.ability.cannot_drag then
         local c = toHook(self)
         return c
@@ -1169,6 +1173,121 @@ function Card:stop_drag()
     local c = toHook(self)
     return c
 end 
+
+local toHook = Card.click
+function Card:click() 
+    local ret = toHook(self)
+    
+    if G.ygg_hold_lshift and self.ability.ygg_is_item then
+        if G.GAME["YggSecondAreaMode"] and G.GAME["YggSecondAreaMode"] == "Delete" then
+            local from_area = "Inventory"
+            local area = nil
+            local num = nil
+            for i = 1,3 do
+                if area and num then break end
+                if G["ygg_delete_cardarea"..i] and G["ygg_delete_cardarea"..i].cards then
+                    for _,c in ipairs(G["ygg_delete_cardarea"..i].cards) do
+                        if c == self then area = G["ygg_delete_cardarea"..i]; num = i; from_area = "Delete"; break end
+                    end
+                end
+                if G["ygg_inventory_cardarea"..i] and G["ygg_inventory_cardarea"..i].cards then
+                    for _,c in ipairs(G["ygg_inventory_cardarea"..i].cards) do
+                        if c == self then area = G["ygg_inventory_cardarea"..i]; num = i; from_area = "Inventory"; break end
+                    end
+                end
+            end
+
+            if from_area == "Inventory" and area and num then
+                local true_key = Yggdrasil.get_true_key(self)
+                local transferred_item = nil
+
+                for i,v in ipairs(G.PROFILES[G.SETTINGS.profile]["YggInventory"]) do
+                    if v.id == true_key then
+                        transferred_item = v
+                        table.remove(G.PROFILES[G.SETTINGS.profile]["YggInventory"],i)
+                        break
+                    end
+                end
+                area:remove_card(self)
+
+                if not G.PROFILES[G.SETTINGS.profile]["YggDelete"..num] then G.PROFILES[G.SETTINGS.profile]["YggDelete"..num] = {} end
+                G.PROFILES[G.SETTINGS.profile]["YggDelete"..num][#G.PROFILES[G.SETTINGS.profile]["YggDelete"..num]+1] = transferred_item
+                G["ygg_delete_cardarea"..num]:emplace(self)
+            elseif from_area == "Delete" and area and num then
+                local true_key = Yggdrasil.get_true_key(self)
+                local transferred_item = nil
+
+                for i,v in ipairs(G.PROFILES[G.SETTINGS.profile]["YggDelete"..num]) do
+                    if v.id == true_key then
+                        transferred_item = v
+                        table.remove(G.PROFILES[G.SETTINGS.profile]["YggDelete"..num],i)
+                        break
+                    end
+                end
+                area:remove_card(self)
+
+                if not G.PROFILES[G.SETTINGS.profile]["YggInventory"] then G.PROFILES[G.SETTINGS.profile]["YggInventory"] = {} end
+                G.PROFILES[G.SETTINGS.profile]["YggInventory"][#G.PROFILES[G.SETTINGS.profile]["YggInventory"]+1] = transferred_item
+                G["ygg_inventory_cardarea"..num]:emplace(self)
+            end
+        elseif G.GAME["YggSecondAreaMode"] and G.GAME["YggSecondAreaMode"] == "Recipes" then
+            --We don't really want anything here, so.
+        else
+            local from_area = "Inventory"
+            local area = nil
+            local num = nil
+            for i = 1,3 do
+                if area and num then break end
+                if G["ygg_crafting_cardarea"..i] and G["ygg_crafting_cardarea"..i].cards then
+                    for _,c in ipairs(G["ygg_crafting_cardarea"..i].cards) do
+                        if c == self then area = G["ygg_crafting_cardarea"..i]; num = i; from_area = "Craft"; break end
+                    end
+                end
+                if G["ygg_inventory_cardarea"..i] and G["ygg_inventory_cardarea"..i].cards then
+                    for _,c in ipairs(G["ygg_inventory_cardarea"..i].cards) do
+                        if c == self then area = G["ygg_inventory_cardarea"..i]; num = i; from_area = "Inventory"; break end
+                    end
+                end
+            end
+
+            if from_area == "Inventory" and area and num then
+                local true_key = Yggdrasil.get_true_key(self)
+                local transferred_item = nil
+
+                for i,v in ipairs(G.PROFILES[G.SETTINGS.profile]["YggInventory"]) do
+                    if v.id == true_key then
+                        transferred_item = v
+                        table.remove(G.PROFILES[G.SETTINGS.profile]["YggInventory"],i)
+                        break
+                    end
+                end
+                area:remove_card(self)
+
+                if not G.PROFILES[G.SETTINGS.profile]["YggCrafting"..num] then G.PROFILES[G.SETTINGS.profile]["YggCrafting"..num] = {} end
+                G.PROFILES[G.SETTINGS.profile]["YggCrafting"..num][#G.PROFILES[G.SETTINGS.profile]["YggCrafting"..num]+1] = transferred_item
+                G["ygg_crafting_cardarea"..num]:emplace(self)
+            elseif from_area == "Craft" and area and num then
+                local true_key = Yggdrasil.get_true_key(self)
+                local transferred_item = nil
+
+                for i,v in ipairs(G.PROFILES[G.SETTINGS.profile]["YggCrafting"..num]) do
+                    if v.id == true_key then
+                        transferred_item = v
+                        table.remove(G.PROFILES[G.SETTINGS.profile]["YggCrafting"..num],i)
+                        break
+                    end
+                end
+                area:remove_card(self)
+
+                if not G.PROFILES[G.SETTINGS.profile]["YggInventory"] then G.PROFILES[G.SETTINGS.profile]["YggInventory"] = {} end
+                G.PROFILES[G.SETTINGS.profile]["YggInventory"][#G.PROFILES[G.SETTINGS.profile]["YggInventory"]+1] = transferred_item
+                G["ygg_inventory_cardarea"..num]:emplace(self)
+            end
+        end
+    end
+
+    return ret
+end
 
 G.FUNCS.to_next_inventory_page = function(e)
     G.GAME.ygg_inven_page = (G.GAME.ygg_inven_page or 1) + 1
@@ -1575,6 +1694,7 @@ function create_inventory_UI(args)
                 local card = Card(G["ygg_inventory_cardarea"..i].T.x + G["ygg_inventory_cardarea"..i].T.w / 2, G["ygg_inventory_cardarea"..i].T.y,
                     G.CARD_W, G.CARD_H, G.P_CARDS.empty,
                     G.P_CENTERS[key])
+                card.ability.ygg_is_item = true
                 card.children.back:remove()
                 card.children.back = Sprite(card.T.x, card.T.y, card.T.w, card.T.h, G.ASSET_ATLAS["ygg_placeholder_mat"], { x = 0, y = 0 })
                 card.children.back.states.hover = card.states.hover
@@ -1616,7 +1736,7 @@ function create_inventory_UI(args)
                 ]]
             end
         end 
-    else
+    else --Loading cards to the area.
         if G.PROFILES[G.SETTINGS.profile]["YggInventory"] then
             local current_page = G.GAME.ygg_inven_page or 1
             local list_to_use = G.PROFILES[G.SETTINGS.profile]["YggInventory"]
@@ -1771,6 +1891,7 @@ function create_inventory_UI(args)
                                 local card = Card(cardarea_to_insert.T.x + cardarea_to_insert.T.w / 2, cardarea_to_insert.T.y,
                                     G.CARD_W, G.CARD_H, G.P_CARDS.empty,
                                     G.P_CENTERS[key])
+                                card.ability.ygg_is_item = true
                                 card.children.back:remove()
                                 card.children.back = Sprite(card.T.x, card.T.y, card.T.w, card.T.h, G.ASSET_ATLAS["ygg_placeholder_mat"], { x = 0, y = 0 })
                                 card.children.back.states.hover = card.states.hover
@@ -1800,6 +1921,7 @@ function create_inventory_UI(args)
                                 local card = Card(cardarea_to_insert.T.x + cardarea_to_insert.T.w / 2, cardarea_to_insert.T.y,
                                     G.CARD_W, G.CARD_H, G.P_CARDS.empty,
                                     G.P_CENTERS[key])
+                                card.ability.ygg_is_item = true
                                 card.children.back:remove()
                                 card.children.back = Sprite(card.T.x, card.T.y, card.T.w, card.T.h, G.ASSET_ATLAS["ygg_placeholder_mat"], { x = 0, y = 0 })
                                 card.children.back.states.hover = card.states.hover
@@ -1826,6 +1948,7 @@ function create_inventory_UI(args)
                                 local card = Card(cardarea_to_insert.T.x + cardarea_to_insert.T.w / 2, cardarea_to_insert.T.y,
                                     G.CARD_W, G.CARD_H, G.P_CARDS.empty,
                                     G.P_CENTERS[key])
+                                card.ability.ygg_is_item = true
                                 card.children.back:remove()
                                 card.children.back = Sprite(card.T.x, card.T.y, card.T.w, card.T.h, G.ASSET_ATLAS["ygg_placeholder_mat"], { x = 0, y = 0 })
                                 card.children.back.states.hover = card.states.hover
@@ -2500,7 +2623,7 @@ function create_inventory_menu()
 end
 
 G.FUNCS.ygg_open_inventory = function()
-    G.SETTINGS.paused = true
+    --G.SETTINGS.paused = true
     Yggdrasil.cleanup_dead_elements(G, "MOVEABLES")
     
     G.FUNCS.overlay_menu{

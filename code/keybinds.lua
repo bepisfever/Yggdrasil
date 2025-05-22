@@ -46,3 +46,23 @@ SMODS.Keybind{
         end
     end
 }
+
+SMODS.Keybind{
+    key_pressed = "lshift", 
+    event = 'pressed',
+    action = function(self)
+        if G then
+            G.ygg_hold_lshift = true
+        end
+    end
+}
+
+SMODS.Keybind{
+    key_pressed = "lshift", 
+    event = 'released',
+    action = function(self)
+        if G then
+            G.ygg_hold_lshift = false
+        end
+    end
+}

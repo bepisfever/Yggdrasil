@@ -2226,6 +2226,7 @@ return { --remind me to work on this
             ygg_potassium = "Potassium",
             ygg_potassium_overload = "Potassium Overload",
             ygg_chains_of_eternity = "Chains of Eternity",
+            ygg_astronaut_helmet = "Astronaut Helmet",
 
             ygg_sort_rarity = "Sort by Rarity",
             ygg_sort_date = "Sort by Date",

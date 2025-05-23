@@ -979,19 +979,32 @@ function Card:stop_drag()
                     if v.card_key and v.card_key == self.config.center.key then found_recipe = v end
                 end
                 if not found_recipe["config"].immediate_emplace then
-                    local item = Yggdrasil.get_item(Yggdrasil.get_true_key(self))
+                    local true_key = Yggdrasil.get_true_key(self)
+                    local item = Yggdrasil.get_item(true_key)
+                    local to_emplace = (Yggdrasil.amt_item_inv(true_key) <= 0 and true) or false
                     if item then
                         G.PROFILES[G.SETTINGS.profile]["YggInventory"][#G.PROFILES[G.SETTINGS.profile]["YggInventory"]+1] = item
                     end
-                    Yggdrasil.draw_card(self.area, area, 1, 'up', nil, self ,0)
-                    G.E_MANAGER:add_event(Event({
-                        func = function() 
-                            self.ygg_oldarea = nil
-                            self:remove()
-                            return true 
-                        end
-                    }))
-                    area:align_cards()
+                    
+                    if to_emplace then
+                        Yggdrasil.draw_card(self.area, area, 1, 'up', nil, self ,0)
+                        G.E_MANAGER:add_event(Event({
+                            func = function() 
+                                self.ygg_oldarea = nil
+                                self:remove()
+                                return true 
+                            end
+                        }))
+                        area:align_cards()
+                    else
+                        G.E_MANAGER:add_event(Event({
+                            func = function() 
+                                self.ygg_oldarea = nil
+                                self:remove()
+                                return true 
+                            end
+                        }))
+                    end
                 else
                     for _ = 1, found_recipe["config"].amount or 1 do
                         if not found_recipe["config"].specific_area then
@@ -1044,12 +1057,14 @@ function Card:stop_drag()
             if self.ygg_oldarea == G["ygg_crafting_cardarea"..i] then cardarea = G["ygg_crafting_cardarea"..i]; cardarea_type = "Crafting"..i break end
             if self.ygg_oldarea == G["ygg_delete_cardarea"..i] then cardarea = G["ygg_delete_cardarea"..i]; cardarea_type = "Delete"..i break end
         end
+        local to_emplace = false
+        local stop_create = false
         if cardarea then
-            cardarea:remove_card(self)
             if cardarea_type and cardarea_type == "Inventory" then
                 local class_prefix = "ygg_mat"
                 local mod_prefix = self.config.center.mod.prefix
                 local cutout_pos = #class_prefix + #mod_prefix + 3
+                local is_to_inventory = false
 
                 local final_key = string.sub(self.config.center.key, cutout_pos, #self.config.center.key)
                 for i,v in ipairs(G.PROFILES[G.SETTINGS.profile]["YggInventory"] or {}) do
@@ -1058,6 +1073,8 @@ function Card:stop_drag()
                         break
                     end
                 end
+                local true_key = Yggdrasil.get_true_key(self)
+                if Yggdrasil.amt_item_inv(true_key) >= 1 then to_emplace = true end
 
                 for i = 1,3 do
                     if area == G["ygg_crafting_cardarea"..i] then
@@ -1097,6 +1114,9 @@ function Card:stop_drag()
                             end
                         end
 
+                        local true_key = Yggdrasil.get_true_key(self)
+                        if Yggdrasil.amt_item_inv(true_key) >= 1 then stop_create = true end
+
                         for i2 = 1,3 do
                             if area == G["ygg_crafting_cardarea"..i2] then
                                 local item = Yggdrasil.get_item(final_key)
@@ -1134,6 +1154,9 @@ function Card:stop_drag()
                             end
                         end
 
+                        local true_key = Yggdrasil.get_true_key(self)
+                        if Yggdrasil.amt_item_inv(true_key) >= 1 then stop_create = true end
+
                         for i2 = 1,3 do
                             if area == G["ygg_crafting_cardarea"..i2] then
                                 local item = Yggdrasil.get_item(final_key)
@@ -1161,14 +1184,27 @@ function Card:stop_drag()
                 end
             end
         end
-        Yggdrasil.draw_card(self.area, area, 1, 'up', nil, self ,0)
-        G.E_MANAGER:add_event(Event({
-            func = function() 
-                self.ygg_oldarea = nil
-                return true 
+
+        if not stop_create then
+            local new_card = SMODS.add_card({key = self.config.center.key, area = area})
+            new_card.ability.ygg_is_item = true
+            local is_to_inventory = false
+            for i = 1,3 do
+                if area == G["ygg_inventory_cardarea"..i] then is_to_inventory = true end
             end
-        }))
-        area:align_cards()
+            if is_to_inventory == true then new_card.ability.ygg_from_inventory = true end
+        end
+        
+        if not to_emplace then
+            G.E_MANAGER:add_event(Event({
+                func = function()
+                    cardarea:remove_card(self)
+                    self:remove()
+                    self.ygg_oldarea = nil
+                    return true 
+                end
+            }))
+        end
     end
     local c = toHook(self)
     return c
@@ -1208,14 +1244,20 @@ function Card:click()
                         break
                     end
                 end
-                area:remove_card(self)
-
+            
                 if not G.PROFILES[G.SETTINGS.profile]["YggDelete"..num] then G.PROFILES[G.SETTINGS.profile]["YggDelete"..num] = {} end
                 G.PROFILES[G.SETTINGS.profile]["YggDelete"..num][#G.PROFILES[G.SETTINGS.profile]["YggDelete"..num]+1] = transferred_item
-                G["ygg_delete_cardarea"..num]:emplace(self)
+                local new_card = SMODS.add_card({key = self.config.center.key, area = G["ygg_delete_cardarea"..num]})
+                new_card.ability.ygg_is_item = true
+
+                if Yggdrasil.amt_item_inv(true_key) <= 0 then
+                    area:remove_card(self)
+                    self:remove()
+                end
             elseif from_area == "Delete" and area and num then
                 local true_key = Yggdrasil.get_true_key(self)
                 local transferred_item = nil
+                local to_emplace = (Yggdrasil.amt_item_inv(true_key) <= 0 and true) or false
 
                 for i,v in ipairs(G.PROFILES[G.SETTINGS.profile]["YggDelete"..num]) do
                     if v.id == true_key then
@@ -1225,10 +1267,15 @@ function Card:click()
                     end
                 end
                 area:remove_card(self)
+                self:remove()
 
                 if not G.PROFILES[G.SETTINGS.profile]["YggInventory"] then G.PROFILES[G.SETTINGS.profile]["YggInventory"] = {} end
                 G.PROFILES[G.SETTINGS.profile]["YggInventory"][#G.PROFILES[G.SETTINGS.profile]["YggInventory"]+1] = transferred_item
-                G["ygg_inventory_cardarea"..num]:emplace(self)
+                if to_emplace then
+                    local new_card = SMODS.add_card({key = self.config.center.key, area = G["ygg_inventory_cardarea"..num]})
+                    new_card.ability.ygg_is_item = true
+                    new_card.ability.ygg_from_inventory = true
+                end
             end
         elseif G.GAME["YggSecondAreaMode"] and G.GAME["YggSecondAreaMode"] == "Recipes" then
             --We don't really want anything here, so.
@@ -1261,14 +1308,20 @@ function Card:click()
                         break
                     end
                 end
-                area:remove_card(self)
 
                 if not G.PROFILES[G.SETTINGS.profile]["YggCrafting"..num] then G.PROFILES[G.SETTINGS.profile]["YggCrafting"..num] = {} end
                 G.PROFILES[G.SETTINGS.profile]["YggCrafting"..num][#G.PROFILES[G.SETTINGS.profile]["YggCrafting"..num]+1] = transferred_item
-                G["ygg_crafting_cardarea"..num]:emplace(self)
+                local new_card = SMODS.add_card({key = self.config.center.key, area = G["ygg_crafting_cardarea"..num]})
+                new_card.ability.ygg_is_item = true
+
+                if Yggdrasil.amt_item_inv(true_key) <= 0 then
+                    area:remove_card(self)
+                    self:remove()
+                end
             elseif from_area == "Craft" and area and num then
                 local true_key = Yggdrasil.get_true_key(self)
                 local transferred_item = nil
+                local to_emplace = (Yggdrasil.amt_item_inv(true_key) <= 0 and true) or false
 
                 for i,v in ipairs(G.PROFILES[G.SETTINGS.profile]["YggCrafting"..num]) do
                     if v.id == true_key then
@@ -1278,10 +1331,15 @@ function Card:click()
                     end
                 end
                 area:remove_card(self)
+                self:remove()
 
                 if not G.PROFILES[G.SETTINGS.profile]["YggInventory"] then G.PROFILES[G.SETTINGS.profile]["YggInventory"] = {} end
                 G.PROFILES[G.SETTINGS.profile]["YggInventory"][#G.PROFILES[G.SETTINGS.profile]["YggInventory"]+1] = transferred_item
-                G["ygg_inventory_cardarea"..num]:emplace(self)
+                if to_emplace then
+                    local new_card = SMODS.add_card({key = self.config.center.key, area = G["ygg_inventory_cardarea"..num]})
+                    new_card.ability.ygg_is_item = true
+                    new_card.ability.ygg_from_inventory = true
+                end
             end
         end
     end
@@ -1872,6 +1930,23 @@ function create_inventory_UI(args)
                 end
             end
 
+            local loaded_keys = {}
+
+            local temp_list_to_take = {}
+            for _,v in ipairs(list_to_take) do
+                local exist = false
+                for _,v2 in ipairs(temp_list_to_take) do
+                    if v2.id == v.id then exist = true break end
+                end
+                if not exist then
+                    temp_list_to_take[#temp_list_to_take+1] = v
+                end
+            end
+            list_to_take = temp_list_to_take
+
+            true_page = math.max(math.ceil(#list_to_take/15), 1)
+            if (G.GAME.ygg_inven_page or 1) >= true_page then G.GAME.ygg_inven_page = true_page end
+
             for i = (1 + (15 * (current_page - 1))), (15 + (15 * (current_page - 1))) do
                 local skill_to_insert = list_to_take[i]
                 if skill_to_insert then
@@ -1879,6 +1954,8 @@ function create_inventory_UI(args)
                     G.E_MANAGER:add_event(Event({
                         func = function() 
                             local key = "ygg_mat_"..saved_skill_to_insert.mod_prefix.."_"..saved_skill_to_insert.id
+                            if table.contains(loaded_keys, key) then return true end
+                            loaded_keys[#loaded_keys+1] = key
                             local cardarea_to_insert = nil
                             for i2 = 1,3 do
                                 if not G["ygg_inventory_cardarea"..i2] or not G["ygg_inventory_cardarea"..i2].cards then return end
@@ -1891,6 +1968,7 @@ function create_inventory_UI(args)
                                 local card = Card(cardarea_to_insert.T.x + cardarea_to_insert.T.w / 2, cardarea_to_insert.T.y,
                                     G.CARD_W, G.CARD_H, G.P_CARDS.empty,
                                     G.P_CENTERS[key])
+                                card.ability.ygg_from_inventory = true
                                 card.ability.ygg_is_item = true
                                 card.children.back:remove()
                                 card.children.back = Sprite(card.T.x, card.T.y, card.T.w, card.T.h, G.ASSET_ATLAS["ygg_placeholder_mat"], { x = 0, y = 0 })
@@ -1901,7 +1979,7 @@ function create_inventory_UI(args)
                                 card.children.back:set_role({major = card, role_type = 'Glued', draw_major = card})
                                 cardarea_to_insert:emplace(card) 
                             end
-                        return true 
+                            return true 
                         end
                     }), "yggdrasil")
                 end
@@ -2141,6 +2219,56 @@ function create_inventory_UI(args)
             {n = G.UIT.R, config = {align = "tr", padding = 0.02}, nodes = {
                 ygg_create_text_input({w = 3, prompt_text = G.GAME["YggAutoDelete"], id = "ygg_auto_delete", extended_corpus = true, ref_table = G.GAME, ref_value = 'YggAutoDeleteInput',
                     callback = function(_)
+                        local command_head = "-"
+                        local input = string.lower(Yggdrasil.remove_space(G.GAME["YggAutoDeleteInput"]))
+                        local current_command_starters = {
+                            "delete",
+                        }
+                        if string.sub(input,1,1) == command_head then
+                            local starter = ""
+                            local command = nil
+                            for i = 2,#input do
+                                if string.sub(input,i,i) == "(" then break end
+                                starter = starter..string.sub(input,i,i)
+                            end
+
+                            for _,v in ipairs(current_command_starters) do
+                                if v == starter then command = v break end
+                            end
+                            
+                            if command == "delete" then
+                                local item_key = nil
+                                local amt = nil
+
+                                local cut_off = string.sub(input,2+#command,#input)
+                                local sections = {}
+
+                                cut_off = string.gsub(cut_off, "%(", "")
+                                cut_off = string.gsub(cut_off, "%)", "")
+
+                                local indiv_sec = ""
+                                for i = 1, #cut_off do
+                                    local character = string.sub(cut_off,i,i)
+                                    if character == "," or i == #cut_off then
+                                        if i == #cut_off then indiv_sec = indiv_sec..string.sub(cut_off,i,i) end
+                                        sections[#sections+1] = string.gsub(indiv_sec, ",", "")
+                                        indiv_sec = ""
+                                    end
+                                    indiv_sec = indiv_sec..string.sub(cut_off,i,i)
+                                end
+
+                                item_key = sections[1]
+                                amt = sections[2] or 1
+
+                                if item_key then
+                                    for _ = 1, amt do
+                                        for i,v in ipairs(G.PROFILES[G.SETTINGS.profile]["YggInventory"] or {}) do
+                                            if v.id == item_key then table.remove(G.PROFILES[G.SETTINGS.profile]["YggInventory"], i) break end
+                                        end
+                                    end
+                                end
+                            end
+                        end
                         G.GAME["YggAutoDelete"] = G.GAME["YggAutoDeleteInput"]
                         G.FUNCS.ygg_open_inventory()
                     end

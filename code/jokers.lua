@@ -60,7 +60,7 @@ SMODS.Joker {
 
          if if_skill_obtained("ygg_MoreFluff_2") and next(SMODS.find_mod("MoreFluff")) then
             local registered_keys = {}
-            
+
             for _,v in ipairs(G.consumeables.cards or {}) do
                if v.ability and v.ability.partial_rounds and not table.contains(registered_keys, v.config.center.key) then registered_keys[#registered_keys+1] = v.config.center.key end
             end

@@ -768,6 +768,27 @@ function run_info_create_skill_tree_UI(args)
       }}
 end
 
+G.FUNCS.ygg_update_text_color = function(e)
+    local dyna = e.config.object
+    local colours_to_use = {
+        G.C.WHITE, G.C.FILTER
+    }
+    local ret_colours = {}
+    if dyna then
+        if YggdrasilSkillTreeText.text then
+            local former_half = #(localize('ygg_skill_tree_text').." ")
+            local latter_half = #YggdrasilSkillTreeText.text - former_half
+            for _ = 1, former_half do
+                ret_colours[#ret_colours+1] = colours_to_use[1]
+            end
+            for _ = 1, latter_half+1 do
+                ret_colours[#ret_colours+1] = colours_to_use[2]
+            end
+            dyna.colours = ret_colours
+        end
+    end
+end
+
 function create_skill_tree_UI(args)
     args = args or {}
     local back_func = args.back_func or "exit_overlay_menu"
@@ -1050,7 +1071,7 @@ function create_skill_tree_UI(args)
                             },   
                         }},
                         {n = G.UIT.R, config = {align = "cm", padding = 0.2}, nodes = {
-                            {n = G.UIT.O, config = {object = DynaText({scale = 0.75,  string = {{ref_table = YggdrasilSkillTreeText, ref_value = "text"}}, maxw = 9, colours = { G.C.WHITE }, float = true, silent = true, shadow = true})}}
+                            {n = G.UIT.O, config = {func = "ygg_update_text_color", object = DynaText({scale = 0.75,  string = {{ref_table = YggdrasilSkillTreeText, ref_value = "text"}}, maxw = 9, colours = { G.C.WHITE }, float = true, silent = true, shadow = true})}}
                         }},
                         {n = G.UIT.R, config = {align = "tm", padding = 0.02}, nodes = {
                             {n = G.UIT.O, config = {object = DynaText({scale = 0.4, string = localize(G.GAME.ygg_chosen_skill_tree_sec or 'ygg_skill_tree_diff'), maxw = 9, colours = { G.C.WHITE }, float = true, silent = true})}}

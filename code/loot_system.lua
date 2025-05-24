@@ -9,7 +9,7 @@ YggMaterialChance = {
     uncommon = {chance = 1/4, priority = 1},
     rare = {chance = 1/10, priority = 2},
     legendary = {chance = 1/25, priority = 3},
-    exotic = {chance = 1/200, priority = 4},
+    exotic = {chance = 1/2000, priority = 4},
 }
 YggMaterialList = {
     --[[
@@ -1104,6 +1104,7 @@ function Card:stop_drag()
                         local class_prefix = "ygg_mat"
                         local mod_prefix = self.config.center.mod.prefix or nil
                         local cutout_pos = #class_prefix + (#mod_prefix or - 2) + 3
+                        local final_key = string.sub(self.config.center.key, cutout_pos, #self.config.center.key)
 
                         for i2,v in ipairs(G.PROFILES[G.SETTINGS.profile]["YggCrafting"..i] or {}) do
                             if v.id == final_key then
@@ -1113,7 +1114,6 @@ function Card:stop_drag()
                         end
 
                         local is_to_inventory = false
-                        local final_key = string.sub(self.config.center.key, cutout_pos, #self.config.center.key)
                         for i2 = 1,3 do
                             if area == G["ygg_inventory_cardarea"..i2] then is_to_inventory = true; break end
                         end
@@ -1147,7 +1147,8 @@ function Card:stop_drag()
                         local class_prefix = "ygg_mat"
                         local mod_prefix = self.config.center.mod.prefix or nil
                         local cutout_pos = #class_prefix + (#mod_prefix or - 2) + 3
-
+                        local final_key = string.sub(self.config.center.key, cutout_pos, #self.config.center.key)
+                        
                         for i2,v in ipairs(G.PROFILES[G.SETTINGS.profile]["YggDelete"..i] or {}) do
                             if v.id == final_key then
                                 table.remove(G.PROFILES[G.SETTINGS.profile]["YggDelete"..i], i2)
@@ -1156,7 +1157,6 @@ function Card:stop_drag()
                         end
 
                         local is_to_inventory = false
-                        local final_key = string.sub(self.config.center.key, cutout_pos, #self.config.center.key)
                         for i2 = 1,3 do
                             if area == G["ygg_inventory_cardarea"..i2] then is_to_inventory = true; break end
                         end

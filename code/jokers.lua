@@ -23,6 +23,7 @@ SMODS.Joker {
    perishable_compat = false,
    pos = { x = 0, y = 0 },
    no_collection = true,
+   no_doe = true,
    in_pool = function(self, args)
       return false
    end,

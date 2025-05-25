@@ -489,3 +489,30 @@ function Card:use_consumeable(area, copier)
     local ret = hookTo(self, area, copier)
     return ret
 end
+
+--EDITIONS GAKRSAMSLAMDSA
+local hookTo = G.P_CENTERS.e_foil.calculate
+function G.P_CENTERS.e_foil:calculate(card, context)
+    local ret = hookTo(self,card,context)
+    if context.ygg_edition_upgrade and if_skill_obtained("ygg_foil_upgrade") then
+        card.edition.chips = card.edition.chips * 1.2
+        return {
+            message = "Upgraded!",
+            colour = G.C.CHIPS,
+        }
+    end
+    return ret
+end
+
+local hookTo = G.P_CENTERS.e_holo.calculate
+function G.P_CENTERS.e_holo:calculate(card, context)
+    local ret = hookTo(self,card,context)
+    if context.ygg_edition_upgrade and if_skill_obtained("ygg_holo_upgrade") then
+        card.edition.mult = card.edition.mult + 5
+        return {
+            message = "Upgraded!",
+            colour = G.C.MULT,
+        }
+    end
+    return ret
+end

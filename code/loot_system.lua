@@ -3003,7 +3003,7 @@ function SMODS.calculate_context(context, return_table)
         end
 
         if Yggdrasil.have_item("clover_talisman") then
-            for _ = 1, Yggdrasil.amt_item_inv("sharp_spear") do
+            for _ = 1, Yggdrasil.amt_item_inv("clover_talisman") do
                 if context.other_card:is_suit("Clubs") then
                     SMODS.calculate_effect({mult = 2 * gains_multi["mult"]}, context.other_card)
                     if retrigger_times > 0 then
@@ -3017,7 +3017,7 @@ function SMODS.calculate_context(context, return_table)
         end
 
         if Yggdrasil.have_item("diamond_staff") then
-            for _ = 1, Yggdrasil.amt_item_inv("sharp_spear") do
+            for _ = 1, Yggdrasil.amt_item_inv("diamond_staff") do
                 if context.other_card:is_suit("Diamonds") then
                     SMODS.calculate_effect({dollars = 0.5}, context.other_card)
                     if retrigger_times > 0 then

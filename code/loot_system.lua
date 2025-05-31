@@ -1065,6 +1065,9 @@ function Card:stop_drag()
                 local mod_prefix = self.config.center.mod.prefix
                 local cutout_pos = #class_prefix + #mod_prefix + 3
                 local is_to_inventory = false
+                for i2 = 1,3 do
+                    if area == G["ygg_inventory_cardarea"..i2] then is_to_inventory = true; break end
+                end
 
                 local final_key = string.sub(self.config.center.key, cutout_pos, #self.config.center.key)
                 for i,v in ipairs(G.PROFILES[G.SETTINGS.profile]["YggInventory"] or {}) do
@@ -1074,7 +1077,7 @@ function Card:stop_drag()
                     end
                 end
                 local true_key = Yggdrasil.get_true_key(self)
-                if Yggdrasil.amt_item_inv(true_key) >= 1 then to_emplace = true end
+                if Yggdrasil.amt_item_inv(true_key) >= 1 and not is_to_inventory then to_emplace = true end
 
                 for i = 1,3 do
                     if area == G["ygg_crafting_cardarea"..i] then

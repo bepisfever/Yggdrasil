@@ -38,7 +38,7 @@ local hookTo = Game.start_run
 function Game:start_run(args) --To add level meter.
    hookTo(self, args)
 
-    if G and G.jokers then
+    if G and G.jokers and not G.GAME.ygg_current_xp then
         G.GAME.ygg_current_xp = 0
     end
 

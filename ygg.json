@@ -1,7 +1,7 @@
 {
     "id": "YGGDRASIL",
     "name": "Yggdrasil",
-    "author": ["BepisFever"],
+    "author": ["BepisFever, th30ne, Mr33ps"],
     "description": "A Skill Tree mod that saves for the entire profile.",
     "prefix": "ygg",
     "main_file": "main.lua",

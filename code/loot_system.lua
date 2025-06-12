@@ -2,14 +2,17 @@
 
 --Welcome to the most bs thing I ever worked on.
 G.E_MANAGER.queues.yggdrasil = {} --referenced from Galdur, credits to Eremel :3
+YggEquipCount = {
+    text = "0/5"
+}
 YggMaterialChance = {
     --[[
     ALL rarities should be listed here. Priority is important.
     ]]
     uncommon = {chance = 1/4, priority = 1},
-    rare = {chance = 1/10, priority = 2},
-    legendary = {chance = 1/25, priority = 3},
-    exotic = {chance = 1/200, priority = 4},
+    rare = {chance = 1/25, priority = 2},
+    legendary = {chance = 1/50, priority = 3},
+    exotic = {chance = 1/2000, priority = 4},
 }
 YggMaterialList = {
     --[[
@@ -33,6 +36,7 @@ YggMaterialList = {
     common = {
         {id = "card_scrap", craft_id = "cs", min_obtain_cap = 1, max_obtain_cap = 3, blind_req = "All", rarity = "common", mod_prefix = "ygg"},
         {id = "half_a_chip", craft_id = "hac", min_obtain_cap = 1, max_obtain_cap = 3, blind_req = "All", rarity = "common", mod_prefix = "ygg"},
+        {id = "philosopher_quill", craft_id = "ph_q", min_obtain_cap = 1, max_obtain_cap = 1, blind_req = "All", rarity = "common", mod_prefix = "ygg", unique = true},
     },
     uncommon = {
         {id = "broken_spade", craft_id = "bs", min_obtain_cap = 1, max_obtain_cap = 1, blind_req = "Small", rarity = "uncommon", mod_prefix = "ygg"},
@@ -42,6 +46,7 @@ YggMaterialList = {
         {id = "harmony_core", craft_id = "hc", min_obtain_cap = 1, max_obtain_cap = 1, blind_req = "Big", rarity = "uncommon", mod_prefix = "ygg"},
         {id = "potassium", craft_id = "pota", min_obtain_cap = 1, max_obtain_cap = 1, blind_req = "Boss", rarity = "uncommon", mod_prefix = "ygg"},
         {id = "astronaut_helmet", craft_id = "ast_h", min_obtain_cap = 1, max_obtain_cap = 1, blind_req = "Big", rarity = "uncommon", mod_prefix = "ygg", unique = true},
+        {id = "four_leaf_clover", craft_id = "flc", min_obtain_cap = 1, max_obtain_cap = 1, blind_req = "All", rarity = "uncommon", mod_prefix = "ygg", unique = true},
     },
     rare = {
         {id = "misprinted_essence", craft_id = "me", min_obtain_cap = 1, max_obtain_cap = 1, blind_req = "Big", rarity = "rare", mod_prefix = "ygg"},
@@ -49,10 +54,14 @@ YggMaterialList = {
     },
     legendary = {
         {id = "soul_fragment", craft_id = "sf", min_obtain_cap = 1, max_obtain_cap = 1, blind_req = "Boss", rarity = "legendary", mod_prefix = "ygg"},
+        {id = "bismuth", craft_id = "bis", min_obtain_cap = 1, max_obtain_cap = 1, blind_req = "Big", rarity = "legendary", mod_prefix = "ygg"},
+        {id = "wither_catalyst", craft_id = "wic", min_obtain_cap = 1, max_obtain_cap = 1, blind_req = "Small", rarity = "legendary", mod_prefix = "ygg"},
         {id = "chains_of_eternity", craft_id = "coe", min_obtain_cap = 1, max_obtain_cap = 1, blind_req = "Boss", rarity = "legendary", mod_prefix = "ygg", unique = true},
     },
     exotic = {
         {id = "vial_of_rainbow", craft_id = "vor", min_obtain_cap = 1, max_obtain_cap = 1, blind_req = "Boss", rarity = "exotic", mod_prefix = "ygg"},
+        {id = "necron_handle", craft_id = "nh", min_obtain_cap = 1, max_obtain_cap = 1, blind_req = "Boss", min_stake = 4, rarity = "exotic", mod_prefix = "ygg"},
+        {id = "necron_scroll", craft_id = "nes", min_obtain_cap = 1, max_obtain_cap = 1, blind_req = "All", min_stake = 4, rarity = "exotic", mod_prefix = "ygg"},
     },
 
     --Type sorting here.
@@ -69,8 +78,13 @@ YggMaterialList = {
         {id = "misprinted_talisman", craft_id = "mt", rarity = "rare", mod_prefix = "ygg"},
         {id = "soul_engine", craft_id = "soul_e", rarity = "legendary", mod_prefix = "ygg"},
         {id = "rainbow_element", craft_id = "r_e", rarity = "exotic", mod_prefix = "ygg"},
-        {id = "chains_of_eternity", craft_id = "coe", min_obtain_cap = 1, max_obtain_cap = 1, blind_req = "Boss", rarity = "legendary", mod_prefix = "ygg", unique = true},
+        {id = "react_rainbow_element", craft_id = "rr_e", rarity = "exotic", mod_prefix = "ygg"},
+        {id = "necron_blade", craft_id = "ne_b", rarity = "exotic", mod_prefix = "ygg"},
+        {id = "hyperion", craft_id = "hype", rarity = "exotic", mod_prefix = "ygg"},
+        {id = "philosopher_quill", craft_id = "ph_q", min_obtain_cap = 1, max_obtain_cap = 1, blind_req = "All", rarity = "common", mod_prefix = "ygg", unique = true},
         {id = "astronaut_helmet", craft_id = "ast_h", min_obtain_cap = 1, max_obtain_cap = 1, blind_req = "Big", rarity = "uncommon", mod_prefix = "ygg", unique = true},
+        {id = "four_leaf_clover", craft_id = "flc", min_obtain_cap = 1, max_obtain_cap = 1, blind_req = "All", rarity = "uncommon", mod_prefix = "ygg", unique = true},
+        {id = "chains_of_eternity", craft_id = "coe", min_obtain_cap = 1, max_obtain_cap = 1, blind_req = "Boss", rarity = "legendary", mod_prefix = "ygg", unique = true},
     },
     material = {
         {id = "card_scrap", craft_id = "cs", min_obtain_cap = 1, max_obtain_cap = 3, blind_req = "All", rarity = "common", mod_prefix = "ygg"},
@@ -84,7 +98,11 @@ YggMaterialList = {
         {id = "misprinted_essence", craft_id = "me", min_obtain_cap = 1, max_obtain_cap = 1, blind_req = "Big", rarity = "rare", mod_prefix = "ygg"},
         {id = "potassium_overload", craft_id = "pota_o", min_obtain_cap = 1, max_obtain_cap = 1, blind_req = "Boss", rarity = "rare", mod_prefix = "ygg"},
         {id = "soul_fragment", craft_id = "sf", min_obtain_cap = 1, max_obtain_cap = 1, blind_req = "Boss", rarity = "legendary", mod_prefix = "ygg"},
+        {id = "wither_catalyst", craft_id = "wic", min_obtain_cap = 1, max_obtain_cap = 1, blind_req = "Small", rarity = "legendary", mod_prefix = "ygg"},
+        {id = "bismuth", craft_id = "bis", min_obtain_cap = 1, max_obtain_cap = 1, blind_req = "Big", rarity = "legendary", mod_prefix = "ygg"},
         {id = "vial_of_rainbow", craft_id = "vor", min_obtain_cap = 1, max_obtain_cap = 1, blind_req = "Boss", rarity = "exotic", mod_prefix = "ygg"},
+        {id = "necron_handle", craft_id = "nh", min_obtain_cap = 1, max_obtain_cap = 1, blind_req = "Boss", min_stake = 4, rarity = "exotic", mod_prefix = "ygg"},
+        {id = "necron_scroll", craft_id = "nes", min_obtain_cap = 1, max_obtain_cap = 1, blind_req = "All", min_stake = 4, rarity = "exotic", mod_prefix = "ygg"},
     },
 }
 YggCraftingRecipes = {
@@ -256,6 +274,18 @@ YggCraftingRecipes = {
         }
     },
     {
+        card_key = "ygg_mat_ygg_react_rainbow_element",
+        recipe = {
+            {"bis"},
+            {"bis", "r_e", "bis"},
+            {"bis"},
+        },
+        config = {
+            amount = 1,
+            unique = true,
+        }
+    },
+    {
         card_key = "ygg_mat_ygg_misprinted_talisman",
         recipe = {
             {"cs", "cs"},
@@ -265,7 +295,30 @@ YggCraftingRecipes = {
             amount = 1,
             unique = true
         }
-    }
+    },
+    {
+        card_key = "ygg_mat_ygg_necron_blade",
+        recipe = {
+            {"wic", "wic", "wic"},
+            {"wic", "nh", "wic"},
+            {"wic", "wic", "wic"},
+        },
+        config = {
+            amount = 1,
+            unique = true
+        }
+    },
+    {
+        card_key = "ygg_mat_ygg_hyperion",
+        recipe = {
+            {"ne_b", "necron_scroll", "necron_scroll", "necron_scroll"},
+        },
+        config = {
+            no_order = true,
+            amount = 1,
+            unique = true
+        }
+    },
 } 
 
 YggRelicEffects = {
@@ -313,7 +366,18 @@ YggRelicEffects = {
         config = {
             mult_multi = 1.5,
         }
-    }
+    },
+    four_leaf_clover = {
+        config = {
+            luck = 0.2,
+            xmult = -0.2
+        }
+    },
+    philosopher_quill = {
+        config = {
+            xp_gain = 20,
+        },
+    },
 }
 
 Yggdrasil.get_type_table = function() --Returns a table with items in type tables only.
@@ -416,6 +480,20 @@ Yggdrasil.have_item = function(key, amt) --Check if you have that item in invent
         end
     end
     return false
+end
+
+Yggdrasil.equipped_item = function(key) --Check if you have that item equipped 
+    if not Yggdrasil.have_item(key) then
+        for i,v in ipairs(G.PROFILES[G.SETTINGS.profile]["YggEquipped"] or {}) do
+            if v.info.id == key then table.remove(G.PROFILES[G.SETTINGS.profile]["YggEquipped"],i) end
+        end
+        return false
+    else
+        for _,v in ipairs(G.PROFILES[G.SETTINGS.profile]["YggEquipped"] or {}) do
+            if v.info.id == key then return true end
+        end
+        return false
+    end
 end
 
 Yggdrasil.item_exist = function(key, amt) --Check if you have that item in inventory, crafting AND delete zones, amt stands for amount.
@@ -673,6 +751,13 @@ function roll_material_rng(type)
                     if Yggdrasil.item_exist(mat_info.id) then
                         is_valid = false
                     end
+                    
+                    local allBlindTypes = {"Small", "Big", "Boss"}
+                    for _,v2 in ipairs(allBlindTypes) do
+                        for _,v3 in ipairs(G.GAME["loot_table"][v2.."Loots"] or {}) do
+                            if v3.info and v3.info.id == mat_info.id then is_valid = false end
+                        end
+                    end
                 end
 
                 if is_valid then valid_pool[i][#valid_pool[i]+1] = mat_info end
@@ -682,7 +767,12 @@ function roll_material_rng(type)
 
     local total_luck_change = 1
     for _,v in pairs(G.GAME.YGG_LUCK_BUFF or {}) do
-        total_luck_change = total_luck_change * v.luck
+        total_luck_change = total_luck_change + v.luck
+    end
+    for _,v in pairs(G.PROFILES[G.SETTINGS.profile]["YggEquipped"] or {}) do
+        if YggRelicEffects[v.info.id] and YggRelicEffects[v.info.id].config.luck then
+            total_luck_change = total_luck_change + YggRelicEffects[v.info.id].config.luck
+        end
     end
     local chosen_rarities = {}
     for i,_ in pairs(valid_pool) do
@@ -711,7 +801,6 @@ function UIElement:hover()
     if self.config.id == "select_blind_button" then
         --self.config.ref_table
         local check = nil
-        if self.config.ref_table.small then print(":3") end
         if self.config.ref_table.key == "bl_small" or self.config.ref_table.small then
             check = "Small"
         elseif self.config.ref_table.key == "bl_big" or self.config.ref_table.big then
@@ -877,6 +966,97 @@ end
 local toHook = Card.stop_drag
 function Card:stop_drag()
     if G.ygg_hold_lshift and not self.ability.is_material then
+        local c = toHook(self)
+        return c
+    end
+    if self.ability.is_equipped then
+        local area = self.area
+        self.ygg_oldarea = self.area or self.ygg_oldarea
+        for i, k in ipairs(G.CONTROLLER.collision_list) do
+            if (k:is(CardArea)) then
+                area = k
+                break
+            end
+            
+            if (k:is(Card)) and false then
+                area = k.area
+                break
+            end
+        end
+
+        for i = 2,4 do
+            if area == G["ygg_equip_cardarea"..i] then
+                if G.PROFILES[G.SETTINGS.profile]["YggEquipped"] then
+                    for i2,v in ipairs(G.PROFILES[G.SETTINGS.profile]["YggEquipped"]) do
+                        if v.card_key == self.config.center.key then
+                            table.remove(G.PROFILES[G.SETTINGS.profile]["YggEquipped"], i2)
+                        end
+                    end
+                end
+                self.ability.is_equipped = false
+                self.ability.to_equip = true
+                Yggdrasil.draw_card(self.ygg_oldarea, area, 1, 'up', nil, self ,0)
+                G.E_MANAGER:add_event(Event({
+                    func = function()
+                        self.ygg_oldarea = nil
+                        return true 
+                    end
+                }))
+                area:align_cards()
+            end
+        end
+
+        local c = toHook(self)
+        return c
+    elseif self.ability.to_equip then
+        local area = self.area
+        self.ygg_oldarea = self.area or self.ygg_oldarea
+        for i, k in ipairs(G.CONTROLLER.collision_list) do
+            if (k:is(CardArea)) then
+                area = k
+                break
+            end
+            
+            if (k:is(Card)) and false then
+                area = k.area
+                break
+            end
+        end
+
+        if area == G["ygg_equip_cardarea1"] then
+            if not G.PROFILES[G.SETTINGS.profile]["YggEquipped"] or (G.PROFILES[G.SETTINGS.profile]["YggEquipped"] and #G.PROFILES[G.SETTINGS.profile]["YggEquipped"] < 5)then
+                local true_key = Yggdrasil.get_true_key(self)
+                if true_key then
+                    if not G.PROFILES[G.SETTINGS.profile]["YggEquipped"] then G.PROFILES[G.SETTINGS.profile]["YggEquipped"] = {} end
+                    G.PROFILES[G.SETTINGS.profile]["YggEquipped"][#G.PROFILES[G.SETTINGS.profile]["YggEquipped"]+1] = {card_key = self.config.center.key, info = Yggdrasil.get_item(true_key)}
+                    self.ability.is_equipped = true
+                    self.ability.to_equip = false
+                    Yggdrasil.draw_card(self.ygg_oldarea, area, 1, 'up', nil, self ,0)
+                    G.E_MANAGER:add_event(Event({
+                        func = function()
+                            self.ygg_oldarea = nil
+                            return true 
+                        end
+                    }))
+                    area:align_cards()
+                end
+            end
+        else
+            for i = 2,4 do
+                if area == G["ygg_equip_cardarea"..i] then
+                    Yggdrasil.draw_card(self.ygg_oldarea, area, 1, 'up', nil, self ,0)
+                    G.E_MANAGER:add_event(Event({
+                        func = function()
+                            self.ygg_oldarea = nil
+                            return true 
+                        end
+                    }))
+                    area:align_cards()
+                    break
+                end
+            end
+        end
+
         local c = toHook(self)
         return c
     end
@@ -1065,6 +1245,9 @@ function Card:stop_drag()
                 local mod_prefix = self.config.center.mod.prefix
                 local cutout_pos = #class_prefix + #mod_prefix + 3
                 local is_to_inventory = false
+                for i2 = 1,3 do
+                    if area == G["ygg_inventory_cardarea"..i2] then is_to_inventory = true; break end
+                end
 
                 local final_key = string.sub(self.config.center.key, cutout_pos, #self.config.center.key)
                 for i,v in ipairs(G.PROFILES[G.SETTINGS.profile]["YggInventory"] or {}) do
@@ -1074,7 +1257,7 @@ function Card:stop_drag()
                     end
                 end
                 local true_key = Yggdrasil.get_true_key(self)
-                if Yggdrasil.amt_item_inv(true_key) >= 1 then to_emplace = true end
+                if Yggdrasil.amt_item_inv(true_key) >= 1 and not is_to_inventory then to_emplace = true end
 
                 for i = 1,3 do
                     if area == G["ygg_crafting_cardarea"..i] then
@@ -1104,7 +1287,6 @@ function Card:stop_drag()
                         local class_prefix = "ygg_mat"
                         local mod_prefix = self.config.center.mod.prefix or nil
                         local cutout_pos = #class_prefix + (#mod_prefix or - 2) + 3
-
                         local final_key = string.sub(self.config.center.key, cutout_pos, #self.config.center.key)
 
                         for i2,v in ipairs(G.PROFILES[G.SETTINGS.profile]["YggCrafting"..i] or {}) do
@@ -1114,8 +1296,12 @@ function Card:stop_drag()
                             end
                         end
 
+                        local is_to_inventory = false
+                        for i2 = 1,3 do
+                            if area == G["ygg_inventory_cardarea"..i2] then is_to_inventory = true; break end
+                        end
                         local true_key = Yggdrasil.get_true_key(self)
-                        if Yggdrasil.amt_item_inv(true_key) >= 1 then stop_create = true end
+                        if Yggdrasil.amt_item_inv(true_key) >= 1 and is_to_inventory then stop_create = true end
 
                         for i2 = 1,3 do
                             if area == G["ygg_crafting_cardarea"..i2] then
@@ -1144,7 +1330,6 @@ function Card:stop_drag()
                         local class_prefix = "ygg_mat"
                         local mod_prefix = self.config.center.mod.prefix or nil
                         local cutout_pos = #class_prefix + (#mod_prefix or - 2) + 3
-
                         local final_key = string.sub(self.config.center.key, cutout_pos, #self.config.center.key)
 
                         for i2,v in ipairs(G.PROFILES[G.SETTINGS.profile]["YggDelete"..i] or {}) do
@@ -1154,8 +1339,12 @@ function Card:stop_drag()
                             end
                         end
 
+                        local is_to_inventory = false
+                        for i2 = 1,3 do
+                            if area == G["ygg_inventory_cardarea"..i2] then is_to_inventory = true; break end
+                        end
                         local true_key = Yggdrasil.get_true_key(self)
-                        if Yggdrasil.amt_item_inv(true_key) >= 1 then stop_create = true end
+                        if Yggdrasil.amt_item_inv(true_key) >= 1 and is_to_inventory then stop_create = true end
 
                         for i2 = 1,3 do
                             if area == G["ygg_crafting_cardarea"..i2] then
@@ -1379,6 +1568,22 @@ G.FUNCS.to_previous_recipe_page = function(e)
     G.FUNCS.ygg_open_inventory()
 end
 
+G.FUNCS.to_next_equip_page = function(e)
+    G.GAME["YggEquipPage"] = (G.GAME["YggEquipPage"] or 1) + 1
+    if G.GAME["YggEquipPage"] > (e.config.page) then
+        G.GAME["YggEquipPage"] = 1
+    end
+    G.FUNCS.ygg_open_inventory()
+end
+
+G.FUNCS.to_previous_equip_page = function(e)
+    G.GAME["YggEquipPage"] = (G.GAME["YggEquipPage"] or 1) - 1
+    if G.GAME["YggEquipPage"] <= 0 then
+        G.GAME["YggEquipPage"] = (e.config.page)
+    end
+    G.FUNCS.ygg_open_inventory()
+end
+
 G.FUNCS.ygg_switch_sort_type = function(e)
     local sort_type = e.config.sort_type or nil
     if sort_type then
@@ -1391,6 +1596,14 @@ G.FUNCS.ygg_switch_second_area = function(e)
     local second_area = e.config.second_area or nil
     if second_area then
         G.GAME["YggSecondAreaMode"] = second_area
+        G.FUNCS.ygg_open_inventory()
+    end
+end
+
+G.FUNCS.ygg_switch_inven_area = function(e)
+    local second_area = e.config.inven_area or nil
+    if second_area then
+        G.GAME["YggInvenArea"] = second_area
         G.FUNCS.ygg_open_inventory()
     end
 end
@@ -1619,6 +1832,7 @@ function create_inventory_UI(args)
     local cardarea_padding = -0.5
     local true_page = nil
     local true_recipe_page = nil
+    local true_equip_page = nil
 
     local function clear_ygg_areas()
         for i = 1,3 do
@@ -1654,18 +1868,34 @@ function create_inventory_UI(args)
     clear_ygg_areas()
     G.E_MANAGER:clear_queue('yggdrasil')
 
-    for i = 1,3 do
-        if G["ygg_inventory_cardarea"..i] then
-            G["ygg_inventory_cardarea"..i]:remove()
-            G["ygg_inventory_cardarea"..i] = nil
+    if not G.GAME["YggInvenArea"] or G.GAME["YggInvenArea"] == "Inventory" then
+        for i = 1,3 do
+            if G["ygg_inventory_cardarea"..i] then
+                G["ygg_inventory_cardarea"..i]:remove()
+                G["ygg_inventory_cardarea"..i] = nil
+            end
+            G["ygg_inventory_cardarea"..i] = CardArea(
+                G.ROOM.T.x + 0.2 * G.ROOM.T.w / 2, G.ROOM.T.h,
+                4.25 * G.CARD_W,
+                0.95 * G.CARD_H,
+                {card_limit = 5, type = 'title', highlight_limit = 0}
+            )
+            G["ygg_inventory_cardarea"..i].states.collide.can = true
         end
-        G["ygg_inventory_cardarea"..i] = CardArea(
-            G.ROOM.T.x + 0.2 * G.ROOM.T.w / 2, G.ROOM.T.h,
-            4.25 * G.CARD_W,
-            0.95 * G.CARD_H,
-            {card_limit = 5, type = 'title', highlight_limit = 0}
-        )
-        G["ygg_inventory_cardarea"..i].states.collide.can = true
+    elseif G.GAME["YggInvenArea"] == "Equip" then
+        for i = 1,4 do
+            if G["ygg_equip_cardarea"..i] then
+                G["ygg_equip_cardarea"..i]:remove()
+                G["ygg_equip_cardarea"..i] = nil
+            end
+            G["ygg_equip_cardarea"..i] = CardArea(
+                G.ROOM.T.x + 0.2 * G.ROOM.T.w / 2, G.ROOM.T.h,
+                4.25 * G.CARD_W,
+                0.95 * G.CARD_H,
+                {card_limit = 5, type = 'title', highlight_limit = 0}
+            )
+            G["ygg_equip_cardarea"..i].states.collide.can = true
+        end
     end
 
     if G.GAME["YggSecondAreaMode"] and G.GAME["YggSecondAreaMode"] == "Delete" then
@@ -1795,7 +2025,7 @@ function create_inventory_UI(args)
             end
         end 
     else --Loading cards to the area.
-        if G.PROFILES[G.SETTINGS.profile]["YggInventory"] then
+        if G.PROFILES[G.SETTINGS.profile]["YggInventory"] and (not G.GAME["YggInvenArea"] or G.GAME["YggInvenArea"] == "Inventory") then
             local current_page = G.GAME.ygg_inven_page or 1
             local list_to_use = G.PROFILES[G.SETTINGS.profile]["YggInventory"]
             if G.GAME["YggSearchOption"] and type(G.GAME["YggSearchOption"]) == "string" then
@@ -1970,6 +2200,84 @@ function create_inventory_UI(args)
                                     G.P_CENTERS[key])
                                 card.ability.ygg_from_inventory = true
                                 card.ability.ygg_is_item = true
+                                card.children.back:remove()
+                                card.children.back = Sprite(card.T.x, card.T.y, card.T.w, card.T.h, G.ASSET_ATLAS["ygg_placeholder_mat"], { x = 0, y = 0 })
+                                card.children.back.states.hover = card.states.hover
+                                card.children.back.states.click = card.states.click
+                                card.children.back.states.drag = card.states.drag
+                                card.children.back.states.collide.can = false
+                                card.children.back:set_role({major = card, role_type = 'Glued', draw_major = card})
+                                cardarea_to_insert:emplace(card) 
+                            end
+                            return true 
+                        end
+                    }), "yggdrasil")
+                end
+            end
+        elseif G.PROFILES[G.SETTINGS.profile]["YggInventory"] and (G.GAME["YggInvenArea"] and G.GAME["YggInvenArea"] == "Equip") then
+            if G.PROFILES[G.SETTINGS.profile]["YggEquipped"] then
+                local cardarea_to_insert = G["ygg_equip_cardarea1"]
+                for _,v in ipairs(G.PROFILES[G.SETTINGS.profile]["YggEquipped"] or {}) do
+                    if not Yggdrasil.have_item(v.info.id) then
+                        for i,v2 in ipairs(G.PROFILES[G.SETTINGS.profile]["YggEquipped"] or {}) do
+                            if v2.info.id == v.info.id then table.remove(G.PROFILES[G.SETTINGS.profile]["YggEquipped"],i) end
+                        end
+                    end
+                    local key = v.card_key
+                    local card = Card(cardarea_to_insert.T.x + cardarea_to_insert.T.w / 2, cardarea_to_insert.T.y,
+                        G.CARD_W, G.CARD_H, G.P_CARDS.empty,
+                        G.P_CENTERS[key])
+                    card.ability.is_equipped = true
+                    card.children.back:remove()
+                    card.children.back = Sprite(card.T.x, card.T.y, card.T.w, card.T.h, G.ASSET_ATLAS["ygg_placeholder_mat"], { x = 0, y = 0 })
+                    card.children.back.states.hover = card.states.hover
+                    card.children.back.states.click = card.states.click
+                    card.children.back.states.drag = card.states.drag
+                    card.children.back.states.collide.can = false
+                    card.children.back:set_role({major = card, role_type = 'Glued', draw_major = card})
+                    cardarea_to_insert:emplace(card) 
+                end
+            end
+
+            local relics = {}
+            for _,v in ipairs(G.PROFILES[G.SETTINGS.profile]["YggInventory"]) do
+                local exists = false
+                for _,v2 in ipairs(relics) do
+                    if v2.id == v.id then exists = true break end
+                end
+                if not exists and Yggdrasil.get_type_of_item(v.id) == "relic" then
+                    relics[#relics+1] = v
+                end
+            end
+
+            if G.PROFILES[G.SETTINGS.profile]["YggEquipped"] then
+                for _,v in ipairs(G.PROFILES[G.SETTINGS.profile]["YggEquipped"] or {}) do
+                    for i,v2 in ipairs(relics) do
+                        if v2.id == v.info.id then table.remove(relics,i) end
+                    end
+                end
+            end
+
+            true_equip_page = math.max(math.ceil(#relics/15),1)
+            local current_page = G.GAME["YggEquipPage"] or 1
+            if current_page > true_equip_page then
+                G.GAME["YggEquipPage"] = true_equip_page
+            end
+            for i = (1 + (15 * (current_page - 1))), (15 + (15 * (current_page - 1))) do
+                local saved_skill_to_insert = relics[i]
+                if saved_skill_to_insert then
+                    G.E_MANAGER:add_event(Event({
+                        func = function() 
+                            local key = "ygg_mat_"..saved_skill_to_insert.mod_prefix.."_"..saved_skill_to_insert.id
+                            local cardarea_to_insert = nil
+                            for i2 = 2,4 do
+                                if G["ygg_equip_cardarea"..i2] and G["ygg_equip_cardarea"..i2].cards and #G["ygg_equip_cardarea"..i2].cards < 5 then cardarea_to_insert = G["ygg_equip_cardarea"..i2] break end
+                            end
+                            if cardarea_to_insert then
+                                local card = Card(cardarea_to_insert.T.x + cardarea_to_insert.T.w / 2, cardarea_to_insert.T.y,
+                                    G.CARD_W, G.CARD_H, G.P_CARDS.empty,
+                                    G.P_CENTERS[key])
+                                card.ability.to_equip = true
                                 card.children.back:remove()
                                 card.children.back = Sprite(card.T.x, card.T.y, card.T.w, card.T.h, G.ASSET_ATLAS["ygg_placeholder_mat"], { x = 0, y = 0 })
                                 card.children.back.states.hover = card.states.hover
@@ -2211,6 +2519,7 @@ function create_inventory_UI(args)
     if not G.GAME["YggAutoDelete"] then G.GAME["YggAutoDelete"] = "" end
     
     local second_area_nodes = {}
+    local inven_area_nodes = {}
     if G.GAME["YggSecondAreaMode"] and G.GAME["YggSecondAreaMode"] == "Delete" then --Delete Area
         second_area_nodes = {
             {n = G.UIT.R, config = {align = "tm", padding = 0.2}, nodes = {
@@ -2516,6 +2825,183 @@ function create_inventory_UI(args)
         }
     end
 
+    if not G.GAME["YggInvenArea"] or G.GAME["YggInvenArea"] == "Inventory" then
+        inven_area_nodes = {
+            {n = G.UIT.R, config = {align = "tm", padding = 0.2}, nodes = {
+                {n = G.UIT.O, config = {align = "tm", object = DynaText({scale = 0.75, string = localize('ygg_inventory_text'), maxw = 9, colours = { G.C.WHITE }, float = true, silent = true, shadow = true})}}
+            }},
+            {n = G.UIT.R, config = {align = "tr", padding = 0.02}, nodes = {
+                ygg_create_text_input({w = 3, prompt_text = G.GAME["YggSearchOption"], id = "ygg_search_option", extended_corpus = true, ref_table = G.GAME, ref_value = 'YggSearchOptionInput',
+                    callback = function(_)
+                        G.GAME["YggSearchOption"] = G.GAME["YggSearchOptionInput"]
+                        G.FUNCS.ygg_open_inventory()
+                    end
+                }),
+                {n = G.UIT.C, config = {align = "tr", minw = 0.5, minh = 0.5, padding = 0.1, r = 0.1, hover = true, colour = G.C.RED, shadow = true, button = "ygg_clear_text"}, nodes = {
+                    {n = G.UIT.R, config = { align = "cm", padding = 0.05 }, nodes = {
+                        {n = G.UIT.T, config = {text = localize("ygg_clear"), scale = 0.4, colour = G.C.UI.TEXT_LIGHT}}
+                        }
+                    },
+                    }
+                },   
+            }},
+            {n = G.UIT.R, config = {align = "tr", padding = 0.02}, nodes = {
+                {
+                    n = G.UIT.C,
+                    config = {
+                        align = "tr",
+                        minw = 0.5,
+                        minh = 0.5,
+                        padding = 0.1,
+                        r = 0.1,
+                        hover = true,
+                        colour = G.C.RED,
+                        shadow = true,
+                        button = "ygg_switch_sort_type",
+                        sort_type = "Rarity",
+                    },
+                    nodes = {
+                        {
+                            n = G.UIT.R,
+                            config = { align = "cm", padding = 0.05 },
+                            nodes = {
+                                {
+                                    n = G.UIT.T,
+                                    config = {
+                                        text = localize("ygg_sort_rarity"),
+                                        scale = 0.3,
+                                        colour = G.C.UI.TEXT_LIGHT
+                                    }
+                                }
+                            }
+                        },
+                    }
+                },   
+                {
+                    n = G.UIT.C,
+                    config = {
+                        align = "tr",
+                        minw = 0.5,
+                        minh = 0.5,
+                        padding = 0.1,
+                        r = 0.1,
+                        hover = true,
+                        colour = G.C.RED,
+                        shadow = true,
+                        button = "ygg_switch_sort_type",
+                        sort_type = "Date",
+                    },
+                    nodes = {
+                        {
+                            n = G.UIT.R,
+                            config = { align = "cm", padding = 0.05 },
+                            nodes = {
+                                {
+                                    n = G.UIT.T,
+                                    config = {
+                                        text = localize("ygg_sort_date"),
+                                        scale = 0.3,
+                                        colour = G.C.UI.TEXT_LIGHT
+                                    }
+                                }
+                            }
+                        },
+                    }
+                },   
+            }},
+            {n = G.UIT.R, config = {align = "tr", padding = 0.02}, nodes = {
+                {n = G.UIT.C, config = {align = "tr", minw = 0.5, minh = 0.5, padding = 0.1, r = 0.1, hover = true, colour = G.C.RED, shadow = true, button = "ygg_switch_inven_area", inven_area = "Equip"}, nodes = {
+                    {n = G.UIT.R, config = { align = "cm", padding = 0.05 }, nodes = {
+                        {n = G.UIT.T, config = {text = localize("ygg_equip_text"), scale = 0.4, colour = G.C.UI.TEXT_LIGHT}}
+                        }
+                    },
+                    }
+                }, 
+            }},
+            {n = G.UIT.R, config = {align = "tm", padding = cardarea_padding}, nodes = {
+                {n = G.UIT.O, config = {align = "tm", object = G["ygg_inventory_cardarea1"]}}
+            }},
+            {n = G.UIT.R, config = {align = "tm", padding = cardarea_padding}, nodes = {
+                {n = G.UIT.O, config = {align = "tm", object = G["ygg_inventory_cardarea2"]}}
+            }},
+            {n = G.UIT.R, config = {align = "tm", padding = cardarea_padding}, nodes = {
+                {n = G.UIT.O, config = {align = "tm", object = G["ygg_inventory_cardarea3"]}}
+            }},
+            {n = G.UIT.R, config = {align = "cm", padding = 0.02}, nodes = {
+                {n = G.UIT.C, config = {align = "cm", minw = 0.5, minh = 0.5, padding = 0.1, r = 0.1, hover = true, colour = G.C.RED, shadow = true, button = "to_previous_inventory_page", page = true_page}, nodes = {
+                    {n = G.UIT.R, config = {align = "cm", padding = 0.05}, nodes = {
+                        {n = G.UIT.T, config = {text = "<", scale = 0.4, colour = G.C.UI.TEXT_LIGHT}}
+                    }}
+                }},
+                {n = G.UIT.C, config = {align = "cm", minw = 0.5, minh = 0.5, padding = 0.1, r = 0.1, hover = true, colour = G.C.RED, shadow = true}, nodes = {
+                    {n = G.UIT.R, config = {align = "cm", padding = 0.05}, nodes = {
+                        {n = G.UIT.T, config = {text = localize("ygg_page").." "..(G.GAME.ygg_inven_page or 1).."/"..(true_page or math.max(math.ceil(#(G.PROFILES[G.SETTINGS.profile]["YggInventory"] or {})/15), 1)), scale = 0.4, colour = G.C.UI.TEXT_LIGHT}}
+                    }}
+                }}, 
+                {n = G.UIT.C, config = {align = "cm", minw = 0.5, minh = 0.5, padding = 0.1, r = 0.1, hover = true, colour = G.C.RED, shadow = true, button = "to_next_inventory_page", page = true_page}, nodes = {
+                    {n = G.UIT.R, config = {align = "cm", padding = 0.05}, nodes = {
+                        {n = G.UIT.T, config = {text = ">", scale = 0.4, colour = G.C.UI.TEXT_LIGHT}}
+                    }}
+                }},
+            }},
+        }
+    elseif G.GAME["YggInvenArea"] == "Equip" then
+        inven_area_nodes = {
+            {n = G.UIT.R, config = {align = "tm", padding = 0.2}, nodes = {
+                {n = G.UIT.O, config = {align = "tm", object = DynaText({scale = 0.75, string = localize('ygg_equip_area_text'), maxw = 9, colours = { G.C.WHITE }, float = true, silent = true, shadow = true})}}
+            }},
+            {n = G.UIT.R, config = {align = "tr", padding = 0.02}, nodes = {
+                {n = G.UIT.C, config = {align = "tr", minw = 0.5, minh = 0.5, padding = 0.1, r = 0.1, hover = true, colour = G.C.RED, shadow = true, button = "ygg_switch_inven_area", inven_area = "Inventory"}, nodes = {
+                    {n = G.UIT.R, config = { align = "cm", padding = 0.05 }, nodes = {
+                        {n = G.UIT.T, config = {text = localize("ygg_inventory_text"), scale = 0.4, colour = G.C.UI.TEXT_LIGHT}}
+                        }
+                    },
+                    }
+                }, 
+            }},
+            {n = G.UIT.R, config = {align = "tm", padding = cardarea_padding, r = 0.1, colour = adjust_alpha({G.C.GREY[1], G.C.GREY[2], G.C.GREY[3]}, 0.3)}, nodes = {
+                {n = G.UIT.C, config = {align = "tm", padding = 0, colour = G.C.CLEAR}, nodes = {
+                    --[[
+                    {n = G.UIT.R, config = {align = "tm", padding = 0, colour = G.C.CLEAR}, nodes = {
+                        {n = G.UIT.O, config = {align = "tm", object = DynaText({scale = 0.4, string = {{ref_table = YggEquipCount, ref_value = "text"}}, maxw = 9, colours = { G.C.WHITE }})}}
+                    }},]]
+                    {n = G.UIT.R, config = {align = "tm", padding = 0, colour = G.C.CLEAR}, nodes = {
+                        {n = G.UIT.O, config = {align = "tm", object = G["ygg_equip_cardarea1"]}},
+                    }},
+                }},
+            }},
+            {n = G.UIT.R, config = {align = "tr", padding = 0.1}, nodes = {
+                {n = G.UIT.O, config = {align = "tr", object = DynaText({scale = 0.4, string = {{ref_table = YggEquipCount, ref_value = "text"}}, maxw = 9, colours = { G.C.WHITE }})}}
+            }},
+            {n = G.UIT.R, config = {align = "tm", padding = cardarea_padding}, nodes = {
+                {n = G.UIT.O, config = {align = "tm", object = G["ygg_equip_cardarea2"]}}
+            }},
+            {n = G.UIT.R, config = {align = "tm", padding = cardarea_padding}, nodes = {
+                {n = G.UIT.O, config = {align = "tm", object = G["ygg_equip_cardarea3"]}}
+            }},
+            {n = G.UIT.R, config = {align = "tm", padding = cardarea_padding}, nodes = {
+                {n = G.UIT.O, config = {align = "tm", object = G["ygg_equip_cardarea4"]}}
+            }},
+            {n = G.UIT.R, config = {align = "cm", padding = 0.02}, nodes = {
+                {n = G.UIT.C, config = {align = "cm", minw = 0.5, minh = 0.5, padding = 0.1, r = 0.1, hover = true, colour = G.C.RED, shadow = true, button = "to_previous_equip_page", page = true_equip_page}, nodes = {
+                    {n = G.UIT.R, config = {align = "cm", padding = 0.05}, nodes = {
+                        {n = G.UIT.T, config = {text = "<", scale = 0.4, colour = G.C.UI.TEXT_LIGHT}}
+                    }}
+                }},
+                {n = G.UIT.C, config = {align = "cm", minw = 0.5, minh = 0.5, padding = 0.1, r = 0.1, hover = true, colour = G.C.RED, shadow = true}, nodes = {
+                    {n = G.UIT.R, config = {align = "cm", padding = 0.05}, nodes = {
+                        {n = G.UIT.T, config = {text = localize("ygg_page").." "..(G.GAME.ygg_equip_page or 1).."/"..(true_equip_page or 1), scale = 0.4, colour = G.C.UI.TEXT_LIGHT}}
+                    }}
+                }}, 
+                {n = G.UIT.C, config = {align = "cm", minw = 0.5, minh = 0.5, padding = 0.1, r = 0.1, hover = true, colour = G.C.RED, shadow = true, button = "to_next_equip_page", page = true_equip_page}, nodes = {
+                    {n = G.UIT.R, config = {align = "cm", padding = 0.05}, nodes = {
+                        {n = G.UIT.T, config = {text = ">", scale = 0.4, colour = G.C.UI.TEXT_LIGHT}}
+                    }}
+                }},
+            }},
+        }
+    end
+
     return {n=G.UIT.ROOT, config = {align = "cm", minw = G.ROOM.T.w*5, minh = G.ROOM.T.h*5,padding = 0.1, r = 0.1, colour = args.bg_colour or {G.C.GREY[1], G.C.GREY[2], G.C.GREY[3],0.7}}, nodes={
       {n=G.UIT.R, config={align = "cm", minh = 1,r = 0.3, padding = 0.07, minw = 1, colour = args.outline_colour or G.C.JOKER_GREY, emboss = 0.1}, nodes={
         {n=G.UIT.C, config={align = "cm", minh = 1,r = 0.2, padding = 0.2, minw = 1, colour = args.colour or G.C.L_BLACK}, nodes={
@@ -2524,201 +3010,12 @@ function create_inventory_UI(args)
                     {
                         {n=G.UIT.R, config={align = "cm",padding = args.padding or 0.2, minw = args.minw or 7}, nodes= 
                             {
-
                                 {n=G.UIT.C, config={align = "tm",padding = args.padding or 0.05, r = 0.3, minw = area_minw, minh = area_minh, colour = G.C.BLACK}, nodes= --Inventory Area
-                                    {
-                                        {n = G.UIT.R, config = {align = "tm", padding = 0.2}, nodes = {
-                                            {n = G.UIT.O, config = {align = "tm", object = DynaText({scale = 0.75, string = localize('ygg_inventory_text'), maxw = 9, colours = { G.C.WHITE }, float = true, silent = true, shadow = true})}}
-                                        }},
-                                        {n = G.UIT.R, config = {align = "tr", padding = 0.02}, nodes = {
-                                            ygg_create_text_input({w = 3, prompt_text = G.GAME["YggSearchOption"], id = "ygg_search_option", extended_corpus = true, ref_table = G.GAME, ref_value = 'YggSearchOptionInput',
-                                                callback = function(_)
-                                                    G.GAME["YggSearchOption"] = G.GAME["YggSearchOptionInput"]
-                                                    G.FUNCS.ygg_open_inventory()
-                                                end
-                                            }),
-                                            {n = G.UIT.C, config = {align = "tr", minw = 0.5, minh = 0.5, padding = 0.1, r = 0.1, hover = true, colour = G.C.RED, shadow = true, button = "ygg_clear_text"}, nodes = {
-                                                {n = G.UIT.R, config = { align = "cm", padding = 0.05 }, nodes = {
-                                                    {n = G.UIT.T, config = {text = localize("ygg_clear"), scale = 0.4, colour = G.C.UI.TEXT_LIGHT}}
-                                                    }
-                                                },
-                                                }
-                                            },   
-                                        }},
-                                        {n = G.UIT.R, config = {align = "tr", padding = 0.02}, nodes = {
-                                            {
-                                                n = G.UIT.C,
-                                                config = {
-                                                    align = "tr",
-                                                    minw = 0.5,
-                                                    minh = 0.5,
-                                                    padding = 0.1,
-                                                    r = 0.1,
-                                                    hover = true,
-                                                    colour = G.C.RED,
-                                                    shadow = true,
-                                                    button = "ygg_switch_sort_type",
-                                                    sort_type = "Rarity",
-                                                },
-                                                nodes = {
-                                                    {
-                                                        n = G.UIT.R,
-                                                        config = { align = "cm", padding = 0.05 },
-                                                        nodes = {
-                                                            {
-                                                                n = G.UIT.T,
-                                                                config = {
-                                                                    text = localize("ygg_sort_rarity"),
-                                                                    scale = 0.3,
-                                                                    colour = G.C.UI.TEXT_LIGHT
-                                                                }
-                                                            }
-                                                        }
-                                                    },
-                                                }
-                                            },   
-                                            {
-                                                n = G.UIT.C,
-                                                config = {
-                                                    align = "tr",
-                                                    minw = 0.5,
-                                                    minh = 0.5,
-                                                    padding = 0.1,
-                                                    r = 0.1,
-                                                    hover = true,
-                                                    colour = G.C.RED,
-                                                    shadow = true,
-                                                    button = "ygg_switch_sort_type",
-                                                    sort_type = "Date",
-                                                },
-                                                nodes = {
-                                                    {
-                                                        n = G.UIT.R,
-                                                        config = { align = "cm", padding = 0.05 },
-                                                        nodes = {
-                                                            {
-                                                                n = G.UIT.T,
-                                                                config = {
-                                                                    text = localize("ygg_sort_date"),
-                                                                    scale = 0.3,
-                                                                    colour = G.C.UI.TEXT_LIGHT
-                                                                }
-                                                            }
-                                                        }
-                                                    },
-                                                }
-                                            },   
-                                        }},
-                                        {n = G.UIT.R, config = {align = "tm", padding = cardarea_padding}, nodes = {
-                                            {n = G.UIT.O, config = {align = "tm", object = G["ygg_inventory_cardarea1"]}}
-                                        }},
-                                        {n = G.UIT.R, config = {align = "tm", padding = cardarea_padding}, nodes = {
-                                            {n = G.UIT.O, config = {align = "tm", object = G["ygg_inventory_cardarea2"]}}
-                                        }},
-                                        {n = G.UIT.R, config = {align = "tm", padding = cardarea_padding}, nodes = {
-                                            {n = G.UIT.O, config = {align = "tm", object = G["ygg_inventory_cardarea3"]}}
-                                        }},
-                                        {n = G.UIT.R, config = {align = "cm", padding = 0.02}, nodes = {
-                                            {
-                                                n = G.UIT.C,
-                                                config = {
-                                                    align = "cm",
-                                                    minw = 0.5,
-                                                    minh = 0.5,
-                                                    padding = 0.1,
-                                                    r = 0.1,
-                                                    hover = true,
-                                                    colour = G.C.RED,
-                                                    shadow = true,
-                                                    button = "to_previous_inventory_page",
-                                                    page = true_page
-                                                },
-                                                nodes = {
-                                                    {
-                                                        n = G.UIT.R,
-                                                        config = { align = "cm", padding = 0.05 },
-                                                        nodes = {
-                                                            {
-                                                                n = G.UIT.T,
-                                                                config = {
-                                                                    text = "<",
-                                                                    scale = 0.4,
-                                                                    colour = G.C.UI.TEXT_LIGHT
-                                                                }
-                                                            }
-                                                        }
-                                                    },
-                                                }
-                                            },   
-
-                                            {
-                                                n = G.UIT.C,
-                                                config = {
-                                                    align = "cm",
-                                                    minw = 1,
-                                                    minh = 0.5,
-                                                    padding = 0.1,
-                                                    r = 0.1,
-                                                    hover = true,
-                                                    colour = G.C.RED,
-                                                    shadow = true,
-                                                },
-                                                nodes = {
-                                                    {
-                                                        n = G.UIT.R,
-                                                        config = { align = "cm", padding = 0.05 },
-                                                        nodes = {
-                                                            {
-                                                                n = G.UIT.T,
-                                                                config = {
-                                                                    text = localize("ygg_page").." "..(G.GAME.ygg_inven_page or 1).."/"..(true_page or math.max(math.ceil(#(G.PROFILES[G.SETTINGS.profile]["YggInventory"] or {})/15), 1)),
-                                                                    scale = 0.4,
-                                                                    colour = G.C.UI.TEXT_LIGHT
-                                                                }
-                                                            }
-                                                        }
-                                                    },
-                                                }
-                                            },   
-
-                                            {
-                                                n = G.UIT.C,
-                                                config = {
-                                                    align = "cm",
-                                                    minw = 0.5,
-                                                    minh = 0.5,
-                                                    padding = 0.1,
-                                                    r = 0.1,
-                                                    hover = true,
-                                                    colour = G.C.RED,
-                                                    shadow = true,
-                                                    button = "to_next_inventory_page",
-                                                    page = true_page
-                                                },
-                                                nodes = {
-                                                    {
-                                                        n = G.UIT.R,
-                                                        config = { align = "cm", padding = 0.05 },
-                                                        nodes = {
-                                                            {
-                                                                n = G.UIT.T,
-                                                                config = {
-                                                                    text = ">",
-                                                                    scale = 0.4,
-                                                                    colour = G.C.UI.TEXT_LIGHT
-                                                                }
-                                                            }
-                                                        }
-                                                    },
-                                                }
-                                            },   
-                                        }},
-                                    }
+                                    inven_area_nodes
                                 },
                                 {n=G.UIT.C, config={align = "tm",padding = args.padding or 0.05, r = 0.3, minw = area_minw, minh = area_minh, colour = G.C.BLACK}, nodes= --Second Area
                                     second_area_nodes
                                 },
-
                             }
                         },
                     }
@@ -2762,6 +3059,10 @@ end
 local hookTo = Game.update
 function Game:update(dt)
     local ret = hookTo(self, dt)
+
+    if G.PROFILES[G.SETTINGS.profile]["YggEquipped"] then
+        YggEquipCount.text = #G.PROFILES[G.SETTINGS.profile]["YggEquipped"].."/"..(5 + ((G.GAME and G.GAME.YggIncreaseEquipCap) or 0))
+    end
 
     if G["ygg_crafting_show"] and G["ygg_crafting_show"].cards then
         local available_crafting_recipes = {}
@@ -2867,7 +3168,6 @@ function Game:update(dt)
     return ret
 end
 
-
 --believe me when i say idk what im doing
 local hookTo = SMODS.calculate_context
 function SMODS.calculate_context(context, return_table)
@@ -2880,7 +3180,7 @@ function SMODS.calculate_context(context, return_table)
         retrigger_times = 0
 
         for relic_key, relic_config in pairs(YggRelicEffects) do
-            if Yggdrasil.have_item(relic_key) then
+            if Yggdrasil.equipped_item(relic_key) then
                 for _ = 1, Yggdrasil.amt_item_inv(relic_key) do
                     for gain_type,_ in pairs(gains_multi) do
                         if relic_config.config[gain_type.."_multi"] then
@@ -2937,7 +3237,7 @@ function SMODS.calculate_context(context, return_table)
             end
         end
 
-        if Yggdrasil.have_item("misprinted_talisman") then
+        if Yggdrasil.equipped_item("misprinted_talisman") then
             for _ = 1, Yggdrasil.amt_item_inv("misprinted_talisman") do
                 local function func()
                     SMODS.calculate_effect({xmult = (1 + (pseudorandom("ygg_misprinted_talisman", -1, 5) * 0.1)) * gains_multi["xmult"]}, G.deck)
@@ -2951,15 +3251,34 @@ function SMODS.calculate_context(context, return_table)
                 end
             end
         end
+
+        if Yggdrasil.equipped_item("necron_blade") then
+            for _ = 1, Yggdrasil.amt_item_inv("necron_blade") do
+                local function func()
+                    if G.GAME["ygg_necron_blade_wither_essence"] and G.GAME["ygg_necron_blade_wither_essence"] >= 10 then
+                        G.GAME["ygg_necron_blade_wither_essence"] = G.GAME["ygg_necron_blade_wither_essence"] - 10
+                        SMODS.calculate_effect({xmult = 1.25 * gains_multi["xmult"]}, G.deck)
+                    end
+                end
+
+                func()
+                if retrigger_times > 0 then
+                    for _ = 1, retrigger_times do
+                        SMODS.calculate_effect({message = localize("k_again_ex")}, G.deck)
+                        func()
+                    end
+                end
+            end
+        end
     end
     
     if context.mat_end_of_round then
-        if pseudorandom("ygg_gros_michel_roll") <= 1/5 and not G.GAME["ygg_gros_michel_disabled"] and Yggdrasil.have_item("gros_michel") then
+        if pseudorandom("ygg_gros_michel_roll") <= 1/5 and not G.GAME["ygg_gros_michel_disabled"] and Yggdrasil.equipped_item("gros_michel") then
             G.GAME["ygg_gros_michel_disabled"] = true
             SMODS.calculate_effect({message = localize("ygg_disabled")}, G.deck)
         end
 
-        if pseudorandom("ygg_cavendish_roll") <= 1/100 and not G.GAME["ygg_cavendish_disabled"] and Yggdrasil.have_item("cavendish") then
+        if pseudorandom("ygg_cavendish_roll") <= 1/100 and not G.GAME["ygg_cavendish_disabled"] and Yggdrasil.equipped_item("cavendish") then
             G.GAME["ygg_cavendish_disabled"] = true
             SMODS.calculate_effect({message = localize("ygg_disabled")}, G.deck)
         end
@@ -2968,7 +3287,7 @@ function SMODS.calculate_context(context, return_table)
     if context.mat_individual and context.cardarea == G.play then
         ygg_calculate_multi()
 
-        if Yggdrasil.have_item("sharp_spear") then
+        if Yggdrasil.equipped_item("sharp_spear") then
             for _ = 1, Yggdrasil.amt_item_inv("sharp_spear") do
                 if context.other_card:is_suit("Spades") then
                     SMODS.calculate_effect({chips = 15 * gains_multi["mult"]}, context.other_card)
@@ -2982,7 +3301,7 @@ function SMODS.calculate_context(context, return_table)
             end
         end
 
-        if Yggdrasil.have_item("cupid_bow") then
+        if Yggdrasil.equipped_item("cupid_bow") then
             for _ = 1, Yggdrasil.amt_item_inv("cupid_bow") do
                 if context.other_card:is_suit("Hearts") then
                     SMODS.calculate_effect({xmult = 1.1 * gains_multi["xmult"]}, context.other_card)
@@ -2996,7 +3315,7 @@ function SMODS.calculate_context(context, return_table)
             end
         end
 
-        if Yggdrasil.have_item("clover_talisman") then
+        if Yggdrasil.equipped_item("clover_talisman") then
             for _ = 1, Yggdrasil.amt_item_inv("sharp_spear") do
                 if context.other_card:is_suit("Clubs") then
                     SMODS.calculate_effect({mult = 2 * gains_multi["mult"]}, context.other_card)
@@ -3010,7 +3329,7 @@ function SMODS.calculate_context(context, return_table)
             end
         end
 
-        if Yggdrasil.have_item("diamond_staff") then
+        if Yggdrasil.equipped_item("diamond_staff") then
             for _ = 1, Yggdrasil.amt_item_inv("sharp_spear") do
                 if context.other_card:is_suit("Diamonds") then
                     SMODS.calculate_effect({dollars = 0.5}, context.other_card)
@@ -3024,8 +3343,134 @@ function SMODS.calculate_context(context, return_table)
             end
         end
 
-        if Yggdrasil.have_item("rainbow_element") then
+        if Yggdrasil.equipped_item("rainbow_element") then
             for _ = 1, Yggdrasil.amt_item_inv("rainbow_element") do
+                if context.other_card:is_suit("Diamonds") then
+                    local amt = 1
+                    for _,v in ipairs(context.scoring_hand) do
+                        if v:is_suit("Diamonds") and v ~= context.other_card then amt = amt + 0.2 end
+                    end
+                    local function func() 
+                        SMODS.calculate_effect({dollars = amt}, context.other_card)
+                    end
+                    
+                    func()
+                    if retrigger_times > 0 then
+                        for _ = 1, retrigger_times do
+                            SMODS.calculate_effect({message = localize("k_again_ex")}, context.other_card)
+                            func()
+                        end
+                    end
+                end 
+
+                if context.other_card:is_suit("Clubs") then
+                    local amt = 5
+                    for _,v in ipairs(context.scoring_hand) do
+                        if v:is_suit("Clubs") and v ~= context.other_card then amt = amt + 1 end
+                    end
+                    local function func() 
+                        SMODS.calculate_effect({mult = amt * gains_multi["mult"]}, context.other_card)
+                    end
+                    
+                    func()
+                    if retrigger_times > 0 then
+                        for _ = 1, retrigger_times do
+                            SMODS.calculate_effect({message = localize("k_again_ex")}, context.other_card)
+                            func()
+                        end
+                    end
+                end
+
+                if context.other_card:is_suit("Spades") then
+                    local amt = 1
+                    for _,v in ipairs(context.scoring_hand) do
+                        if v:is_suit("Spades") and v ~= context.other_card then amt = amt + 0.1 end
+                    end
+                    local function func() 
+                        SMODS.calculate_effect({xchips = amt * gains_multi["xchips"]}, context.other_card)
+                    end
+                    
+                    func()
+                    if retrigger_times > 0 then
+                        for _ = 1, retrigger_times do
+                            SMODS.calculate_effect({message = localize("k_again_ex")}, context.other_card)
+                            func()
+                        end
+                    end
+                end
+
+                if context.other_card:is_suit("Hearts") then
+                    local amt = 1
+                    for _,v in ipairs(context.scoring_hand) do
+                        if v:is_suit("Hearts") and v ~= context.other_card then amt = amt + 0.1 end
+                    end
+                    local function func() 
+                        SMODS.calculate_effect({xmult = amt * gains_multi["xmult"]}, context.other_card)
+                    end
+                    
+                    func()
+                    if retrigger_times > 0 then
+                        for _ = 1, retrigger_times do
+                            SMODS.calculate_effect({message = localize("k_again_ex")}, context.other_card)
+                            func()
+                        end
+                    end
+                end
+            end
+
+
+        end
+
+        if Yggdrasil.equipped_item("necron_blade") then
+            for _ = 1, Yggdrasil.amt_item_inv("necron_blade") do
+                local function func() 
+                    G.GAME["ygg_necron_blade_wither_essence"] = (G.GAME["ygg_necron_blade_wither_essence"] or 0) + 1
+                    SMODS.calculate_effect({message = "+1", colour = G.C.DARK_EDITION}, context.other_card)
+                end
+                
+                func()
+                if retrigger_times > 0 then
+                    for _ = 1, retrigger_times do
+                        SMODS.calculate_effect({message = localize("k_again_ex")}, context.other_card)
+                        func()
+                    end
+                end
+            end
+        end
+
+        if Yggdrasil.equipped_item("hyperion") then
+            for _ = 1, Yggdrasil.amt_item_inv("hyperion") do
+                local function func() 
+                    G.GAME["ygg_hyperion_wither_essence"] = (G.GAME["ygg_hyperion_wither_essence"] or 0) + 1
+                    SMODS.calculate_effect({message = "+1", colour = G.C.DARK_EDITION}, context.other_card)
+
+                    if G.GAME["ygg_hyperion_wither_essence"] >= 5 then
+                        G.GAME["ygg_hyperion_wither_essence"] = G.GAME["ygg_hyperion_wither_essence"] - 5
+                        SMODS.calculate_effect({message = localize("ygg_wither_impact"), colour = G.C.DARK_EDITION}, G.deck)
+                        for _,v in ipairs(G.hand.cards or {}) do
+                            local unique = true
+                            for _,v2 in ipairs(G.play.cards or {}) do
+                                if v:get_id() == v2:get_id() then unique = false break end
+                            end
+                            if unique then
+                                SMODS.calculate_effect({xmult = 2 * gains_multi["xmult"]}, v)
+                            end
+                        end
+                    end
+                end
+                
+                func()
+                if retrigger_times > 0 then
+                    for _ = 1, retrigger_times do
+                        SMODS.calculate_effect({message = localize("k_again_ex")}, context.other_card)
+                        func()
+                    end
+                end
+            end
+        end
+
+        if Yggdrasil.equipped_item("react_rainbow_element") then
+            for _ = 1, Yggdrasil.amt_item_inv("react_rainbow_element") do
                 if context.other_card:is_suit("Diamonds") then
                     local amt = 5
                     for _,v in ipairs(context.scoring_hand) do
@@ -3047,7 +3492,7 @@ function SMODS.calculate_context(context, return_table)
                 if context.other_card:is_suit("Clubs") then
                     local amt = 25
                     for _,v in ipairs(context.scoring_hand) do
-                        if v:is_suit("Diamonds") and v ~= context.other_card then amt = amt + 5 end
+                        if v:is_suit("Clubs") and v ~= context.other_card then amt = amt + 5 end
                     end
                     local function func() 
                         SMODS.calculate_effect({mult = amt * gains_multi["mult"]}, context.other_card)
@@ -3086,7 +3531,7 @@ function SMODS.calculate_context(context, return_table)
                         if v:is_suit("Hearts") and v ~= context.other_card then amt = amt + 0.2 end
                     end
                     local function func() 
-                        SMODS.calculate_effect({xmult = amt * gains_multi["xchips"]}, context.other_card)
+                        SMODS.calculate_effect({xmult = amt * gains_multi["xmult"]}, context.other_card)
                     end
                     
                     func()
@@ -3098,14 +3543,12 @@ function SMODS.calculate_context(context, return_table)
                     end
                 end
             end
-
-
         end
     end
 
     --[[if context.mat_repetition then  (Might be better to handle these in the dummy joker instead.)
         if context.cardarea == G.play then
-            if Yggdrasil.have_item("rainbow_element") then
+            if Yggdrasil.equipped_item("rainbow_element") then
                 for _ = 1, Yggdrasil.amt_item_inv("rainbow_element") do
                     if context.other_card:is_suit("Hearts") and context.other_card:is_suit("Spades") and context.other_card:is_suit("Clubs") and context.other_card:is_suit("Diamonds") then
                         SMODS.calculate_effect({repetitions = 1, card = context.other_card}, context.other_card)
@@ -3118,7 +3561,7 @@ function SMODS.calculate_context(context, return_table)
     if context.mat_other_consumeable then
         ygg_calculate_multi()
 
-        if Yggdrasil.have_item("astronaut_helmet") then
+        if Yggdrasil.equipped_item("astronaut_helmet") then
             for _ = 1, Yggdrasil.amt_item_inv("astronaut_helmet") do
                 if context.mat_other_consumeable.ability.set == "Planet" then
                     SMODS.calculate_effect({mult = 10 * gains_multi["mult"]}, context.mat_other_consumeable)
@@ -3134,7 +3577,7 @@ function SMODS.calculate_context(context, return_table)
     if context.mat_other_joker then
         ygg_calculate_multi()
 
-        if Yggdrasil.have_item("chains_of_eternity") then
+        if Yggdrasil.equipped_item("chains_of_eternity") then
             for i = 1, Yggdrasil.amt_item_inv("chains_of_eternity") do
                 if context.mat_other_joker.ability and context.mat_other_joker.ability.eternal then
                     SMODS.calculate_effect({xmult = 2 * gains_multi["xmult"]}, context.mat_other_joker)

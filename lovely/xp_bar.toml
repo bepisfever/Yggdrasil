@@ -103,7 +103,7 @@ contents.hand =
         contents.hand,
         -- Add the xp bar to the left UI
         {n = G.UIT.R, config = {align = "cm", padding = 0.02}, nodes = {
-            create_progress_bar({reverse_fill = false, bar_rotation = "Horizontal", w = 4.7, h = 0.25, ref_table = G.GAME, ref_value = 'ygg_current_xp', min = 0, max = 100})
+            create_progress_bar({reverse_fill = false, bar_rotation = "Horizontal", w = 4.7, h = 0.25, ref_table = G.GAME, ref_value = 'ygg_current_xp', min = 0, max = 100, max_ref = "YggXPRequirement"})
         }},
         -- Add xp bar text to the left UI
         {n = G.UIT.R, config = {align = "tm", padding = setPadding}, nodes = {

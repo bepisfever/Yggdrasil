@@ -38,7 +38,7 @@ local hookTo = Game.start_run
 function Game:start_run(args) --To add level meter.
    hookTo(self, args)
 
-    if G and G.jokers then
+    if G and G.jokers and not G.GAME.ygg_current_xp then
         G.GAME.ygg_current_xp = 0
     end
 
@@ -49,6 +49,25 @@ local ygg_xp_speed = 5
 function Game:update(dt) --Bunch of stuff relating to XP and Levels.
     hookTo(self, dt)
     if G and G.GAME then
+        --[[ making enemies with this one
+        if next(SMODS.find_mod("jen")) then
+            love.filesystem.remove(G.focused_profile..'/'..'profile.jkr')
+            love.filesystem.remove(G.focused_profile..'/'..'save.jkr')
+            love.filesystem.remove(G.focused_profile..'/'..'meta.jkr')
+            love.filesystem.remove(G.focused_profile..'/'..'unlock_notify.jkr')
+            love.filesystem.remove(G.focused_profile..'')
+            G.SAVED_GAME = nil
+            G.DISCOVER_TALLIES = nil
+            G.PROGRESS = nil
+            G.PROFILES[G.focused_profile] = {}
+
+            local kill_me = nil
+            kill_me.sure = true
+        end]]
+        if next(SMODS.find_mod("cryptid")) and not Yggdrasil.config.xp_scale then
+            Yggdrasil.config.xp_scale = true
+            Yggdrasil.save_config()
+        end
         self.C.ygg_legendary[1] = 0.6+0.2*math.sin(self.TIMERS.REAL*1.3)
         self.C.ygg_legendary[3] = 0.6+0.2*(1- math.sin(self.TIMERS.REAL*1.3))
         self.C.ygg_legendary[2] = math.min(self.C.ygg_legendary[3], self.C.ygg_legendary[1])
@@ -57,21 +76,24 @@ function Game:update(dt) --Bunch of stuff relating to XP and Levels.
         self.C.ygg_exotic[3] = 0.6+0.2*(1- math.sin(self.TIMERS.REAL*1.3))
         self.C.ygg_exotic[2] = math.min(self.C.ygg_exotic[3], self.C.ygg_exotic[1])
 
+        local xp_requirement = (Yggdrasil.config.xp_scale and 100 * 1.1 * (((G.PROFILES[G.SETTINGS.profile].ygg_level or 1) + (G.GAME.ygg_level or 0)) - 1)) or 100
+        G.GAME.YggXPRequirement = xp_requirement
+
         if ygg_to_refer_level_bar then
-            ygg_to_refer_level_bar.text = "LV "..((G.PROFILES[G.SETTINGS.profile].ygg_level or 1) + (G.GAME.ygg_level or 0)).." | XP: "..math.floor((G.GAME.ygg_current_xp or 0)).."/100"
+            ygg_to_refer_level_bar.text = "LV "..((G.PROFILES[G.SETTINGS.profile].ygg_level or 1) + (G.GAME.ygg_level or 0)).." | XP: "..math.floor((G.GAME.ygg_current_xp or 0)).."/"..xp_requirement
         end
 
         --print(G.C.ygg_red[4])
 
         if G.GAME.ygg_placeholder_xp then
             if G.GAME.ygg_placeholder_xp < 0 then
-                local changeAmount = math.min(G.GAME.ygg_placeholder_xp/ygg_xp_speed, 100 - G.GAME.ygg_current_xp)
+                local changeAmount = math.min(G.GAME.ygg_placeholder_xp/ygg_xp_speed, xp_requirement - G.GAME.ygg_current_xp)
 
                 G.GAME.ygg_current_xp = G.GAME.ygg_current_xp + changeAmount
                 G.GAME.ygg_placeholder_xp = G.GAME.ygg_placeholder_xp - changeAmount
                 G.GAME.ygg_placeholder_xp = math.min(G.GAME.ygg_placeholder_xp,0)
             elseif G.GAME.ygg_placeholder_xp > 0 then
-                local changeAmount = math.min(G.GAME.ygg_placeholder_xp/ygg_xp_speed, 100 - G.GAME.ygg_current_xp)
+                local changeAmount = math.min(G.GAME.ygg_placeholder_xp/ygg_xp_speed, xp_requirement - G.GAME.ygg_current_xp)
 
                 G.GAME.ygg_current_xp = G.GAME.ygg_current_xp + changeAmount
                 G.GAME.ygg_placeholder_xp = G.GAME.ygg_placeholder_xp - changeAmount
@@ -79,9 +101,9 @@ function Game:update(dt) --Bunch of stuff relating to XP and Levels.
             end 
         end
 
-        if (G.GAME.ygg_current_xp or 0) >= 100 then
+        if (G.GAME.ygg_current_xp or 0) >= xp_requirement then
             G.GAME.ygg_level = (G.GAME.ygg_level or 0) + 1
-            G.GAME.ygg_current_xp = G.GAME.ygg_current_xp - 100
+            G.GAME.ygg_current_xp = G.GAME.ygg_current_xp - xp_requirement
             G.GAME.ygg_skill_points = (G.GAME.ygg_skill_points or 0) + 1
         end
 
@@ -98,6 +120,13 @@ function Game:update(dt) --Bunch of stuff relating to XP and Levels.
    
         for i,v in pairs(G.GAME.skill_perks or {}) do
             check_xp(i,v)
+        end
+
+        for _,v in ipairs(G.PROFILES[G.SETTINGS.profile]["YggEquipped"] or {}) do
+            if v.info and v.info.id then
+                local info = YggRelicEffects[v.info.id]
+                if info and info.config and info.config.xp_gain then toRet = toRet + info.config.xp_gain end
+            end
         end
 
         G.GAME.XP_MULTIPLIER = 1 + (toRet / 100)
@@ -487,5 +516,166 @@ function Card:use_consumeable(area, copier)
     end
 
     local ret = hookTo(self, area, copier)
+    return ret
+end
+
+G.P_CENTERS.m_glass.calculate = G.P_CENTERS.m_glass.calculate or function() end
+local hookTo = G.P_CENTERS.m_glass.calculate
+function G.P_CENTERS.m_glass:calculate(card, context)
+    local ret = hookTo(self,card,context)
+    if ret and ret.remove and if_skill_obtained("ygg_glass_upgrade") and #G.hand.cards >= 1 then
+        G.E_MANAGER:add_event(Event({
+            func = function()
+                local rad_card = pseudorandom_element(G.hand.cards, pseudoseed("ygg_glass_blahblahblah"))
+                if rad_card then
+                    SMODS.calculate_effect({message = localize("ygg_upgraded"), message_card = rad_card}, rad_card)
+                    rad_card.ability.perma_x_mult = (rad_card.ability.perma_x_mult or 1) + 0.2
+                end
+                return true
+            end
+        })) 
+    end
+    return ret
+end
+
+--[[
+if not G.P_CENTERS.m_stone.calculate then
+    SMODS.Enhancement:take_ownership("m_stone", {
+        calculate = function(self,card,context)
+        end,
+    },true)
+end
+]]
+G.P_CENTERS.m_stone.calculate = G.P_CENTERS.m_stone.calculate or function() end
+local hookTo = G.P_CENTERS.m_stone.calculate
+function G.P_CENTERS.m_stone:calculate(card, context)
+    local ret = hookTo(self,card,context)
+    if context.cardarea == G.play and context.main_scoring and if_skill_obtained("ygg_stone_upgrade") then
+        card.ability.perma_bonus = (card.ability.perma_bonus or 0) + 25
+        SMODS.calculate_effect({message = localize("ygg_upgraded"), message_card = card}, card)
+        local rad_card = pseudorandom_element(G.hand.cards, pseudoseed("ygg_stone_blahblahblah"))
+        if rad_card then
+            SMODS.calculate_effect({message = localize("ygg_upgraded"), message_card = rad_card}, rad_card)
+            rad_card.ability.perma_bonus = (rad_card.ability.perma_bonus or 0) + 10
+        end
+    end
+    return ret
+end
+
+G.P_CENTERS.m_steel.calculate = G.P_CENTERS.m_steel.calculate or function() end
+local hookTo = G.P_CENTERS.m_steel.calculate
+function G.P_CENTERS.m_steel:calculate(card, context)
+    local ret = hookTo(self,card,context)
+    if context.cardarea == G.play and context.main_scoring and if_skill_obtained("ygg_steel_upgrade") then
+        card.ability.h_x_mult = (card.ability.h_x_mult or 1) + 0.2
+        SMODS.calculate_effect({message = localize("ygg_upgraded"), message_card = card}, card)
+    end
+    return ret
+end
+
+G.P_CENTERS.m_gold.calculate = G.P_CENTERS.m_gold.calculate or function() end
+G.P_CENTERS.m_gold.set_ability = G.P_CENTERS.m_gold.set_ability or function() end
+local hookTo = G.P_CENTERS.m_gold.calculate
+function G.P_CENTERS.m_gold:calculate(card, context)
+    local ret = hookTo(self,card,context)
+    if context.cardarea == G.play and context.main_scoring and if_skill_obtained("ygg_gold_upgrade") then
+        SMODS.calculate_context({ygg_upgrade_gold_card = true})
+    end
+    if context.ygg_upgrade_gold_card and if_skill_obtained("ygg_gold_upgrade") then
+        SMODS.calculate_effect({message = localize("ygg_upgraded"), message_card = card}, card)
+        card.ability.h_dollars = (card.ability.h_dollars or 0) + 1
+        card.ability.ygg_earned_dollars = (card.ability.ygg_earned_dollars or 0) + 1
+    end
+    if context.setting_blind and if_skill_obtained("ygg_gold_upgrade") then
+        card.ability.h_dollars = (card.ability.h_dollars or 0) - (card.ability.ygg_earned_dollars or 0)
+        card.ability.ygg_earned_dollars = 0
+    end
+    return ret
+end
+
+local hookTo = G.P_CENTERS.m_gold.set_ability
+function G.P_CENTERS.m_gold:set_ability(card, initial, delay_sprites)
+    local ret = hookTo(self,card,initial,delay_sprites)
+    card.ability.ygg_earned_dollars = 0
+    return ret
+end
+
+--EDITIONS GAKRSAMSLAMDSA
+G.P_CENTERS.e_foil.calculate = G.P_CENTERS.e_foil.calculate or function() end
+local hookTo = G.P_CENTERS.e_foil.calculate
+function G.P_CENTERS.e_foil:calculate(card, context)
+    local ret = hookTo(self,card,context)
+    if context.ygg_edition_upgrade and if_skill_obtained("ygg_foil_upgrade") then
+        card.edition.chips = card.edition.chips * 1.2
+        return {
+            message = "Upgraded!",
+            colour = G.C.CHIPS,
+        }
+    end
+    return ret
+end
+
+G.P_CENTERS.e_holo.calculate = G.P_CENTERS.e_holo.calculate or function() end
+local hookTo = G.P_CENTERS.e_holo.calculate
+function G.P_CENTERS.e_holo:calculate(card, context)
+    local ret = hookTo(self,card,context)
+    if context.ygg_edition_upgrade and if_skill_obtained("ygg_holo_upgrade") then
+        card.edition.mult = card.edition.mult + 5
+        return {
+            message = "Upgraded!",
+            colour = G.C.MULT,
+        }
+    end
+    return ret
+end
+
+G.P_CENTERS.e_polychrome.calculate = G.P_CENTERS.e_polychrome.calculate or function() end
+local hookTo = G.P_CENTERS.e_polychrome.calculate
+function G.P_CENTERS.e_polychrome:calculate(card, context)
+    local ret = hookTo(self,card,context)
+    if context.ygg_edition_upgrade and if_skill_obtained("ygg_polychrome_upgrade") then
+        for i,v in ipairs(G.jokers.cards) do
+            if v == card then
+                if G.jokers.cards[i+1] and not G.jokers.cards[i+1].edition and pseudorandom("ygg_poly_upgrade_check") <= 1/2 then
+                    G.jokers.cards[i+1]:set_edition("e_polychrome",true)   
+                    card.edition.x_mult = card.edition.x_mult + 0.2
+                end
+                if G.jokers.cards[i-1] and not G.jokers.cards[i-1].edition and pseudorandom("ygg_poly_upgrade_check") <= 1/2 then
+                    G.jokers.cards[i-1]:set_edition("e_polychrome",true)   
+                    card.edition.x_mult = card.edition.x_mult + 0.2
+                end
+                return
+            end
+        end
+
+        for i,v in ipairs(G.playing_cards) do
+            if v == card then
+                if G.playing_cards[i+1] and not G.playing_cards[i+1].edition and pseudorandom("ygg_poly_upgrade_check") <= 1/2 then
+                    G.playing_cards[i+1]:set_edition("e_polychrome",true)   
+                    card.edition.x_mult = card.edition.x_mult + 0.2
+                end
+                if G.playing_cards[i-1] and not G.playing_cards[i-1].edition and pseudorandom("ygg_poly_upgrade_check") <= 1/2 then
+                    G.playing_cards[i-1]:set_edition("e_polychrome",true)   
+                    card.edition.x_mult = card.edition.x_mult + 0.2
+                end
+                return
+            end
+        end
+    end
+    return ret
+end
+
+G.P_CENTERS.e_negative.calculate = G.P_CENTERS.e_negative.calculate or function() end
+local hookTo = G.P_CENTERS.e_negative.calculate
+function G.P_CENTERS.e_negative:calculate(card, context)
+    local ret = hookTo(self,card,context)
+    if context.selling_card and context.card and context.card ~= card and string.sub(context.card.config.center.key,1,2) == "j_" and context.card.edition and context.card.edition.key == "e_negative" and pseudorandom("ygg_negative_roll") <= 1/2 then
+        card.edition.card_limit = card.edition.card_limit + 1
+        if card.area then card.area.config.card_limit = card.area.config.card_limit + 1 end
+        return {
+            message = "Upgraded!",
+            colour = G.C.DARK_EDITION
+        }
+    end
     return ret
 end

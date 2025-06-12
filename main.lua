@@ -78,3 +78,31 @@ for i = 1,#allFolders do
         end
     end
 end
+
+Yggdrasil.save_config = function(self) --Saving configs.
+    SMODS.save_mod_config(self)
+end
+
+function config_desc_from_rows(desc_nodes, empty, maxw)
+    local t = {}
+    for k, v in ipairs(desc_nodes) do
+      t[#t+1] = {n=G.UIT.R, config={align = "cm", maxw = maxw}, nodes=v}
+    end
+    return {n=G.UIT.R, config={align = "cm", colour = empty and G.C.CLEAR or G.C.UI.BACKGROUND_WHITE, r = 0.1, padding = 0.04, minw = 2, minh = 0.25, emboss = not empty and 0.05 or nil, filler = true}, nodes={
+      {n=G.UIT.R, config={align = "cm", padding = 0.03}, nodes=t}
+    }}
+end
+
+Yggdrasil.config_tab = function()
+    local loc_vars = {}
+
+    local Node2 = {}
+    localize {type = 'descriptions', key = "ygg_xp_scale_desc", set = 'dictionary', nodes = Node2, vars = loc_vars.vars, scale = loc_vars.scale, text_colour = loc_vars.text_colour, shadow = loc_vars.shadow} 
+    Node2 = config_desc_from_rows(Node2,true)
+    Node2.config.colour = loc_vars.background_colour or Node2.config.colour
+
+    return {n = G.UIT.ROOT, config = {r = 0.1, minw = 5, align = "cm", padding = 0.1, colour = G.C.BLACK}, nodes = {
+        create_toggle({label = localize('ygg_xp_scale_enable'), ref_table = Yggdrasil.config, ref_value = 'xp_scale', callback = function() Yggdrasil:save_config() end }),
+        Node2
+    }}
+end

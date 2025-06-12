@@ -1,5 +1,52 @@
-return { --remind me to work on this
+local ret = { --remind me to work on this
     descriptions = {
+        Enhanced = {
+            m_glass_u = {
+                name = "Glass Card",
+                text = {
+                    "{X:mult,C:white}X#1#{} Mult",
+                    "{C:green}#2# in #3#{} chance to",
+                    "destroy card, and give a random",
+                    "card in hand {X:mult,C:white}X0.2{} Mult",
+                    "{s:0.2} ",
+                    "{C:inactive}({}{C:dark_edition}Overhauled{}{C:inactive} Effect){}",
+                }
+            },
+            m_stone_u = {
+                name = "Stone Card",
+                text = {
+                    "{C:chips}#1#{} Chips",
+                    "Increase {C:chips}Chips{} by {C:chips}+25{}",
+                    "when scored, and a random card's",
+                    "{C:chips}Chips{} in hand by {C:chips}+10{}",
+                    "{s:0.2} ",
+                    "{C:inactive}({}{C:dark_edition}Overhauled{}{C:inactive} Effect){}",
+                }
+            },
+            m_steel_u = {
+                name = "Steel Card",
+                text = {
+                    "{X:mult,C:white}X#1#{} Mult while this",
+                    "card stays in hand",
+                    "Increases {X:mult,C:white}XMult{} by {X:mult,C:white}X0.2{}",
+                    "when {C:attention}scored{}",
+                    "{s:0.2} ",
+                    "{C:inactive}({}{C:dark_edition}Overhauled{}{C:inactive} Effect){}",
+                }
+            },
+            m_gold_u = {
+                name = "Gold Card",
+                text = {
+                    "{C:money}#1#{} if this card is held",
+                    "in hand at end of round",
+                    "{s:0.15} ",
+                    "Increases by {C:money}$1{} for each",
+                    "{C:gold}Gold{} card {C:attention}scored{} this round",
+                    "{s:0.2} ",
+                    "{C:inactive}({}{C:dark_edition}Overhauled{}{C:inactive} Effect){}",
+                }
+            },
+        },
         UIPopUp = {
             ygg_rstb_name = {
                 name = "Placeholder",
@@ -163,6 +210,23 @@ return { --remind me to work on this
                     "{C:inactive}holding spirits with immense power",
                 }
             },
+            ygg_mat_ygg_bismuth = {
+                name = "Bismuth",
+                text = {
+                    "{C:inactive}(Rarity: {}{V:1}Legendary{}{C:inactive}){}",
+                    "{s:0.15} ",
+                    "{C:inactive}Rare rainbow-like metal that contains energy",
+                    "{C:inactive}enough to power up an entire city for decades",
+                }
+            },
+            ygg_mat_ygg_wither_catalyst = {
+                name = "Wither Catalyst",
+                text = {
+                    "{C:inactive}(Rarity: {}{V:1}Legendary{}{C:inactive}){}",
+                    "{s:0.15} ",
+                    "{C:inactive}wither skeleton reference",
+                }
+            },
             ygg_mat_ygg_vial_of_rainbow = {
                 name = "Vial of Rainbow",
                 text = {
@@ -173,12 +237,31 @@ return { --remind me to work on this
                     "{C:inactive}Relics that demand harmony of multiple elements"
                 }
             },
+            ygg_mat_ygg_necron_handle = {
+                name = "Necron\'s Handle",
+                text = {
+                    "{C:inactive}(Rarity: {}{V:1}Exotic{}{C:inactive}){}",
+                    "{s:0.15} ",
+                    "{C:inactive}The handle to create a tremendously",
+                    "{C:inactive}powerful blade, just itself is enough",
+                    "{C:inactive}to strike fear in enemies"
+                }
+            },
+            ygg_mat_ygg_necron_scroll = {
+                name = "Necron\'s Scroll",
+                text = {
+                    "{C:inactive}(Rarity: {}{V:1}Exotic{}{C:inactive}){}",
+                    "{s:0.15} ",
+                    "{C:inactive}The scrolls containing the deepest",
+                    "{C:inactive}secrets of the universe",
+                }
+            },
             ygg_mat_ygg_fixed_joker = {
                 name = "Fixed Joker",
                 text = {
                     "{C:inactive}(Rarity: Common){}",
                     "{s:0.15} ",
-                    "While in {C:attention}Inventory{},",
+                    "While {C:attention}Equipped{},",
                     "{C:mult}+3{} Mult",
                     "{s:0.15} ",
                     "{C:inactive}A replica of the infamous Jimbo,",
@@ -192,11 +275,26 @@ return { --remind me to work on this
                 text = {
                     "{C:inactive}(Rarity: Common){}",
                     "{s:0.15} ",
-                    "While in {C:attention}Inventory{},",
+                    "While {C:attention}Equipped{},",
                     "{C:chips}+20{} Chips",
                     "{s:0.15} ",
                     "{C:inactive}cue the blue da ba de de",
                     "{C:inactive}song or something idk",
+                    "{s:0.15} ",
+                    "{C:inactive}(Only one copy can exist)",
+                }
+            },
+            ygg_mat_ygg_philosopher_quill = {
+                name = "Philosopher's Quill",
+                text = {
+                    "{C:inactive}(Rarity: Common){}",
+                    "{s:0.15} ",
+                    "While {C:attention}Equipped{},",
+                    "{C:attention}+20%{} XP",
+                    "{s:0.15} ",
+                    "{C:inactive}The quill often used by philosophers",
+                    "{C:inactive}back in the day, just holding it",
+                    "{C:inactive}makes you question your life",
                     "{s:0.15} ",
                     "{C:inactive}(Only one copy can exist)",
                 }
@@ -206,7 +304,7 @@ return { --remind me to work on this
                 text = {
                     "{C:inactive}(Rarity: {}{V:1}Uncommon{}{C:inactive}){}",
                     "{s:0.15} ",
-                    "While in {C:attention}Inventory{},",
+                    "While {C:attention}Equipped{},",
                     "{C:mult}+10{} Mult, {C:green}20%{} to {C:attention}disable{}",
                     "at the end of round",
                     "{C:inactive}(Currently: #1#)",
@@ -222,7 +320,7 @@ return { --remind me to work on this
                 text = {
                     "{C:inactive}(Rarity: {}{V:1}Uncommon{}{C:inactive}){}",
                     "{s:0.15} ",
-                    "While in {C:attention}Inventory{},",
+                    "While {C:attention}Equipped{},",
                     "{C:chips}+20{} Chips, {C:mult}+5{} Mult",
                     "{s:0.15} ",
                     "{C:inactive}A perfect harmony of {}{C:chips}Blue{}{C:inactive} and",
@@ -236,7 +334,7 @@ return { --remind me to work on this
                 text = {
                     "{C:inactive}(Rarity: {}{V:1}Rare{}{C:inactive}){}",
                     "{s:0.15} ",
-                    "While in {C:attention}Inventory{},",
+                    "While {C:attention}Equipped{},",
                     "{X:mult,C:white}X1.5{} Mult, {C:green}1%{} to {C:attention}disable{}",
                     "at the end of round",
                     "{C:inactive}(Currently: #1#)",
@@ -252,7 +350,7 @@ return { --remind me to work on this
                 text = {
                     "{C:inactive}(Rarity: {}{V:1}Rare{}{C:inactive}){}",
                     "{s:0.15} ",
-                    "While in {C:attention}Inventory{}, randomly give from",
+                    "While {C:attention}Equipped{}, randomly give from",
                     "{X:mult,C:white}X0.9{} Mult to {X:mult,C:white}X1.5{} Mult",
                     "{C:inactive}(Currently: #1#)",
                     "{s:0.15} ",
@@ -267,7 +365,7 @@ return { --remind me to work on this
                 text = {
                     "{C:inactive}(Rarity: {}{V:1}Legendary{}{C:inactive}){}",
                     "{s:0.15} ",
-                    "While in {C:attention}Inventory{},",
+                    "While {C:attention}Equipped{},",
                     "all {C:attention}Relics{} give {C:mult}X1.5{}",
                     "more {C:mult}+Mult{}",
                     "{s:0.15} ",
@@ -283,7 +381,7 @@ return { --remind me to work on this
                 text = {
                     "{C:inactive}(Rarity: {}{V:1}Legendary{}{C:inactive}){}",
                     "{s:0.15} ",
-                    "While in {C:attention}Inventory{},",
+                    "While {C:attention}Equipped{},",
                     "{C:attention}Eternal{} Jokers give",
                     "{X:mult,C:white}X2{} Mult",
                     "{s:0.15} ",
@@ -299,7 +397,7 @@ return { --remind me to work on this
                 text = {
                     "{C:inactive}(Rarity: {}{V:1}Uncommon{}{C:inactive}){}",
                     "{s:0.15} ",
-                    "While in {C:attention}Inventory{},",
+                    "While {C:attention}Equipped{},",
                     "{C:planet}Planet{} cards held give",
                     "{C:mult}+10{} Mult",
                     "{s:0.15} ",
@@ -315,7 +413,7 @@ return { --remind me to work on this
                 text = {
                     "{C:inactive}(Rarity: {}{V:1}Uncommon{}{C:inactive}){}",
                     "{s:0.15} ",
-                    "While in {C:attention}Inventory{},",
+                    "While {C:attention}Equipped{},",
                     "scored {C:spades}Spade{} cards give",
                     "{C:chips}+15{} Chips",
                     "{s:0.15} ",
@@ -330,7 +428,7 @@ return { --remind me to work on this
                 text = {
                     "{C:inactive}(Rarity: {}{V:1}Uncommon{}{C:inactive}){}",
                     "{s:0.15} ",
-                    "While in {C:attention}Inventory{},",
+                    "While {C:attention}Equipped{},",
                     "scored {C:hearts}Hearts{} cards give",
                     "{X:mult,C:white}X1.1{} Mult",
                     "{s:0.15} ",
@@ -345,7 +443,7 @@ return { --remind me to work on this
                 text = {
                     "{C:inactive}(Rarity: {}{V:1}Uncommon{}{C:inactive}){}",
                     "{s:0.15} ",
-                    "While in {C:attention}Inventory{},",
+                    "While {C:attention}Equipped{},",
                     "scored {C:diamonds}Diamonds{} cards give",
                     "{C:money}+$0.5{}",
                     "{s:0.15} ",
@@ -360,7 +458,7 @@ return { --remind me to work on this
                 text = {
                     "{C:inactive}(Rarity: {}{V:1}Uncommon{}{C:inactive}){}",
                     "{s:0.15} ",
-                    "While in {C:attention}Inventory{},",
+                    "While {C:attention}Equipped{},",
                     "scored {C:clubs}Clubs{} cards give",
                     "{C:mult}+2{} Mult",
                     "{s:0.15} ",
@@ -371,12 +469,88 @@ return { --remind me to work on this
                     "{C:inactive}(Only one copy can exist)",
                 }
             },
+            ygg_mat_ygg_four_leaf_clover = {
+                name = "Four-Leaf Clover",
+                text = {
+                    "{C:inactive}(Rarity: {}{V:1}Uncommon{}{C:inactive}){}",
+                    "{s:0.15} ",
+                    "While {C:attention}Equipped{},",
+                    "{X:mult,C:white}X0.8{} Mult, {C:green}+20%{} Loot Luck",
+                    "{s:0.15} ",
+                    "{C:inactive}The good ol' symbol of luck, though",
+                    "{C:inactive}it does take a toll on your",
+                    "{C:inactive}power",
+                    "{s:0.15} ",
+                    "{C:inactive}(Only one copy can exist)",
+                }
+            },
             ygg_mat_ygg_rainbow_element = {
+                name = "Monochrome Element",
+                text = {
+                    "{C:inactive}(Rarity: {}{V:1}Exotic{}{C:inactive}){}",
+                    "{s:0.15} ",
+                    "While {C:attention}Equipped{}, scored cards give",
+                    "different buffs depending on their {C:attention}suit{}:",
+                    "{s:0.15} ",
+                    "-{C:hearts}Hearts{}: {X:mult,C:white}X1{} Mult, increases by {X:mult,C:white}X0.1{} Mult",
+                    "for each other scored {C:hearts}Hearts{} card",
+                    "-{C:spades}Spades{}: {X:chips,C:white}X1{} Chips, increases by {X:chips,C:white}X0.1{} Chips",
+                    "for each other scored {C:spades}Spades{} card",
+                    "-{C:clubs}Clubs{}: {C:mult}+5{} Mult, increases by {C:mult}+1{} Mult",
+                    "for each other scored {C:clubs}Clubs{} card",
+                    "-{C:diamonds}Diamonds{}: {C:money}+$1{}, increases by {C:money}+$0.2{}",
+                    "for each other scored {C:diamonds}Diamonds{} card",
+                    "{s:0.15} ",
+                    "{C:inactive}The dead, empty core of an once omniponent tool.",
+                    "{C:inactive}Perhaps you will need to power it back up",
+                    "{s:0.15} ",
+                    "{C:inactive}(Only one copy can exist)",
+                }
+            },
+            ygg_mat_ygg_necron_blade = {
+                name = "Necron's Blade",
+                text = {
+                    "{C:inactive}(Rarity: {}{V:1}Exotic{}{C:inactive}){}",
+                    "{s:0.15} ",
+                    "While {C:attention}Equipped{}, scored cards",
+                    "give {C:dark_edition}+1{} Wither Essence",
+                    "When {C:dark_edition}Wither Essence{} reaches {C:dark_edition}10{},",
+                    "reduces {C:dark_edition}Wither Essence{} by {C:dark_edition}10{}, and",
+                    "give {X:mult,C:white}X1.25{} Mult",
+                    "{C:inactive}(Wither Essence: {}{C:dark_edition}#1#{}{C:inactive})",
+                    "{s:0.15} ",
+                    "{C:inactive}A blade that's yet to be refined,",
+                    "{C:inactive}its full potential is locked behind",
+                    "{C:inactive}ancient scrolls",
+                    "{s:0.15} ",
+                    "{C:inactive}(Only one copy can exist)",
+                }
+            },
+            ygg_mat_ygg_hyperion = {
+                name = "Hyperion",
+                text = {
+                    "{C:inactive}(Rarity: {}{V:1}Exotic{}{C:inactive}){}",
+                    "{s:0.15} ",
+                    "While {C:attention}Equipped{}, scored cards",
+                    "give {C:dark_edition}+1{} Wither Essence",
+                    "Resets at {C:dark_edition}5{} Wither Essence, and",
+                    "each card in hand with {C:attention}rank{} not",
+                    "in {C:attention}played hand{} gives {X:mult,C:white}X2{} Mult",
+                    "{C:inactive}(Wither Essence: {}{C:dark_edition}#1#{}{C:inactive})",
+                    "",
+                    "{s:0.15} ",
+                    "{C:inactive}holy fuck is this hypixel skyblock",
+                    "{C:inactive}reference??????",
+                    "{s:0.15} ",
+                    "{C:inactive}(Only one copy can exist)",
+                }
+            },
+            ygg_mat_ygg_react_rainbow_element = {
                 name = "Rainbow Element",
                 text = {
                     "{C:inactive}(Rarity: {}{V:1}Exotic{}{C:inactive}){}",
                     "{s:0.15} ",
-                    "While in {C:attention}Inventory{}, scored cards give",
+                    "While {C:attention}Equipped{}, scored cards give",
                     "different buffs depending on their {C:attention}suit{}:",
                     "{s:0.15} ",
                     "-{C:hearts}Hearts{}: {X:mult,C:white}X2{} Mult, increases by {X:mult,C:white}X0.2{} Mult",
@@ -1439,6 +1613,80 @@ return { --remind me to work on this
                     "The Tower, but {C:green}better{}",
                 }
             },
+            sp_ygg_glass_upgrade = {
+                name = "Placeholder",
+                text = {
+                    "{C:attention}Glass Card{}'s effect is {C:dark_edition}Overhauled{}",
+                    "{s:0.3} ",
+                    "{X:mult,C:white}X2{} Mult",
+                    "{C:green}1 in 4{} chance to",
+                    "destroy card, and give a random",
+                    "card in hand {X:mult,C:white}X0.2{} Mult",
+                    "{C:inactive}(#1#/1)",
+                }
+            },
+            sp_ygg_glass_upgrade_name = {
+                name = "Placeholder",
+                text = {
+                    "Fly, Broken Wings",
+                }
+            },
+            sp_ygg_stone_upgrade = {
+                name = "Placeholder",
+                text = {
+                    "{C:attention}Stone Card{}'s effect is {C:dark_edition}Overhauled{}",
+                    "{s:0.3} ",
+                    "{C:chips}+50{} Chips",
+                    "Increase {C:chips}Chips{} by {C:chips}+25{}",
+                    "when scored, and a random card's {C:chips}Chips{}",
+                    "in hand by {C:chips}+10{}",
+                    "{C:inactive}(#1#/1)",
+                }
+            },
+            sp_ygg_stone_upgrade_name = {
+                name = "Placeholder",
+                text = {
+                    "Thrown Stones",
+                }
+            },
+            sp_ygg_steel_upgrade = {
+                name = "Placeholder",
+                text = {
+                    "{C:attention}Steel Card{}'s effect is {C:dark_edition}Overhauled{}",
+                    "{s:0.3} ",
+                    "{X:mult,C:white}X1.5{} Mult while this",
+                    "card stays in hand",
+                    "Increases {X:mult,C:white}XMult{} by {X:mult,C:white}X0.2{}",
+                    "when {C:attention}scored{}",
+                    "{C:inactive}(#1#/1)",
+                }
+            },
+            sp_ygg_steel_upgrade_name = {
+                name = "Placeholder",
+                text = {
+                    "Reinforcing Steel",
+                }
+            },
+            sp_ygg_gold_upgrade = {
+                name = "Placeholder",
+                text = {
+                    "{C:attention}Gold Card{}'s effect is {C:dark_edition}Overhauled{}",
+                    "{s:0.3} ",
+                    "{C:money}$3{} if this card is held",
+                    "in hand at end of round",
+                    "{s:0.15} ",
+                    "Increases by {C:money}$1{} for each",
+                    "{C:gold}Gold{} card {C:attention}scored{} this round",
+                    "{C:inactive}(#1#/1)",
+                    "{s:0.7,C:inactive}(Idea Credit: Ice)",
+                }
+            },
+            sp_ygg_gold_upgrade_name = {
+                name = "Placeholder",
+                text = {
+                    "Gold Gold Gold",
+                }
+            },
             sp_ygg_familiar_upgrade = {
                 name = "Placeholder",
                 text = {
@@ -1701,7 +1949,7 @@ return { --remind me to work on this
             sp_ygg_polychrome_upgrade = {
                 name = "Placeholder",
                 text = {
-                    "{C:attention}Holographic{}'s effect is {C:dark_edition}Overhauled{}",
+                    "{C:attention}Polychrome{}'s effect is {C:dark_edition}Overhauled{}",
                     "{s:0.3} ",
                     "{X:mult,C:white}X1.5{} Mult",
                     "At {C:attention}end of round{}, fixed",
@@ -2177,12 +2425,22 @@ return { --remind me to work on this
                     "{s:0.8,C:red}good luck.{}",
                 }
             },
+        },
+        dictionary = {
+            ygg_xp_scale_desc = {
+                name = "",
+                text = {
+                    "{s:inactive}If enabled, XP requirement of levels will increase.{}",
+                    "{s:inactive}Automatically enabled when Cryptid is installed.{}",
+                },
+            },
         }
     },
     misc={
         dictionary = {
             ygg_skill_tree_text = "Skill Tree",
             ygg_inventory_text = "Inventory",
+            ygg_equip_area_text = "Equip Area",
             ygg_crafting_area_text = "Crafting Area",
             ygg_delete_area_text = "Delete Area",
             ygg_recipe_area_text = "Recipes Area",
@@ -2190,6 +2448,7 @@ return { --remind me to work on this
             ygg_delete_text = "Delete",
             ygg_craft_text = "Craft",
             ygg_recipes_text = "Recipes",
+            ygg_equip_text = "Equip",
 
             ygg_skill_tree_sec1 = "Need for Stats", --Balatro: Star Rail
             ygg_skill_tree_sec2 = "I'm Multin' it",
@@ -2207,26 +2466,11 @@ return { --remind me to work on this
             ygg_reset_skill_tree = "RESET SKILL TREE",
             ygg_page = "PAGE",
 
-
+            ygg_raw_cost = "Cost: {C:red}#1#{} Skill Point",
 
             --Material Stuffs
             k_YggMaterial_text = "Material",
             k_YggRelic_text = "Relic",
-
-            ygg_card_scrap = "Card Scraps",
-            ygg_half_a_chip = "Half a Chip",
-            ygg_broken_spade = "Broken Spade",
-            ygg_shattered_heart = "Shattered Heart",
-            ygg_dead_clover = "Dead Clover",
-            ygg_fractured_diamond = "Fractured Diamond",
-            ygg_harmony_core = "Harmony Core",
-            ygg_vial_of_rainbow = "Vial of Rainbow",
-            ygg_misprinted_essence = "Misprinted Essences",
-            ygg_soul_fragment = "Soul Fragment",
-            ygg_potassium = "Potassium",
-            ygg_potassium_overload = "Potassium Overload",
-            ygg_chains_of_eternity = "Chains of Eternity",
-            ygg_astronaut_helmet = "Astronaut Helmet",
 
             ygg_sort_rarity = "Sort by Rarity",
             ygg_sort_date = "Sort by Date",
@@ -2238,6 +2482,7 @@ return { --remind me to work on this
             ygg_exotic = "Exotic",
 
             ygg_craft_guide = "DRAG TO INVENTORY TO CRAFT",
+            ygg_equip_guide = "DRAG TO AREA TO EQUIP",
 
             --Others
             ygg_active = "Active",
@@ -2245,11 +2490,25 @@ return { --remind me to work on this
 
             ygg_disabled = "Disabled!",
             ygg_enabled = "Enabled!",
+            ygg_upgraded = "Upgraded!",
 
             ygg_clear = "Clear",
 
+            ygg_wither_impact = "Wither Impact!",
             --Credits
             ygg_credit1 = "Art by Tachonky (@mr.cr33ps)",
+            ygg_credit2 = "Art by Th30ne (@th30ne)",
+            --Config
+            ygg_xp_scale_enable = "XP Scale",
         },
     },
 }
+
+for key, stuff in pairs(ret.descriptions.YggMaterial) do
+    local cut_off_key = string.sub(key,9,#key)
+    if not ret.misc.dictionary[cut_off_key] then
+        ret.misc.dictionary[cut_off_key] = stuff.name
+    end
+end
+
+return ret

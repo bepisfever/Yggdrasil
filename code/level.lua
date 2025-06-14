@@ -76,7 +76,8 @@ function Game:update(dt) --Bunch of stuff relating to XP and Levels.
         self.C.ygg_exotic[3] = 0.6+0.2*(1- math.sin(self.TIMERS.REAL*1.3))
         self.C.ygg_exotic[2] = math.min(self.C.ygg_exotic[3], self.C.ygg_exotic[1])
 
-        local xp_requirement = (Yggdrasil.config.xp_scale and 100 * 1.1 * (((G.PROFILES[G.SETTINGS.profile].ygg_level or 1) + (G.GAME.ygg_level or 0)) - 1)) or 100
+        local base_xp_req = 100
+        local xp_requirement = math.max(math.ceil((Yggdrasil.config.xp_scale and base_xp_req * 0.2 * (((G.PROFILES[G.SETTINGS.profile].ygg_level or 1) + (G.GAME.ygg_level or 0)) - 1)) or base_xp_req), base_xp_req)
         G.GAME.YggXPRequirement = xp_requirement
 
         if ygg_to_refer_level_bar then

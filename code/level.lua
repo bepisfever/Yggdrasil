@@ -670,7 +670,7 @@ G.P_CENTERS.e_negative.calculate = G.P_CENTERS.e_negative.calculate or function(
 local hookTo = G.P_CENTERS.e_negative.calculate
 function G.P_CENTERS.e_negative:calculate(card, context)
     local ret = hookTo(self,card,context)
-    if context.selling_card and context.card and context.card ~= card and string.sub(context.card.config.center.key,1,2) == "j_" and context.card.edition and context.card.edition.key == "e_negative" and pseudorandom("ygg_negative_roll") <= 1/2 then
+    if context.selling_card and context.card and context.card ~= card and string.sub(context.card.config.center.key,1,2) == "j_" and context.card.edition and context.card.edition.key == "e_negative" and pseudorandom("ygg_negative_roll") <= 1/2 and if_skill_obtained("ygg_negative_upgrade") then
         card.edition.card_limit = card.edition.card_limit + 1
         if card.area then card.area.config.card_limit = card.area.config.card_limit + 1 end
         return {

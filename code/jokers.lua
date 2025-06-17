@@ -48,11 +48,15 @@ SMODS.Joker {
          end
    
          for i,v in pairs(G.PROFILES[G.SETTINGS.profile].skill_perks or {}) do
-            check_skill_gains(i,v)
+            if not DisabledSkills[i] then
+               check_skill_gains(i,v)
+            end
          end
    
          for i,v in pairs(G.GAME.skill_perks or {}) do
-            check_skill_gains(i,v)
+            if not DisabledSkills[i] then
+               check_skill_gains(i,v)
+            end
          end
    
          if if_skill_obtained("ygg_mult10") then

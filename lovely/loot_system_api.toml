@@ -61,7 +61,7 @@ end
 '''
 position = 'before'
 payload = '''
-if card and card.config and card.config.center and card.config.center.set card.config.center.set == "YggItem" and not card.config.center.ignore_type_badge then
+if card and card.config and card.config.center and card.config.center.set and card.config.center.set == "YggItem" and not card.config.center.ignore_type_badge then
     if card.config.center.type == "material" then
         badges[#badges+1] = create_badge(localize('k_YggMaterial_text'), HEX("4aa5ff"), G.C.WHITE, 1.2 )
     elseif card.config.center.type == "relic" then

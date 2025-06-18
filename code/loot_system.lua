@@ -833,7 +833,7 @@ function roll_material_rng(type)
 
     local chosen_rarities = {}
     for i,_ in pairs(valid_pool) do
-        if YggMaterialChance[i] and pseudorandom("ygg_rollrarity_"..i) <= (YggMaterialChance[i]["chance"] * total_luck_change) then
+        if YggMaterialChance[i] and pseudorandom("ygg_rollrarity_"..i) <= (YggMaterialChance[i]["chance"] * total_luck_change) and valid_pool[i] and #valid_pool[i] > 0 then
             chosen_rarities[#chosen_rarities+1] = i
         end
     end

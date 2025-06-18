@@ -1,0 +1,68 @@
+[manifest]
+version = "1.0.0"
+dump_lua = true
+priority = 1
+
+[[patches]]
+[patches.pattern]
+target = 'card.lua'
+pattern = '''
+function Card:calculate_joker(context)
+    local obj = self.config.center
+    if self.ability.set ~= "Enhanced" and obj.calculate and type(obj.calculate) == 'function' then
+'''
+position = 'after'
+payload = '''
+        if self.ability.set == "YggItem" then
+            if Yggdrasil.equipped_item(Yggdrasil.get_true_key(self)) then
+                context.equipped = true
+            else
+                context.equipped = false
+            end
+        end
+'''
+match_indent = true
+
+[[patches]]
+[patches.pattern]
+target = 'card.lua'
+pattern = '''
+local o, t = obj:calculate(self, context)
+'''
+position = 'after'
+payload = '''
+if self.ability.set == "YggItem" then
+    --o is the return table
+    if o and type(o) == "table" then
+        local gains_multi = {
+            mult = 1, chips = 1, xchips = 1, xmult = 1
+        }
+        local function ygg_calculate_multi()
+            gains_multi = {mult = 1, chips = 1, xchips = 1, xmult = 1}
+
+            for _,v in ipairs(G.ygg_relic_area and G.ygg_relic_area.cards or {}) do
+                local o, t = v.config.center:calculate(v, {check_gains = true, equipped = true})
+                if o then
+                    for i,_ in pairs(gains_multi) do
+                        if o[i] then gains_multi[i] = gains_multi[i] + o[i] end
+                    end
+                end
+            end
+
+            for _,v in ipairs(G.ygg_uneq_relic_area and G.ygg_uneq_relic_area.cards or {}) do
+                local o, t = v.config.center:calculate(v, {check_gains = true, equipped = false})
+                if o then
+                    for i,_ in pairs(gains_multi) do
+                        if o[i] then gains_multi[i] = gains_multi[i] + o[i] end
+                    end
+                end
+            end
+        end
+        ygg_calculate_multi()
+
+        if not o.message_card then o.message_card = G.deck end
+        if o.mult then o.mult = o.mult * gains_multi["mult"] end
+    end
+end
+'''
+match_indent = true

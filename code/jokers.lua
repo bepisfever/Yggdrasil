@@ -259,17 +259,6 @@ SMODS.Joker {
             SMODS.calculate_context({mat_other_consumeable = context.other_consumeable})
          end
 
-         if context.repetition and context.cardarea == G.play then
-            if Yggdrasil.have_item("rainbow_element") then
-               if context.other_card:is_suit("Hearts") and context.other_card:is_suit("Spades") and context.other_card:is_suit("Clubs") and context.other_card:is_suit("Diamonds") then
-                  return {
-                     repetitions = Yggdrasil.amt_item_inv("rainbow_element"),
-                     card = context.other_card
-                  }
-               end
-            end
-         end
-
          if context.end_of_round and context.main_eval then
             SMODS.calculate_context({mat_end_of_round = true})
             if if_skill_obtained("ygg_spec1_upgrade") then

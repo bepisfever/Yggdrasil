@@ -30,6 +30,11 @@ SkillTreePerks = {
     - multMulti (num) <- Reduces total Skill Tree's Mult and XMult.
     - chipsMulti (num) <- Reduces total Skill Tree's Chips and XChips.
 
+    - cost (num) <- Skill Point cost of the skill.
+    - item_cost (table) <- The skill will also cost those items.
+    EX:
+        item_cost = {{item_id = "card_scrap", amt = 2}} --Without inputing amt, amt is 1 by default.
+
     Button configs, yipee:
     - lock_first_round (boolean): Makes it so the buffs can only be purchased during round 0.
     - exclude_with_skills (table, string): If any of the skills listed in here are obtained, disables the skill button.
@@ -136,6 +141,12 @@ SkillTreePerks = {
             {text = "T.JU", perk_id = "ygg_judgement_upgrade", max_cap = 1, cost = 75},
             {text = "T.W", perk_id = "ygg_world_upgrade", max_cap = 1, cost = 20},
         },
+        {
+            {text = "GLASS", perk_id = "ygg_glass_upgrade", max_cap = 1, cost = 30},
+            {text = "STONE", perk_id = "ygg_stone_upgrade", max_cap = 1, cost = 30},
+            {text = "STEEL", perk_id = "ygg_steel_upgrade", max_cap = 1, cost = 30},
+            {text = "GOLD", perk_id = "ygg_gold_upgrade", max_cap = 1, cost = 30},
+        },
     },
     ygg_skill_tree_sec4 = {
         {
@@ -196,7 +207,7 @@ SkillTreeSections = {
 }
 
 DisabledSkills = {
-    --Add perk ids here, like "ygg_world_upgrade".
+    
 }
 YggdrasilDefaultButton = true
 YggdrasilDebugMode = false
@@ -383,12 +394,92 @@ function create_skill_perk_desc(key, perk_info, specific)
             nodes[#nodes].config.minh = loc_vars.minh or 0.1
         end
 
-        nodes[#nodes+1] = {}
-        local loc_vars = {scale = 0.925, vars = {perk_info.cost}}
-        localize({type = 'descriptions', key = "sp_ygg_cost", set = 'SkillPerks', nodes = nodes[#nodes], vars = loc_vars.vars, scale = loc_vars.scale, text_colour = loc_vars.text_colour})
-        nodes[#nodes] = desc_from_rows(nodes[#nodes])
-        nodes[#nodes].config.colour = G.C.WHITE
-        nodes[#nodes].config.minh = loc_vars.minh or 0.1
+        --we want to change G.localization.descriptions.SkillPerks
+        local new_key = "sp_ygg_newcost"
+        if not perk_info.item_cost then
+            nodes[#nodes+1] = {}
+            local loc_vars = {scale = 0.925, vars = {perk_info.cost}}
+            localize({type = 'descriptions', key = "sp_ygg_cost", set = 'SkillPerks', nodes = nodes[#nodes], vars = loc_vars.vars, scale = loc_vars.scale, text_colour = loc_vars.text_colour})
+            nodes[#nodes] = desc_from_rows(nodes[#nodes])
+            nodes[#nodes].config.colour = G.C.WHITE
+            nodes[#nodes].config.minh = loc_vars.minh or 0.1
+        else
+            local raw_desc = localize("ygg_raw_cost")
+            local lines = 1
+            local first_line_input = false
+            local items = 0
+            local items_each_line = 3
+            local loc_num = 1
+            for _,_ in pairs(perk_info.item_cost) do
+                items = items + 1
+            end
+            if items >= 1 then
+                lines = lines + 1
+                items = items - 1
+                first_line_input = true
+
+                lines = lines + math.max(math.ceil(items/items_each_line),0)
+            end
+            lines = lines - 1
+
+            if first_line_input then
+                loc_num = loc_num + 1
+                raw_desc = raw_desc..", {C:red}#"..loc_num.."#{} #"..(loc_num+1).."#,"
+                if lines == 1 then raw_desc = string.sub(raw_desc,1,(#raw_desc-1)) end
+            end
+
+            local new_lines = {}
+            local calc_items = 0 --i want to check this with uhh items
+            if lines > 1 then
+                for _ = 1, (lines - 1) do
+                    local new_text = ""
+                    for i = 1,items_each_line do
+                        if calc_items < items then
+                            calc_items = calc_items + 1
+                            loc_num = loc_num + 2
+                            new_text = new_text.."{C:red}#"..loc_num.."#{} #"..(loc_num+1).."#, "
+                            if calc_items >= items then
+                                new_text = string.sub(new_text, 1, (#new_text - 2))
+                                break
+                            end 
+                            if i == items_each_line then
+                                new_text = string.sub(new_text, 1, (#new_text - 1))
+                            end
+                        end
+                    end
+                    new_lines[#new_lines+1] = new_text
+                end
+            end
+
+            local text_table = {
+                raw_desc
+            }
+            for _,v in ipairs(new_lines) do
+                text_table[#text_table+1] = v
+            end
+            G.localization.descriptions.SkillPerks[new_key] = {
+                text_parsed = {},
+                name = "Placeholder",
+                text = text_table
+            }
+
+            for _,line in ipairs(G.localization.descriptions.SkillPerks[new_key].text) do
+                G.localization.descriptions.SkillPerks[new_key].text_parsed[#G.localization.descriptions.SkillPerks[new_key].text_parsed + 1] = loc_parse_string(line)
+            end
+
+            local ret_vars = {perk_info.cost}
+            for _,v in ipairs(perk_info.item_cost) do
+                ret_vars[#ret_vars+1] = v.amt or 1
+                ret_vars[#ret_vars+1] = localize("ygg_"..v.item_id)
+            end
+
+            nodes[#nodes+1] = {}
+            local loc_vars = {scale = 0.925, vars = ret_vars}
+            localize({type = 'descriptions', key = new_key, set = 'SkillPerks', nodes = nodes[#nodes], vars = loc_vars.vars, scale = loc_vars.scale, text_colour = loc_vars.text_colour})
+            nodes[#nodes] = desc_from_rows(nodes[#nodes])
+            nodes[#nodes].config.colour = G.C.WHITE
+            nodes[#nodes].config.minh = loc_vars.minh or 0.1
+        end
     end
 
     return
@@ -463,14 +554,96 @@ function UIElement:stop_hover()
     hookTo(self)
 end
 
+function check_valid_item_cost(perk_info)
+    if not perk_info.item_cost then return true end
+    local items = {}
+    local obtained_items = {}
+    for _,v in ipairs(perk_info.item_cost) do
+        items[v.item_id] = (items[v.item_id] or 0) + (v.amt or 1)
+    end
+
+    for _,v in ipairs(G.PROFILES[G.SETTINGS.profile]["YggInventory"] or {}) do
+        if items[v.id] then
+            obtained_items[v.id] = (obtained_items[v.id] or 0) + 1
+        end
+    end
+
+    local valid = true
+    for i,v in pairs(items) do
+        if obtained_items[i] and obtained_items[i] >= v then
+        else
+            valid = false
+            break
+        end
+    end
+
+    return valid
+end
+
+function calculate_item_cost(perk_info, times)
+    if not perk_info.item_cost then return times end
+    local items = {}
+    local obtained_items = {}
+    for _,v in ipairs(perk_info.item_cost) do
+        items[v.item_id] = (items[v.item_id] or 0) + (v.amt or 1)
+    end
+
+    for _,v in ipairs(G.PROFILES[G.SETTINGS.profile]["YggInventory"] or {}) do
+        if items[v.id] then
+            obtained_items[v.id] = (obtained_items[v.id] or 0) + 1
+        end
+    end
+
+    local available_upgrade_times = 0
+    local can_upgrade = true
+    repeat
+        local valid = true
+        for i,v in pairs(items) do
+            if obtained_items[i] and obtained_items[i] >= v then
+                obtained_items[i] = obtained_items[i] - v
+            else
+                valid = false
+                break
+            end
+        end
+        if valid then available_upgrade_times = available_upgrade_times + 1 end
+        can_upgrade = valid
+    until not can_upgrade
+
+    local ret = available_upgrade_times
+    if times then ret = math.min(available_upgrade_times, times) end
+
+    return math.min(available_upgrade_times, (times or math.huge))
+end
+
+function purchase_item_cost(perk_info, times)
+    if not perk_info.item_cost then return end
+    local items = {}
+    for _,v in ipairs(perk_info.item_cost) do
+        items[v.item_id] = (items[v.item_id] or 0) + (v.amt or 1)
+    end
+
+    for _ = 1, (times or 1) do
+        for i,v in pairs(items) do
+            for _ = 1, v do
+                for index,item in ipairs(G.PROFILES[G.SETTINGS.profile]["YggInventory"] or {}) do
+                    if item.id == i then table.remove(G.PROFILES[G.SETTINGS.profile]["YggInventory"], index) break end
+                end
+            end
+        end
+    end
+end
+
 G.FUNCS.purchase_skill_perk = function(e)
     if check_if_conflict(e.config.perk_id) then return end
+    if not check_valid_item_cost(e.config.perk_info) then return end
     local current_perk_cap = (((G.PROFILES[G.SETTINGS.profile].skill_perks or {})[e.config.perk_id]) or 0) + (((G.GAME.skill_perks or {})[e.config.perk_id]) or 0)
     if current_perk_cap < e.config.perk_info.max_cap then
         if (G.PROFILES[G.SETTINGS.profile].ygg_skill_points or 0) >= e.config.perk_info.cost then
             local set_max = ((G.GAME.current_switch_skill or "1") == "1" and 1) or ((G.GAME.current_switch_skill or "1") == "2" and 5) or ((G.GAME.current_switch_skill or "1") == "3" and 10) or ((G.GAME.current_switch_skill or "1") == "4" and math.huge)
             local upgraded_times = math.min(math.min(math.floor((G.PROFILES[G.SETTINGS.profile].ygg_skill_points or 0)/e.config.perk_info.cost),set_max),e.config.perk_info.max_cap - current_perk_cap)
-            play_sound('gold_seal', 1.2, 0.4)
+            upgraded_times = calculate_item_cost(e.config.perk_info, upgraded_times)
+            if upgraded_times > 0 then play_sound('gold_seal', 1.2, 0.4); purchase_item_cost(e.config.perk_info, upgraded_times) end
 
             if not G.PROFILES[G.SETTINGS.profile].skill_perks then G.PROFILES[G.SETTINGS.profile].skill_perks = {} end
             G.PROFILES[G.SETTINGS.profile].skill_perks[e.config.perk_id] = (G.PROFILES[G.SETTINGS.profile].skill_perks[e.config.perk_id] or 0) + upgraded_times
@@ -484,10 +657,12 @@ G.FUNCS.purchase_skill_perk = function(e)
                 Node.hover(e) 
             end
             SMODS.calculate_context({ ygg_skill_buy = true, ygg_skill_id = e.config.perk_info.perk_id })
+            save_run()
         elseif (G.GAME.ygg_skill_points or 0) >= e.config.perk_info.cost then
             local set_max = ((G.GAME.current_switch_skill or "1") == "1" and 1) or ((G.GAME.current_switch_skill or "1") == "2" and 5) or ((G.GAME.current_switch_skill or "1") == "3" and 10) or ((G.GAME.current_switch_skill or "1") == "4" and math.huge)
             local upgraded_times = math.min(math.min(math.floor((G.GAME.ygg_skill_points or 0)/e.config.perk_info.cost),set_max),e.config.perk_info.max_cap - current_perk_cap)
-            play_sound('gold_seal', 1.2, 0.4)
+            upgraded_times = calculate_item_cost(e.config.perk_info, upgraded_times)
+            if upgraded_times > 0 then play_sound('gold_seal', 1.2, 0.4); purchase_item_cost(e.config.perk_info, upgraded_times) end
 
             if not G.GAME.skill_perks then G.GAME.skill_perks = {} end
             G.GAME.skill_perks[e.config.perk_id] = (G.GAME.skill_perks[e.config.perk_id] or 0) + upgraded_times
@@ -501,10 +676,12 @@ G.FUNCS.purchase_skill_perk = function(e)
                 Node.hover(e) 
             end
             SMODS.calculate_context({ ygg_skill_buy = true, ygg_skill_id = e.config.perk_info.perk_id })
+            save_run()
         elseif ((G.PROFILES[G.SETTINGS.profile].ygg_skill_points or 0) + (G.GAME.ygg_skill_points or 0)) >= e.config.perk_info.cost then
             local set_max = ((G.GAME.current_switch_skill or "1") == "1" and 1) or ((G.GAME.current_switch_skill or "1") == "2" and 5) or ((G.GAME.current_switch_skill or "1") == "3" and 10) or ((G.GAME.current_switch_skill or "1") == "4" and math.huge)
             local upgraded_times = math.min(math.min(math.floor(((G.GAME.ygg_skill_points or 0) + (G.PROFILES[G.SETTINGS.profile].ygg_skill_points or 0))/e.config.perk_info.cost),set_max),e.config.perk_info.max_cap - current_perk_cap)
-            play_sound('gold_seal', 1.2, 0.4)
+            upgraded_times = calculate_item_cost(e.config.perk_info, upgraded_times)
+            if upgraded_times > 0 then play_sound('gold_seal', 1.2, 0.4); purchase_item_cost(e.config.perk_info, upgraded_times) end
             
             if not G.GAME.skill_perks then G.GAME.skill_perks = {} end
             if not G.PROFILES[G.SETTINGS.profile].skill_perks then G.PROFILES[G.SETTINGS.profile].skill_perks = {} end
@@ -672,6 +849,27 @@ G.FUNCS.to_previous_st_page = function(e)
     G.FUNCS.ygg_open_skill_tree()
 end
 
+G.FUNCS.ygg_update_text_color = function(e)
+    local dyna = e.config.object
+    local colours_to_use = {
+        G.C.WHITE, G.C.FILTER
+    }
+    local ret_colours = {}
+    if dyna then
+        if YggdrasilSkillTreeText.text then
+            local former_half = #(localize('ygg_skill_tree_text').." ")
+            local latter_half = #YggdrasilSkillTreeText.text - former_half
+            for _ = 1, former_half do
+                ret_colours[#ret_colours+1] = colours_to_use[1]
+            end
+            for _ = 1, latter_half+1 do
+                ret_colours[#ret_colours+1] = colours_to_use[2]
+            end
+            dyna.colours = ret_colours
+        end
+    end
+end
+
 function run_info_create_skill_tree_UI(args)
     args = args or {}
     
@@ -766,27 +964,6 @@ function run_info_create_skill_tree_UI(args)
             }},
         }},
       }}
-end
-
-G.FUNCS.ygg_update_text_color = function(e)
-    local dyna = e.config.object
-    local colours_to_use = {
-        G.C.WHITE, G.C.FILTER
-    }
-    local ret_colours = {}
-    if dyna then
-        if YggdrasilSkillTreeText.text then
-            local former_half = #(localize('ygg_skill_tree_text').." ")
-            local latter_half = #YggdrasilSkillTreeText.text - former_half
-            for _ = 1, former_half do
-                ret_colours[#ret_colours+1] = colours_to_use[1]
-            end
-            for _ = 1, latter_half+1 do
-                ret_colours[#ret_colours+1] = colours_to_use[2]
-            end
-            dyna.colours = ret_colours
-        end
-    end
 end
 
 function create_skill_tree_UI(args)
@@ -1198,7 +1375,7 @@ function load_cross_mod_content()
         end
     end
 
-    if next(SMODS.find_mod("hsr")) then --Balatro: Star Rail, my own mod :3
+    if next(SMODS.find_mod("BALATROSTARRAIL")) then --Balatro: Star Rail, my own mod :3
         local new_sec = "ygg_skill_tree_sec1"
         if not check_if_section_exist(new_sec) then
             add_new_section(new_sec) 

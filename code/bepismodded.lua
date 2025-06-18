@@ -3,6 +3,7 @@ function G.FUNCS.progress_bar_h(e)
     local c = e.children[1]
     if not c then return end
     local rt = c.config.ref_table
+    if rt.max_ref then rt.max = G.GAME[rt.max_ref] or 1 end
     local neww = (rt.ref_table[rt.ref_value] - rt.min)/(rt.max - rt.min)*rt.w
     if neww <= 0 then
         c.states.visible = false
@@ -23,6 +24,7 @@ function G.FUNCS.progress_bar_v(e)
     local c = e.children[1]
     if not c then return end
     local rt = c.config.ref_table
+    if rt.max_ref then rt.max = G.GAME[rt.max_ref] or 1 end
     local newh = (rt.ref_table[rt.ref_value] - rt.min)/(rt.max - rt.min)*rt.h
     
     if newh <= 0 then

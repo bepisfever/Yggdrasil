@@ -19,4 +19,6 @@ payload = '''
         end
     end
     table.insert(t, ygg_joker_idx, G.ygg_sp_area)
+    t[#t+1] = G.ygg_relic_area
+    t[#t+1] = G.ygg_uneq_relic_area
 '''

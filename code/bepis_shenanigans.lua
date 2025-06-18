@@ -1,12 +1,61 @@
 --Welcome to where I store ALL of my (maybe) useful functions!
 --Feel free to grab anything here :3
-function table.contains(table, element)
+
+function table.contains(table, element) --Checks if the table has the given element.
 	for _, value in pairs(table) do
 		if value == element then
 			return true
 		end
 	end
 	return false
+end
+
+function table.equal(table1, table2, on_order, last) --Checks if table1 has all the elements in table2. on_order checks if the order is identical too. I wouldn't recommend setting last to anything.
+    if on_order then            
+        for i,v in ipairs(table1) do
+            if type(v) == "table" then
+                if not type(table2[i]) == "table" or not table.equal(v, table2[i], on_order) then return false end
+            else
+                if not table2 or not table2[i] or table2[i] ~= v then
+                    return false
+                end
+            end
+        end
+        if not last then
+            return table.equal(table2, table1, on_order, true)
+        else
+            return true
+        end
+    else
+        for _,v in pairs(table1) do
+            local equal = false
+            if type(v) == "table" then
+                for _,v2 in ipairs(table2) do
+                    if type(v2) == "table" and table.equal(v,v2) then
+                        equal = true; break
+                    end
+                end
+            else
+                for _,v2 in pairs(table2) do
+                    if v2 == v then equal = true; break end
+                end 
+            end
+            if not equal then return false end
+        end
+        if not last then
+            return table.equal(table2, table1, on_order, true)
+        else
+            return true
+        end
+    end
+end
+
+function table.clone(table) --Clones a table.
+    local ret = {}
+    for i,v in pairs(table) do
+        ret[i] = v
+    end
+    return ret
 end
 
 Yggdrasil.enhanceCard = function(_,other_card,enhancement,after,immediate,no_effects,haltunhighlight,effect_type) --Enhance cards.
@@ -1013,4 +1062,867 @@ function Yggdrasil.cleanup_dead_elements(ref_table, ref_key)
     end
     ref_table[ref_key] = new_values
     return new_values
+end
+
+Yggdrasil.isEven = function(number) --(this is clearly a joke, please dont even use this thanks)
+    if number == 1 then return false end
+    if number == 2 then return true end
+    if number == 3 then return false end
+    if number == 4 then return true end
+    if number == 5 then return false end
+    if number == 6 then return true end
+    if number == 7 then return false end
+    if number == 8 then return true end
+    if number == 9 then return false end
+    if number == 10 then return true end
+    if number == 11 then return false end
+    if number == 12 then return true end
+    if number == 13 then return false end
+    if number == 14 then return true end
+    if number == 15 then return false end
+    if number == 16 then return true end
+    if number == 17 then return false end
+    if number == 18 then return true end
+    if number == 19 then return false end
+    if number == 20 then return true end
+    if number == 21 then return false end
+    if number == 22 then return true end
+    if number == 23 then return false end
+    if number == 24 then return true end
+    if number == 25 then return false end
+    if number == 26 then return true end
+    if number == 27 then return false end
+    if number == 28 then return true end
+    if number == 29 then return false end
+    if number == 30 then return true end
+    if number == 31 then return false end
+    if number == 32 then return true end
+    if number == 33 then return false end
+    if number == 34 then return true end
+    if number == 35 then return false end
+    if number == 36 then return true end
+    if number == 37 then return false end
+    if number == 38 then return true end
+    if number == 39 then return false end
+    if number == 40 then return true end
+    if number == 41 then return false end
+    if number == 42 then return true end
+    if number == 43 then return false end
+    if number == 44 then return true end
+    if number == 45 then return false end
+    if number == 46 then return true end
+    if number == 47 then return false end
+    if number == 48 then return true end
+    if number == 49 then return false end
+    if number == 50 then return true end
+    if number == 51 then return false end
+    if number == 52 then return true end
+    if number == 53 then return false end
+    if number == 54 then return true end
+    if number == 55 then return false end
+    if number == 56 then return true end
+    if number == 57 then return false end
+    if number == 58 then return true end
+    if number == 59 then return false end
+    if number == 60 then return true end
+    if number == 61 then return false end
+    if number == 62 then return true end
+    if number == 63 then return false end
+    if number == 64 then return true end
+    if number == 65 then return false end
+    if number == 66 then return true end
+    if number == 67 then return false end
+    if number == 68 then return true end
+    if number == 69 then return false end
+    if number == 70 then return true end
+    if number == 71 then return false end
+    if number == 72 then return true end
+    if number == 73 then return false end
+    if number == 74 then return true end
+    if number == 75 then return false end
+    if number == 76 then return true end
+    if number == 77 then return false end
+    if number == 78 then return true end
+    if number == 79 then return false end
+    if number == 80 then return true end
+    if number == 81 then return false end
+    if number == 82 then return true end
+    if number == 83 then return false end
+    if number == 84 then return true end
+    if number == 85 then return false end
+    if number == 86 then return true end
+    if number == 87 then return false end
+    if number == 88 then return true end
+    if number == 89 then return false end
+    if number == 90 then return true end
+    if number == 91 then return false end
+    if number == 92 then return true end
+    if number == 93 then return false end
+    if number == 94 then return true end
+    if number == 95 then return false end
+    if number == 96 then return true end
+    if number == 97 then return false end
+    if number == 98 then return true end
+    if number == 99 then return false end
+    if number == 100 then return true end
+    if number == 101 then return false end
+    if number == 102 then return true end
+    if number == 103 then return false end
+    if number == 104 then return true end
+    if number == 105 then return false end
+    if number == 106 then return true end
+    if number == 107 then return false end
+    if number == 108 then return true end
+    if number == 109 then return false end
+    if number == 110 then return true end
+    if number == 111 then return false end
+    if number == 112 then return true end
+    if number == 113 then return false end
+    if number == 114 then return true end
+    if number == 115 then return false end
+    if number == 116 then return true end
+    if number == 117 then return false end
+    if number == 118 then return true end
+    if number == 119 then return false end
+    if number == 120 then return true end
+    if number == 121 then return false end
+    if number == 122 then return true end
+    if number == 123 then return false end
+    if number == 124 then return true end
+    if number == 125 then return false end
+    if number == 126 then return true end
+    if number == 127 then return false end
+    if number == 128 then return true end
+    if number == 129 then return false end
+    if number == 130 then return true end
+    if number == 131 then return false end
+    if number == 132 then return true end
+    if number == 133 then return false end
+    if number == 134 then return true end
+    if number == 135 then return false end
+    if number == 136 then return true end
+    if number == 137 then return false end
+    if number == 138 then return true end
+    if number == 139 then return false end
+    if number == 140 then return true end
+    if number == 141 then return false end
+    if number == 142 then return true end
+    if number == 143 then return false end
+    if number == 144 then return true end
+    if number == 145 then return false end
+    if number == 146 then return true end
+    if number == 147 then return false end
+    if number == 148 then return true end
+    if number == 149 then return false end
+    if number == 150 then return true end
+    if number == 151 then return false end
+    if number == 152 then return true end
+    if number == 153 then return false end
+    if number == 154 then return true end
+    if number == 155 then return false end
+    if number == 156 then return true end
+    if number == 157 then return false end
+    if number == 158 then return true end
+    if number == 159 then return false end
+    if number == 160 then return true end
+    if number == 161 then return false end
+    if number == 162 then return true end
+    if number == 163 then return false end
+    if number == 164 then return true end
+    if number == 165 then return false end
+    if number == 166 then return true end
+    if number == 167 then return false end
+    if number == 168 then return true end
+    if number == 169 then return false end
+    if number == 170 then return true end
+    if number == 171 then return false end
+    if number == 172 then return true end
+    if number == 173 then return false end
+    if number == 174 then return true end
+    if number == 175 then return false end
+    if number == 176 then return true end
+    if number == 177 then return false end
+    if number == 178 then return true end
+    if number == 179 then return false end
+    if number == 180 then return true end
+    if number == 181 then return false end
+    if number == 182 then return true end
+    if number == 183 then return false end
+    if number == 184 then return true end
+    if number == 185 then return false end
+    if number == 186 then return true end
+    if number == 187 then return false end
+    if number == 188 then return true end
+    if number == 189 then return false end
+    if number == 190 then return true end
+    if number == 191 then return false end
+    if number == 192 then return true end
+    if number == 193 then return false end
+    if number == 194 then return true end
+    if number == 195 then return false end
+    if number == 196 then return true end
+    if number == 197 then return false end
+    if number == 198 then return true end
+    if number == 199 then return false end
+    if number == 200 then return true end
+    if number == 201 then return false end
+    if number == 202 then return true end
+    if number == 203 then return false end
+    if number == 204 then return true end
+    if number == 205 then return false end
+    if number == 206 then return true end
+    if number == 207 then return false end
+    if number == 208 then return true end
+    if number == 209 then return false end
+    if number == 210 then return true end
+    if number == 211 then return false end
+    if number == 212 then return true end
+    if number == 213 then return false end
+    if number == 214 then return true end
+    if number == 215 then return false end
+    if number == 216 then return true end
+    if number == 217 then return false end
+    if number == 218 then return true end
+    if number == 219 then return false end
+    if number == 220 then return true end
+    if number == 221 then return false end
+    if number == 222 then return true end
+    if number == 223 then return false end
+    if number == 224 then return true end
+    if number == 225 then return false end
+    if number == 226 then return true end
+    if number == 227 then return false end
+    if number == 228 then return true end
+    if number == 229 then return false end
+    if number == 230 then return true end
+    if number == 231 then return false end
+    if number == 232 then return true end
+    if number == 233 then return false end
+    if number == 234 then return true end
+    if number == 235 then return false end
+    if number == 236 then return true end
+    if number == 237 then return false end
+    if number == 238 then return true end
+    if number == 239 then return false end
+    if number == 240 then return true end
+    if number == 241 then return false end
+    if number == 242 then return true end
+    if number == 243 then return false end
+    if number == 244 then return true end
+    if number == 245 then return false end
+    if number == 246 then return true end
+    if number == 247 then return false end
+    if number == 248 then return true end
+    if number == 249 then return false end
+    if number == 250 then return true end
+    if number == 251 then return false end
+    if number == 252 then return true end
+    if number == 253 then return false end
+    if number == 254 then return true end
+    if number == 255 then return false end
+    if number == 256 then return true end
+    if number == 257 then return false end
+    if number == 258 then return true end
+    if number == 259 then return false end
+    if number == 260 then return true end
+    if number == 261 then return false end
+    if number == 262 then return true end
+    if number == 263 then return false end
+    if number == 264 then return true end
+    if number == 265 then return false end
+    if number == 266 then return true end
+    if number == 267 then return false end
+    if number == 268 then return true end
+    if number == 269 then return false end
+    if number == 270 then return true end
+    if number == 271 then return false end
+    if number == 272 then return true end
+    if number == 273 then return false end
+    if number == 274 then return true end
+    if number == 275 then return false end
+    if number == 276 then return true end
+    if number == 277 then return false end
+    if number == 278 then return true end
+    if number == 279 then return false end
+    if number == 280 then return true end
+    if number == 281 then return false end
+    if number == 282 then return true end
+    if number == 283 then return false end
+    if number == 284 then return true end
+    if number == 285 then return false end
+    if number == 286 then return true end
+    if number == 287 then return false end
+    if number == 288 then return true end
+    if number == 289 then return false end
+    if number == 290 then return true end
+    if number == 291 then return false end
+    if number == 292 then return true end
+    if number == 293 then return false end
+    if number == 294 then return true end
+    if number == 295 then return false end
+    if number == 296 then return true end
+    if number == 297 then return false end
+    if number == 298 then return true end
+    if number == 299 then return false end
+    if number == 300 then return true end
+    if number == 301 then return false == false end
+    if number == 302 then return true == true end
+    if number == 303 then return false == true end
+    if number == 304 then return true == true end
+    if number == 305 then return false == false end
+    if number == 306 then return true == (not false) end
+    if number == 307 then return false == true end
+    if number == 308 then return not false end
+    if number == 309 then return not true end
+    if number == 310 then return true end
+    if number == 311 then return false end
+    if number == 312 then return true end
+    if number == 313 then return false end
+    if number == 314 then return true end
+    if number == 315 then return false end
+    if number == 316 then return true end
+    if number == 317 then return false end
+    if number == 318 then return true end
+    if number == 319 then return false end
+    if number == 320 then return true end
+    if number == 321 then return false end
+    if number == 322 then return true end
+    if number == 323 then return false end
+    if number == 324 then return true end
+    if number == 325 then return false end
+    if number == 326 then return true end
+    if number == 327 then return false end
+    if number == 328 then return true end
+    if number == 329 then return false end
+    if number == 330 then return true end
+    if number == 331 then return false end
+    if number == 332 then return true end
+    if number == 333 then return false end
+    if number == 334 then return true end
+    if number == 335 then return false end
+    if number == 336 then return true end
+    if number == 337 then return false end
+    if number == 338 then return true end
+    if number == 339 then return false end
+    if number == 340 then return true end
+    if number == 341 then return false end
+    if number == 342 then return true end
+    if number == 343 then return false end
+    if number == 344 then return true end
+    if number == 345 then return false end
+    if number == 346 then return true end
+    if number == 347 then return false end
+    if number == 348 then return true end
+    if number == 349 then return false end
+    if number == 350 then return true end
+    if number == 351 then return false end
+    if number == 352 then return true end
+    if number == 353 then return false end
+    if number == 354 then return true end
+    if number == 355 then return false end
+    if number == 356 then return true end
+    if number == 357 then return false end
+    if number == 358 then return true end
+    if number == 359 then return false end
+    if number == 360 then return true end
+    if number == 361 then return false end
+    if number == 362 then return true end
+    if number == 363 then return false end
+    if number == 364 then return true end
+    if number == 365 then return false end
+    if number == 366 then return true end
+    if number == 367 then return false end
+    if number == 368 then return true end
+    if number == 369 then return false end
+    if number == 370 then return true end
+    if number == 371 then return false end
+    if number == 372 then return true end
+    if number == 373 then return false end
+    if number == 374 then return true end
+    if number == 375 then return false end
+    if number == 376 then return true end
+    if number == 377 then return false end
+    if number == 378 then return true end
+    if number == 379 then return false end
+    if number == 380 then return true end
+    if number == 381 then return false end
+    if number == 382 then return true end
+    if number == 383 then return false end
+    if number == 384 then return true end
+    if number == 385 then return false end
+    if number == 386 then return true end
+    if number == 387 then return false end
+    if number == 388 then return true end
+    if number == 389 then return false end
+    if number == 390 then return true end
+    if number == 391 then return false end
+    if number == 392 then return true end
+    if number == 393 then return false end
+    if number == 394 then return true end
+    if number == 395 then return false end
+    if number == 396 then return true end
+    if number == 397 then return false end
+    if number == 398 then return true end
+    if number == 399 then return false end
+    if number == 400 then return true end
+
+    return Yggdrasil.isEven(number - 2)
+end
+
+Yggdrasil.isisEven = function(func) --Check if the function checks for even numbers.
+    local check1 = nil --check1, if true and check2 is true and check3 is true and check4 is true then the function checks for even numbers.
+    local check2 = nil --check2, if true and check1 is true and check3 is true and check4 is true then the function checks for even numbers.
+    local check3 = nil --check3, if true and check2 is true and check1 is true and check4 is true then the function checks for even numbers.
+    local check4 = nil --check4, if true and check2 is true and check3 is true and check1 is true then the function checks for even numbers.
+    if type(func) == "function" then
+        check1 = true --Setting check1 to true when func is indeed a function.
+        local test1 = 1 --First test with a number that isn't even.
+        local test2 = 2 --Second test with a number that is even.
+        local num1 = math.random(0,100000000000000000)
+        local num2 = math.random(0,100000000000000000)
+        local test3 --func might try to be a function that checks for even numbers even when it's not, this is to prevent it by having a random number.
+        local test3isEven = nil
+        if num1 > num2 then
+            test3 = math.random(num2,num1)
+        elseif num2 > num1 then
+            test3 = math.random(num1,num2)
+        end
+
+        local function isEven(number) --My own function that checks for even numbers.
+            if number == 1 then return false end
+            if number == 2 then return true end
+            if number == 3 then return false end
+            if number == 4 then return true end
+            if number == 5 then return false end
+            if number == 6 then return true end
+            if number == 7 then return false end
+            if number == 8 then return true end
+            if number == 9 then return false end
+            if number == 10 then return true end
+            if number == 11 then return false end
+            if number == 12 then return true end
+            if number == 13 then return false end
+            if number == 14 then return true end
+            if number == 15 then return false end
+            if number == 16 then return true end
+            if number == 17 then return false end
+            if number == 18 then return true end
+            if number == 19 then return false end
+            if number == 20 then return true end
+            if number == 21 then return false end
+            if number == 22 then return true end
+            if number == 23 then return false end
+            if number == 24 then return true end
+            if number == 25 then return false end
+            if number == 26 then return true end
+            if number == 27 then return false end
+            if number == 28 then return true end
+            if number == 29 then return false end
+            if number == 30 then return true end
+            if number == 31 then return false end
+            if number == 32 then return true end
+            if number == 33 then return false end
+            if number == 34 then return true end
+            if number == 35 then return false end
+            if number == 36 then return true end
+            if number == 37 then return false end
+            if number == 38 then return true end
+            if number == 39 then return false end
+            if number == 40 then return true end
+            if number == 41 then return false end
+            if number == 42 then return true end
+            if number == 43 then return false end
+            if number == 44 then return true end
+            if number == 45 then return false end
+            if number == 46 then return true end
+            if number == 47 then return false end
+            if number == 48 then return true end
+            if number == 49 then return false end
+            if number == 50 then return true end
+            if number == 51 then return false end
+            if number == 52 then return true end
+            if number == 53 then return false end
+            if number == 54 then return true end
+            if number == 55 then return false end
+            if number == 56 then return true end
+            if number == 57 then return false end
+            if number == 58 then return true end
+            if number == 59 then return false end
+            if number == 60 then return true end
+            if number == 61 then return false end
+            if number == 62 then return true end
+            if number == 63 then return false end
+            if number == 64 then return true end
+            if number == 65 then return false end
+            if number == 66 then return true end
+            if number == 67 then return false end
+            if number == 68 then return true end
+            if number == 69 then return false end
+            if number == 70 then return true end
+            if number == 71 then return false end
+            if number == 72 then return true end
+            if number == 73 then return false end
+            if number == 74 then return true end
+            if number == 75 then return false end
+            if number == 76 then return true end
+            if number == 77 then return false end
+            if number == 78 then return true end
+            if number == 79 then return false end
+            if number == 80 then return true end
+            if number == 81 then return false end
+            if number == 82 then return true end
+            if number == 83 then return false end
+            if number == 84 then return true end
+            if number == 85 then return false end
+            if number == 86 then return true end
+            if number == 87 then return false end
+            if number == 88 then return true end
+            if number == 89 then return false end
+            if number == 90 then return true end
+            if number == 91 then return false end
+            if number == 92 then return true end
+            if number == 93 then return false end
+            if number == 94 then return true end
+            if number == 95 then return false end
+            if number == 96 then return true end
+            if number == 97 then return false end
+            if number == 98 then return true end
+            if number == 99 then return false end
+            if number == 100 then return true end
+            if number == 101 then return false end
+            if number == 102 then return true end
+            if number == 103 then return false end
+            if number == 104 then return true end
+            if number == 105 then return false end
+            if number == 106 then return true end
+            if number == 107 then return false end
+            if number == 108 then return true end
+            if number == 109 then return false end
+            if number == 110 then return true end
+            if number == 111 then return false end
+            if number == 112 then return true end
+            if number == 113 then return false end
+            if number == 114 then return true end
+            if number == 115 then return false end
+            if number == 116 then return true end
+            if number == 117 then return false end
+            if number == 118 then return true end
+            if number == 119 then return false end
+            if number == 120 then return true end
+            if number == 121 then return false end
+            if number == 122 then return true end
+            if number == 123 then return false end
+            if number == 124 then return true end
+            if number == 125 then return false end
+            if number == 126 then return true end
+            if number == 127 then return false end
+            if number == 128 then return true end
+            if number == 129 then return false end
+            if number == 130 then return true end
+            if number == 131 then return false end
+            if number == 132 then return true end
+            if number == 133 then return false end
+            if number == 134 then return true end
+            if number == 135 then return false end
+            if number == 136 then return true end
+            if number == 137 then return false end
+            if number == 138 then return true end
+            if number == 139 then return false end
+            if number == 140 then return true end
+            if number == 141 then return false end
+            if number == 142 then return true end
+            if number == 143 then return false end
+            if number == 144 then return true end
+            if number == 145 then return false end
+            if number == 146 then return true end
+            if number == 147 then return false end
+            if number == 148 then return true end
+            if number == 149 then return false end
+            if number == 150 then return true end
+            if number == 151 then return false end
+            if number == 152 then return true end
+            if number == 153 then return false end
+            if number == 154 then return true end
+            if number == 155 then return false end
+            if number == 156 then return true end
+            if number == 157 then return false end
+            if number == 158 then return true end
+            if number == 159 then return false end
+            if number == 160 then return true end
+            if number == 161 then return false end
+            if number == 162 then return true end
+            if number == 163 then return false end
+            if number == 164 then return true end
+            if number == 165 then return false end
+            if number == 166 then return true end
+            if number == 167 then return false end
+            if number == 168 then return true end
+            if number == 169 then return false end
+            if number == 170 then return true end
+            if number == 171 then return false end
+            if number == 172 then return true end
+            if number == 173 then return false end
+            if number == 174 then return true end
+            if number == 175 then return false end
+            if number == 176 then return true end
+            if number == 177 then return false end
+            if number == 178 then return true end
+            if number == 179 then return false end
+            if number == 180 then return true end
+            if number == 181 then return false end
+            if number == 182 then return true end
+            if number == 183 then return false end
+            if number == 184 then return true end
+            if number == 185 then return false end
+            if number == 186 then return true end
+            if number == 187 then return false end
+            if number == 188 then return true end
+            if number == 189 then return false end
+            if number == 190 then return true end
+            if number == 191 then return false end
+            if number == 192 then return true end
+            if number == 193 then return false end
+            if number == 194 then return true end
+            if number == 195 then return false end
+            if number == 196 then return true end
+            if number == 197 then return false end
+            if number == 198 then return true end
+            if number == 199 then return false end
+            if number == 200 then return true end
+            if number == 201 then return false end
+            if number == 202 then return true end
+            if number == 203 then return false end
+            if number == 204 then return true end
+            if number == 205 then return false end
+            if number == 206 then return true end
+            if number == 207 then return false end
+            if number == 208 then return true end
+            if number == 209 then return false end
+            if number == 210 then return true end
+            if number == 211 then return false end
+            if number == 212 then return true end
+            if number == 213 then return false end
+            if number == 214 then return true end
+            if number == 215 then return false end
+            if number == 216 then return true end
+            if number == 217 then return false end
+            if number == 218 then return true end
+            if number == 219 then return false end
+            if number == 220 then return true end
+            if number == 221 then return false end
+            if number == 222 then return true end
+            if number == 223 then return false end
+            if number == 224 then return true end
+            if number == 225 then return false end
+            if number == 226 then return true end
+            if number == 227 then return false end
+            if number == 228 then return true end
+            if number == 229 then return false end
+            if number == 230 then return true end
+            if number == 231 then return false end
+            if number == 232 then return true end
+            if number == 233 then return false end
+            if number == 234 then return true end
+            if number == 235 then return false end
+            if number == 236 then return true end
+            if number == 237 then return false end
+            if number == 238 then return true end
+            if number == 239 then return false end
+            if number == 240 then return true end
+            if number == 241 then return false end
+            if number == 242 then return true end
+            if number == 243 then return false end
+            if number == 244 then return true end
+            if number == 245 then return false end
+            if number == 246 then return true end
+            if number == 247 then return false end
+            if number == 248 then return true end
+            if number == 249 then return false end
+            if number == 250 then return true end
+            if number == 251 then return false end
+            if number == 252 then return true end
+            if number == 253 then return false end
+            if number == 254 then return true end
+            if number == 255 then return false end
+            if number == 256 then return true end
+            if number == 257 then return false end
+            if number == 258 then return true end
+            if number == 259 then return false end
+            if number == 260 then return true end
+            if number == 261 then return false end
+            if number == 262 then return true end
+            if number == 263 then return false end
+            if number == 264 then return true end
+            if number == 265 then return false end
+            if number == 266 then return true end
+            if number == 267 then return false end
+            if number == 268 then return true end
+            if number == 269 then return false end
+            if number == 270 then return true end
+            if number == 271 then return false end
+            if number == 272 then return true end
+            if number == 273 then return false end
+            if number == 274 then return true end
+            if number == 275 then return false end
+            if number == 276 then return true end
+            if number == 277 then return false end
+            if number == 278 then return true end
+            if number == 279 then return false end
+            if number == 280 then return true end
+            if number == 281 then return false end
+            if number == 282 then return true end
+            if number == 283 then return false end
+            if number == 284 then return true end
+            if number == 285 then return false end
+            if number == 286 then return true end
+            if number == 287 then return false end
+            if number == 288 then return true end
+            if number == 289 then return false end
+            if number == 290 then return true end
+            if number == 291 then return false end
+            if number == 292 then return true end
+            if number == 293 then return false end
+            if number == 294 then return true end
+            if number == 295 then return false end
+            if number == 296 then return true end
+            if number == 297 then return false end
+            if number == 298 then return true end
+            if number == 299 then return false end
+            if number == 300 then return true end
+            if number == 301 then return false == false end
+            if number == 302 then return true == true end
+            if number == 303 then return false == true end
+            if number == 304 then return true == true end
+            if number == 305 then return false == false end
+            if number == 306 then return true == (not false) end
+            if number == 307 then return false == true end
+            if number == 308 then return not false end
+            if number == 309 then return not true end
+            if number == 310 then return true end
+            if number == 311 then return false end
+            if number == 312 then return true end
+            if number == 313 then return false end
+            if number == 314 then return true end
+            if number == 315 then return false end
+            if number == 316 then return true end
+            if number == 317 then return false end
+            if number == 318 then return true end
+            if number == 319 then return false end
+            if number == 320 then return true end
+            if number == 321 then return false end
+            if number == 322 then return true end
+            if number == 323 then return false end
+            if number == 324 then return true end
+            if number == 325 then return false end
+            if number == 326 then return true end
+            if number == 327 then return false end
+            if number == 328 then return true end
+            if number == 329 then return false end
+            if number == 330 then return true end
+            if number == 331 then return false end
+            if number == 332 then return true end
+            if number == 333 then return false end
+            if number == 334 then return true end
+            if number == 335 then return false end
+            if number == 336 then return true end
+            if number == 337 then return false end
+            if number == 338 then return true end
+            if number == 339 then return false end
+            if number == 340 then return true end
+            if number == 341 then return false end
+            if number == 342 then return true end
+            if number == 343 then return false end
+            if number == 344 then return true end
+            if number == 345 then return false end
+            if number == 346 then return true end
+            if number == 347 then return false end
+            if number == 348 then return true end
+            if number == 349 then return false end
+            if number == 350 then return true end
+            if number == 351 then return false end
+            if number == 352 then return true end
+            if number == 353 then return false end
+            if number == 354 then return true end
+            if number == 355 then return false end
+            if number == 356 then return true end
+            if number == 357 then return false end
+            if number == 358 then return true end
+            if number == 359 then return false end
+            if number == 360 then return true end
+            if number == 361 then return false end
+            if number == 362 then return true end
+            if number == 363 then return false end
+            if number == 364 then return true end
+            if number == 365 then return false end
+            if number == 366 then return true end
+            if number == 367 then return false end
+            if number == 368 then return true end
+            if number == 369 then return false end
+            if number == 370 then return true end
+            if number == 371 then return false end
+            if number == 372 then return true end
+            if number == 373 then return false end
+            if number == 374 then return true end
+            if number == 375 then return false end
+            if number == 376 then return true end
+            if number == 377 then return false end
+            if number == 378 then return true end
+            if number == 379 then return false end
+            if number == 380 then return true end
+            if number == 381 then return false end
+            if number == 382 then return true end
+            if number == 383 then return false end
+            if number == 384 then return true end
+            if number == 385 then return false end
+            if number == 386 then return true end
+            if number == 387 then return false end
+            if number == 388 then return true end
+            if number == 389 then return false end
+            if number == 390 then return true end
+            if number == 391 then return false end
+            if number == 392 then return true end
+            if number == 393 then return false end
+            if number == 394 then return true end
+            if number == 395 then return false end
+            if number == 396 then return true end
+            if number == 397 then return false end
+            if number == 398 then return true end
+            if number == 399 then return false end
+            if number == 400 then return true end
+
+            return isEven(number - 2)
+        end
+
+        if isEven(test3) then
+            test3isEven = true
+        else
+            test3isEven = false
+        end
+
+        if func(test1) == false then
+            check2 = true
+        else
+            check2 = false
+        end
+
+        if func(test2) == true then
+            check3 = true
+        else
+            check3 = false
+        end
+
+        if func(test3) == test3isEven then
+            check4 = true
+        else
+            check4 = false
+        end
+    else
+        check1 = nil
+    end
+
+    if check1 and check2 and check3 and check4 then
+        return true
+    else
+        return false
+    end
 end

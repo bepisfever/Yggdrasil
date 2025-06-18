@@ -1,0 +1,72 @@
+[manifest]
+version = "1.0.0"
+dump_lua = true
+priority = 1
+
+[[patches]]
+[patches.pattern]
+target = '=[SMODS _ "src/game_object.lua"]'
+pattern = '''
+if specific_vars and specific_vars.debuffed and not res.replace_debuff then
+    target = { type = 'other', key = 'debuffed_' ..
+    (specific_vars.playing_card and 'playing_card' or 'default'), nodes = desc_nodes, AUT = full_UI_table, }
+end
+if res.main_start then
+    desc_nodes[#desc_nodes + 1] = res.main_start
+end
+localize(target)
+if res.main_end then
+    desc_nodes[#desc_nodes + 1] = res.main_end
+end
+'''
+position = 'at'
+payload = '''
+if specific_vars and specific_vars.debuffed and not res.replace_debuff then
+    target = { type = 'other', key = 'debuffed_' ..
+    (specific_vars.playing_card and 'playing_card' or 'default'), nodes = desc_nodes, AUT = full_UI_table, }
+end
+if res.main_start then
+    desc_nodes[#desc_nodes + 1] = res.main_start
+end
+localize(target)
+if self.set == "YggItem" and not self.dis_default_item_count then 
+    local string = "Amount: "
+    local amt = 0
+    for _,v in ipairs(G.PROFILES[G.SETTINGS.profile]["YggInventory"]) do
+        if v.id == Yggdrasil.get_true_key(card) then amt = amt + 1 end
+    end
+
+    string = string..amt
+    res.main_end = (card.ability.ygg_from_inventory) and {
+        {n = G.UIT.C, config = {algin = "bm", minh = 0}, nodes = {
+            {n = G.UIT.R, config = {algin = "bm", minh = 0}, nodes = {
+                {n = G.UIT.T, config = {text = string, colour = G.C.UI.TEXT_DARK, scale = 0.3}},
+            }},
+        }},
+    } or nil
+end
+if res.main_end then
+    desc_nodes[#desc_nodes + 1] = res.main_end
+end
+'''
+match_indent = true
+
+[[patches]]
+[patches.pattern]
+target = 'functions/UI_definitions.lua'
+pattern = '''
+if obj and obj.set_badges and type(obj.set_badges) == 'function' then
+    obj:set_badges(card, badges)
+end
+'''
+position = 'before'
+payload = '''
+if card.config.center.set == "YggItem" and not card.config.center.ignore_type_badge then
+    if card.config.center.type == "material" then
+        badges[#badges+1] = create_badge(localize('k_YggMaterial_text'), HEX("4aa5ff"), G.C.WHITE, 1.2 )
+    elseif card.config.center.type == "relic" then
+        badges[#badges+1] = create_badge(localize('k_YggRelic_text'), HEX("4aa5ff"), G.C.WHITE, 1.2 )
+    end
+end
+'''
+match_indent = true

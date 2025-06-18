@@ -1,15 +1,15 @@
 {
     "id": "YGGDRASIL",
     "name": "Yggdrasil",
-    "author": ["BepisFever"],
-    "description": "A Skill Tree mod that saves for the entire profile.",
+    "author": ["BepisFever, th30ne, Mr33ps"],
+    "description": "A Skill Tree and Crafting mod that saves for the entire profile.",
     "prefix": "ygg",
     "main_file": "main.lua",
     "badge_colour": "FC3A3A",
     "badge_text_colour": "FFFFFF",
     "display_name": "Yggdrasil",
-    "version": "1.0.0",
-    "priority": 1,
+    "version": "2.0.0",
+    "priority": -69420,
     "dependencies": [
         "Steamodded (>=1.0.0~ALPHA-0321b)"
     ],

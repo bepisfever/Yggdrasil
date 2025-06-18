@@ -848,7 +848,7 @@ function roll_material_rng(type)
     end
     if not chosen_rarity then chosen_rarity = "common" end
 
-    local randomMat = pseudorandom_element(valid_pool[chosen_rarity], pseudoseed("roll_material_rng_roll"))
+    local randomMat = pseudorandom_element(valid_pool[chosen_rarity], pseudoseed("roll_material_rng_roll")) or Yggdrasil.get_item("card_scrap")
     local random_amount = pseudorandom("roll_material_rng_roll_amount", randomMat["min_obtain_cap"] or 1, randomMat["max_obtain_cap"] or 1)
     return randomMat, random_amount
 end

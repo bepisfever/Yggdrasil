@@ -78,7 +78,7 @@ function create_progress_bar(args)
     if args.bar_rotation == "Horizontal" then
         local startval = 0
         t = 
-        {n=G.UIT.C, config={align = "cm", minw = args.w, minh = args.h, padding = 0.1, r = 0.1, colour = G.C.CLEAR, focus_args = {type = 'slider'}}, nodes={
+        {n=G.UIT.C, config={align = "cm", minw = args.w, minh = args.h, padding = 0.1, r = 0.1, colour = G.C.CLEAR, focus_args = {type = 'progress_bar'}}, nodes={
             {n=G.UIT.C, config={align = (args.reverse_fill and "cr") or "cl", ui_degree = args.ui_degree, detailed_tooltip = args.detailed_tooltip, tooltip = args.tooltip, minw = args.w, r = 0.1,minh = args.h, colour = args.bg_colour,emboss = 0.05,func = 'progress_bar_h', refresh_movement = true}, nodes={
               {n=G.UIT.B, config={w=startval,h=args.h, r = 0.1, colour = args.colour, ref_table = args, refresh_movement = true}},
             }},
@@ -86,7 +86,7 @@ function create_progress_bar(args)
     elseif args.bar_rotation == "Vertical" then
         local startval = 0
         t = 
-        {n=G.UIT.C, config={align = "cm", minw = args.w, minh = args.h, padding = 0.1, r = 0.1, colour = G.C.CLEAR, focus_args = {type = 'slider'}}, nodes={
+        {n=G.UIT.C, config={align = "cm", minw = args.w, minh = args.h, padding = 0.1, r = 0.1, colour = G.C.CLEAR, focus_args = {type = 'progress_bar'}}, nodes={
             {n=G.UIT.C, config={align = (args.reverse_fill and "tm") or "bm", ui_degree = args.ui_degree, detailed_tooltip = args.detailed_tooltip, tooltip = args.tooltip, minw = args.w, r = 0.1,minh = args.h, colour = args.bg_colour,emboss = 0.05,func = 'progress_bar_v', refresh_movement = true}, nodes={
               {n=G.UIT.B, config={w=args.w,h=startval, r = 0.1, colour = args.colour, ref_table = args, refresh_movement = true}},
             }},

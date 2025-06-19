@@ -32,7 +32,7 @@ localize(target)
 if self.set == "YggItem" and not self.dis_default_item_count then 
     local string = "Amount: "
     local amt = 0
-    for _,v in ipairs(G.PROFILES[G.SETTINGS.profile]["YggInventory"]) do
+    for _,v in ipairs(G.PROFILES[G.SETTINGS.profile]["YggInventory"] or {}) do
         if v.id == Yggdrasil.get_true_key(card) then amt = amt + 1 end
     end
 

@@ -516,6 +516,10 @@ YggCraftingRecipes = {
             {"goi", "ds", "goi"},
             {"goi", "goi", "goi"},
         },
+        config = {
+            amount = 1,
+            unique = true
+        },
     },
 } 
 

@@ -162,6 +162,172 @@ YggCraftingRecipes = {
         }
     },
     {
+        card_key = "j_gros_michel",
+        recipe = {
+            {"pota", "pota"},
+            {"pota", "pota"},
+        },
+        config = {
+            amount = 1,
+            immediate_emplace = true,
+            specific_area = "jokers"
+        }
+    },
+    {
+        card_key = "j_cavendish",
+        recipe = {
+            {"pota_o", "pota_o"},
+            {"pota_o", "pota_o"},
+        },
+        config = {
+            amount = 1,
+            immediate_emplace = true,
+            specific_area = "jokers"
+        }
+    },
+    {
+        card_key = "j_space",
+        recipe = {
+            {"cs", "cs", "cs"},
+            {"cs", "ast_h", "cs"},
+            {"cs", "cs", "cs"},
+        },
+        config = {
+            amount = 1,
+            immediate_emplace = true,
+            specific_area = "jokers"
+        }
+    },
+    {
+        card_key = "j_greedy_joker",
+        recipe = {
+            {"cs", "cs", "cs"},
+            {"cs", "fd", "cs"},
+            {"cs", "cs", "cs"},
+        },
+        config = {
+            amount = 1,
+            immediate_emplace = true,
+            specific_area = "jokers"
+        }
+    },
+    {
+        card_key = "j_lusty_joker",
+        recipe = {
+            {"cs", "cs", "cs"},
+            {"cs", "sh", "cs"},
+            {"cs", "cs", "cs"},
+        },
+        config = {
+            amount = 1,
+            immediate_emplace = true,
+            specific_area = "jokers"
+        }
+    },
+    {
+        card_key = "j_wrathful_joker",
+        recipe = {
+            {"cs", "cs", "cs"},
+            {"cs", "bs", "cs"},
+            {"cs", "cs", "cs"},
+        },
+        config = {
+            amount = 1,
+            immediate_emplace = true,
+            specific_area = "jokers"
+        }
+    },
+    {
+        card_key = "j_gluttenous_joker",
+        recipe = {
+            {"cs", "cs", "cs"},
+            {"cs", "dc", "cs"},
+            {"cs", "cs", "cs"},
+        },
+        config = {
+            amount = 1,
+            immediate_emplace = true,
+            specific_area = "jokers"
+        }
+    },
+    {
+        card_key = "j_rough_gem",
+        recipe = {
+            {"fd", "fd", "fd"},
+            {"fd", "fd", "fd"},
+            {"fd", "fd", "fd"},
+        },
+        config = {
+            amount = 1,
+            immediate_emplace = true,
+            specific_area = "jokers"
+        }
+    },
+    {
+        card_key = "j_onyx_agate",
+        recipe = {
+            {"dc", "dc", "dc"},
+            {"dc", "dc", "dc"},
+            {"dc", "dc", "dc"},
+        },
+        config = {
+            amount = 1,
+            immediate_emplace = true,
+            specific_area = "jokers"
+        }
+    },
+    {
+        card_key = "j_bloodstone",
+        recipe = {
+            {"sh", "sh", "sh"},
+            {"sh", "sh", "sh"},
+            {"sh", "sh", "sh"},
+        },
+        config = {
+            amount = 1,
+            immediate_emplace = true,
+            specific_area = "jokers"
+        }
+    },
+    {
+        card_key = "j_arrowhead",
+        recipe = {
+            {"bs", "bs", "bs"},
+            {"bs", "bs", "bs"},
+            {"bs", "bs", "bs"},
+        },
+        config = {
+            amount = 1,
+            immediate_emplace = true,
+            specific_area = "jokers"
+        }
+    },
+    {
+        card_key = "j_smeared",
+        recipe = {
+            {"bs", "sh", "dc", "fd"},
+        },
+        config = {
+            no_order = true,
+            amount = 1,
+            immediate_emplace = true,
+            specific_area = "jokers"
+        }
+    },
+    {
+        card_key = "j_misprint",
+        recipe = {
+            {"cs", "cs", "cs"},
+            {"cs", "me", "cs"},
+            {"cs", "cs", "cs"},
+        },
+        config = {
+            amount = 1,
+            immediate_emplace = true,
+            specific_area = "jokers"
+        }
+    },
+    {
         card_key = "ygg_mat_ygg_fixed_joker",
         recipe = {
             {"cs", "cs", "cs"},
@@ -671,6 +837,7 @@ Yggdrasil.Material = SMODS.Center:extend {
     unlocked = true,
     set = "YggItem",
     config = {},
+    no_doe = true,
     display_size = {w = 50, h = 50},
     badge_colour = HEX("edc95c"), --i dont even think this works
     required_params = { "key", "atlas", "pos", "type", "rarity", "loot_config" },
@@ -848,7 +1015,8 @@ function roll_material_rng(type)
     end
     if not chosen_rarity then chosen_rarity = "common" end
 
-    local randomMat = pseudorandom_element(valid_pool[chosen_rarity], pseudoseed("roll_material_rng_roll")) or Yggdrasil.get_item("card_scrap")
+    local randomMat = pseudorandom_element(valid_pool[chosen_rarity], pseudoseed("roll_material_rng_roll"))
+    if not randomMat then randomMat = Yggdrasil.get_item("card_scrap") end
     local random_amount = pseudorandom("roll_material_rng_roll_amount", randomMat["min_obtain_cap"] or 1, randomMat["max_obtain_cap"] or 1)
     return randomMat, random_amount
 end
@@ -1110,7 +1278,7 @@ function Card:stop_drag()
         end
 
         for i = 2,4 do
-            if area == G["ygg_equip_cardarea"..i] then
+            if area == G["ygg_equip_cardarea"..i] and (not self.config.center.can_unequip or (self.config.center.can_unequip and self.config.center.can_unequip())) then
                 if G.PROFILES[G.SETTINGS.profile]["YggEquipped"] then
                     for i2,v in ipairs(G.PROFILES[G.SETTINGS.profile]["YggEquipped"]) do
                         if v.card_key == self.config.center.key then
@@ -1158,7 +1326,7 @@ function Card:stop_drag()
         end
 
         if area == G["ygg_equip_cardarea1"] then
-            if not G.PROFILES[G.SETTINGS.profile]["YggEquipped"] or (G.PROFILES[G.SETTINGS.profile]["YggEquipped"] and #G.PROFILES[G.SETTINGS.profile]["YggEquipped"] < 5)then
+            if not G.PROFILES[G.SETTINGS.profile]["YggEquipped"] or (G.PROFILES[G.SETTINGS.profile]["YggEquipped"] and #G.PROFILES[G.SETTINGS.profile]["YggEquipped"] < 5) and (not self.config.center.can_equip or (self.config.center.can_equip and self.config.center.can_equip())) then
                 local true_key = Yggdrasil.get_true_key(self)
                 if true_key then
                     if not G.PROFILES[G.SETTINGS.profile]["YggEquipped"] then G.PROFILES[G.SETTINGS.profile]["YggEquipped"] = {} end
@@ -3382,6 +3550,17 @@ function Game:update(dt)
             card_keys[#card_keys+1] = v.config.center.key
         end
 
+        local unequipped_keys = table.compare(card_keys, loaded_keys).missing
+        if next(unequipped_keys) then
+            for _,v in ipairs(self.ygg_relic_area.cards) do
+                if table.contains(unequipped_keys, v.config.center.key) then
+                    if v.config.center.on_unequip then
+                        v.config.center:on_unequip(v)
+                    end
+                end
+            end
+        end
+
         if not table.equal(loaded_keys, card_keys, true) then
             for _,v in ipairs(self.ygg_relic_area.cards) do
                 G.E_MANAGER:add_event(Event({
@@ -3438,6 +3617,17 @@ function Game:update(dt)
         local card_keys = {}
         for _,v in ipairs(self.ygg_uneq_relic_area.true_cards or self.ygg_uneq_relic_area.cards or {}) do
             card_keys[#card_keys+1] = v.config.center.key
+        end
+
+        local diff_keys = table.compare(card_keys, loaded_keys).missing
+        if next(diff_keys) then
+            for _,v in ipairs(self.ygg_uneq_relic_area.cards) do
+                if table.contains(diff_keys, v.config.center.key) then
+                    if v.config.center.on_equip then
+                        v.config.center:on_equip(v)
+                    end
+                end
+            end
         end
 
         if not table.equal(loaded_keys, card_keys) then

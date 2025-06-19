@@ -1,7 +1,7 @@
 --Welcome to where I store ALL of my (maybe) useful functions!
 --Feel free to grab anything here :3
 
-function table.contains(table, element) --Checks if the table has the given element.
+function table.contains(table, element) --Checks if the table has the given element, taken from Eremel's code.
 	for _, value in pairs(table) do
 		if value == element then
 			return true
@@ -55,6 +55,37 @@ function table.clone(table) --Clones a table.
     for i,v in pairs(table) do
         ret[i] = v
     end
+    return ret
+end
+
+function table.compare(table1, table2) --Returns value that is missing from table2 compared to table1, and values that are new in table2 that table1 doesn't have.
+    local ret = {missing = {}, added = {}}
+    if type(table1) ~= "table" or type(table2) ~= "table" or table.equal(table1,table2) then return ret end
+
+    for i,v in ipairs(table1) do
+        local found = false
+        for _,v2 in ipairs(table2) do
+            if (type(v) == "table" and type(v2) == "table" and table.equal(v,v2)) or v == v2 then
+                found = true; break
+            end
+        end
+        if not found then
+            ret.missing[i] = v 
+        end
+    end
+
+    for i,v in ipairs(table2) do
+        local found = false
+        for _,v2 in ipairs(table1) do
+            if (type(v) == "table" and type(v2) == "table" and table.equal(v,v2)) or v == v2 then
+                found = true; break
+            end
+        end
+        if not found then
+            ret.added[i] = v 
+        end
+    end
+
     return ret
 end
 

@@ -536,8 +536,8 @@ function Card:use_consumeable(area, copier)
 end
 
 local sr_ref = Game.start_run
-function Game.start_run(args)
-    local ret = sr_ref(args)
+function Game:start_run(args)
+    local ret = sr_ref(self, args)
     if not G.ygg_hooked then
         G.ygg_hooked = true
         G.P_CENTERS.m_glass.calculate = G.P_CENTERS.m_glass.calculate or function() end

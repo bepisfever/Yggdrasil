@@ -535,171 +535,171 @@ function Card:use_consumeable(area, copier)
     return ret
 end
 
-local sr_ref = Game.start_run
-function Game:start_run(args)
-    local ret = sr_ref(self, args)
-    if not G.ygg_hooked then
-        G.ygg_hooked = true
-        G.P_CENTERS.m_glass.calculate = G.P_CENTERS.m_glass.calculate or function() end
-        local hookTo = G.P_CENTERS.m_glass.calculate
-        function G.P_CENTERS.m_glass:calculate(card, context)
-            local ret = hookTo(self,card,context)
-            if ret and ret.remove and if_skill_obtained("ygg_glass_upgrade") and #G.hand.cards >= 1 then
-                G.E_MANAGER:add_event(Event({
-                    func = function()
-                        local rad_card = pseudorandom_element(G.hand.cards, pseudoseed("ygg_glass_blahblahblah"))
-                        if rad_card then
-                            SMODS.calculate_effect({message = localize("ygg_upgraded"), message_card = rad_card}, rad_card)
-                            rad_card.ability.perma_x_mult = (rad_card.ability.perma_x_mult or 1) + 0.2
-                        end
-                        return true
-                    end
-                })) 
-            end
-            return ret
-        end
-
-        --[[
-        if not G.P_CENTERS.m_stone.calculate then
-            SMODS.Enhancement:take_ownership("m_stone", {
-                calculate = function(self,card,context)
-                end,
-            },true)
-        end
-        ]]
-        G.P_CENTERS.m_stone.calculate = G.P_CENTERS.m_stone.calculate or function() end
-        local hookTo = G.P_CENTERS.m_stone.calculate
-        function G.P_CENTERS.m_stone:calculate(card, context)
-            local ret = hookTo(self,card,context)
-            if context.cardarea == G.play and context.main_scoring and if_skill_obtained("ygg_stone_upgrade") then
-                card.ability.perma_bonus = (card.ability.perma_bonus or 0) + 25
-                SMODS.calculate_effect({message = localize("ygg_upgraded"), message_card = card}, card)
-                local rad_card = pseudorandom_element(G.hand.cards, pseudoseed("ygg_stone_blahblahblah"))
+G.P_CENTERS.m_glass.calculate = G.P_CENTERS.m_glass.calculate or function() end
+local hookTo = G.P_CENTERS.m_glass.calculate
+function G.P_CENTERS.m_glass:calculate(card, context)
+    local ret = hookTo(self,card,context)
+    if ret and ret.remove and if_skill_obtained("ygg_glass_upgrade") and #G.hand.cards >= 1 then
+        G.E_MANAGER:add_event(Event({
+            func = function()
+                local rad_card = pseudorandom_element(G.hand.cards, pseudoseed("ygg_glass_blahblahblah"))
                 if rad_card then
                     SMODS.calculate_effect({message = localize("ygg_upgraded"), message_card = rad_card}, rad_card)
-                    rad_card.ability.perma_bonus = (rad_card.ability.perma_bonus or 0) + 10
+                    rad_card.ability.perma_x_mult = (rad_card.ability.perma_x_mult or 1) + 0.2
                 end
+                return true
             end
-            return ret
-        end
+        })) 
+    end
+    return ret
+end
 
-        G.P_CENTERS.m_steel.calculate = G.P_CENTERS.m_steel.calculate or function() end
-        local hookTo = G.P_CENTERS.m_steel.calculate
-        function G.P_CENTERS.m_steel:calculate(card, context)
-            local ret = hookTo(self,card,context)
-            if context.cardarea == G.play and context.main_scoring and if_skill_obtained("ygg_steel_upgrade") then
-                card.ability.h_x_mult = (card.ability.h_x_mult or 1) + 0.2
-                SMODS.calculate_effect({message = localize("ygg_upgraded"), message_card = card}, card)
-            end
-            return ret
-        end
-
-        G.P_CENTERS.m_gold.calculate = G.P_CENTERS.m_gold.calculate or function() end
-        G.P_CENTERS.m_gold.set_ability = G.P_CENTERS.m_gold.set_ability or function() end
-        local hookTo = G.P_CENTERS.m_gold.calculate
-        function G.P_CENTERS.m_gold:calculate(card, context)
-            local ret = hookTo(self,card,context)
-            if context.cardarea == G.play and context.main_scoring and if_skill_obtained("ygg_gold_upgrade") then
-                SMODS.calculate_context({ygg_upgrade_gold_card = true})
-            end
-            if context.ygg_upgrade_gold_card and if_skill_obtained("ygg_gold_upgrade") then
-                SMODS.calculate_effect({message = localize("ygg_upgraded"), message_card = card}, card)
-                card.ability.h_dollars = (card.ability.h_dollars or 0) + 1
-                card.ability.ygg_earned_dollars = (card.ability.ygg_earned_dollars or 0) + 1
-            end
-            if context.setting_blind and if_skill_obtained("ygg_gold_upgrade") then
-                card.ability.h_dollars = (card.ability.h_dollars or 0) - (card.ability.ygg_earned_dollars or 0)
-                card.ability.ygg_earned_dollars = 0
-            end
-            return ret
-        end
-
-        local hookTo = G.P_CENTERS.m_gold.set_ability
-        function G.P_CENTERS.m_gold:set_ability(card, initial, delay_sprites)
-            local ret = hookTo(self,card,initial,delay_sprites)
-            card.ability.ygg_earned_dollars = 0
-            return ret
-        end
-
-        --EDITIONS GAKRSAMSLAMDSA
-        G.P_CENTERS.e_foil.calculate = G.P_CENTERS.e_foil.calculate or function() end
-        local hookTo = G.P_CENTERS.e_foil.calculate
-        function G.P_CENTERS.e_foil:calculate(card, context)
-            local ret = hookTo(self,card,context)
-            if context.ygg_edition_upgrade and if_skill_obtained("ygg_foil_upgrade") then
-                card.edition.chips = card.edition.chips * 1.2
-                return {
-                    message = "Upgraded!",
-                    colour = G.C.CHIPS,
-                }
-            end
-            return ret
-        end
-
-        G.P_CENTERS.e_holo.calculate = G.P_CENTERS.e_holo.calculate or function() end
-        local hookTo = G.P_CENTERS.e_holo.calculate
-        function G.P_CENTERS.e_holo:calculate(card, context)
-            local ret = hookTo(self,card,context)
-            if context.ygg_edition_upgrade and if_skill_obtained("ygg_holo_upgrade") then
-                card.edition.mult = card.edition.mult + 5
-                return {
-                    message = "Upgraded!",
-                    colour = G.C.MULT,
-                }
-            end
-            return ret
-        end
-
-        G.P_CENTERS.e_polychrome.calculate = G.P_CENTERS.e_polychrome.calculate or function() end
-        local hookTo = G.P_CENTERS.e_polychrome.calculate
-        function G.P_CENTERS.e_polychrome:calculate(card, context)
-            local ret = hookTo(self,card,context)
-            if context.ygg_edition_upgrade and if_skill_obtained("ygg_polychrome_upgrade") then
-                for i,v in ipairs(G.jokers.cards) do
-                    if v == card then
-                        if G.jokers.cards[i+1] and not G.jokers.cards[i+1].edition and pseudorandom("ygg_poly_upgrade_check") <= 1/2 then
-                            G.jokers.cards[i+1]:set_edition("e_polychrome",true)   
-                            card.edition.x_mult = card.edition.x_mult + 0.2
-                        end
-                        if G.jokers.cards[i-1] and not G.jokers.cards[i-1].edition and pseudorandom("ygg_poly_upgrade_check") <= 1/2 then
-                            G.jokers.cards[i-1]:set_edition("e_polychrome",true)   
-                            card.edition.x_mult = card.edition.x_mult + 0.2
-                        end
-                        return
-                    end
-                end
-
-                for i,v in ipairs(G.playing_cards) do
-                    if v == card then
-                        if G.playing_cards[i+1] and not G.playing_cards[i+1].edition and pseudorandom("ygg_poly_upgrade_check") <= 1/2 then
-                            G.playing_cards[i+1]:set_edition("e_polychrome",true)   
-                            card.edition.x_mult = card.edition.x_mult + 0.2
-                        end
-                        if G.playing_cards[i-1] and not G.playing_cards[i-1].edition and pseudorandom("ygg_poly_upgrade_check") <= 1/2 then
-                            G.playing_cards[i-1]:set_edition("e_polychrome",true)   
-                            card.edition.x_mult = card.edition.x_mult + 0.2
-                        end
-                        return
-                    end
-                end
-            end
-            return ret
-        end
-
-        G.P_CENTERS.e_negative.calculate = G.P_CENTERS.e_negative.calculate or function() end
-        local hookTo = G.P_CENTERS.e_negative.calculate
-        function G.P_CENTERS.e_negative:calculate(card, context)
-            local ret = hookTo(self,card,context)
-            if context.selling_card and context.card and context.card ~= card and string.sub(context.card.config.center.key,1,2) == "j_" and context.card.edition and context.card.edition.key == "e_negative" and pseudorandom("ygg_negative_roll") <= 1/2 and if_skill_obtained("ygg_negative_upgrade") then
-                card.edition.card_limit = card.edition.card_limit + 1
-                if card.area then card.area.config.card_limit = card.area.config.card_limit + 1 end
-                return {
-                    message = "Upgraded!",
-                    colour = G.C.DARK_EDITION
-                }
-            end
-            return ret
+--[[
+if not G.P_CENTERS.m_stone.calculate then
+    SMODS.Enhancement:take_ownership("m_stone", {
+        calculate = function(self,card,context)
+        end,
+    },true)
+end
+]]
+G.P_CENTERS.m_stone.calculate = G.P_CENTERS.m_stone.calculate or function() end
+local hookTo = G.P_CENTERS.m_stone.calculate
+function G.P_CENTERS.m_stone:calculate(card, context)
+    local ret = hookTo(self,card,context)
+    if context.cardarea == G.play and context.main_scoring and if_skill_obtained("ygg_stone_upgrade") then
+        card.ability.perma_bonus = (card.ability.perma_bonus or 0) + 25
+        SMODS.calculate_effect({message = localize("ygg_upgraded"), message_card = card}, card)
+        local rad_card = pseudorandom_element(G.hand.cards, pseudoseed("ygg_stone_blahblahblah"))
+        if rad_card then
+            SMODS.calculate_effect({message = localize("ygg_upgraded"), message_card = rad_card}, rad_card)
+            rad_card.ability.perma_bonus = (rad_card.ability.perma_bonus or 0) + 10
         end
     end
     return ret
+end
+
+G.P_CENTERS.m_steel.calculate = G.P_CENTERS.m_steel.calculate or function() end
+local hookTo = G.P_CENTERS.m_steel.calculate
+function G.P_CENTERS.m_steel:calculate(card, context)
+    local ret = hookTo(self,card,context)
+    if context.cardarea == G.play and context.main_scoring and if_skill_obtained("ygg_steel_upgrade") then
+        card.ability.h_x_mult = (card.ability.h_x_mult or 1) + 0.2
+        SMODS.calculate_effect({message = localize("ygg_upgraded"), message_card = card}, card)
+    end
+    return ret
+end
+
+G.P_CENTERS.m_gold.calculate = G.P_CENTERS.m_gold.calculate or function() end
+G.P_CENTERS.m_gold.set_ability = G.P_CENTERS.m_gold.set_ability or function() end
+local hookTo = G.P_CENTERS.m_gold.calculate
+function G.P_CENTERS.m_gold:calculate(card, context)
+    local ret = hookTo(self,card,context)
+    if context.cardarea == G.play and context.main_scoring and if_skill_obtained("ygg_gold_upgrade") then
+        SMODS.calculate_context({ygg_upgrade_gold_card = true})
+    end
+    if context.ygg_upgrade_gold_card and if_skill_obtained("ygg_gold_upgrade") then
+        SMODS.calculate_effect({message = localize("ygg_upgraded"), message_card = card}, card)
+        card.ability.h_dollars = (card.ability.h_dollars or 0) + 1
+        card.ability.ygg_earned_dollars = (card.ability.ygg_earned_dollars or 0) + 1
+    end
+    if context.setting_blind and if_skill_obtained("ygg_gold_upgrade") then
+        card.ability.h_dollars = (card.ability.h_dollars or 0) - (card.ability.ygg_earned_dollars or 0)
+        card.ability.ygg_earned_dollars = 0
+    end
+    return ret
+end
+
+local hookTo = G.P_CENTERS.m_gold.set_ability
+function G.P_CENTERS.m_gold:set_ability(card, initial, delay_sprites)
+    local ret = hookTo(self,card,initial,delay_sprites)
+    card.ability.ygg_earned_dollars = 0
+    return ret
+end
+
+--EDITIONS GAKRSAMSLAMDSA
+G.P_CENTERS.e_foil.calculate = G.P_CENTERS.e_foil.calculate or function() end
+local hookTo = G.P_CENTERS.e_foil.calculate
+function G.P_CENTERS.e_foil:calculate(card, context)
+    local ret = hookTo(self,card,context)
+    if context.ygg_edition_upgrade and if_skill_obtained("ygg_foil_upgrade") then
+        card.edition.chips = card.edition.chips * 1.2
+        return {
+            message = "Upgraded!",
+            colour = G.C.CHIPS,
+        }
+    end
+    return ret
+end
+
+G.P_CENTERS.e_holo.calculate = G.P_CENTERS.e_holo.calculate or function() end
+local hookTo = G.P_CENTERS.e_holo.calculate
+function G.P_CENTERS.e_holo:calculate(card, context)
+    local ret = hookTo(self,card,context)
+    if context.ygg_edition_upgrade and if_skill_obtained("ygg_holo_upgrade") then
+        card.edition.mult = card.edition.mult + 5
+        return {
+            message = "Upgraded!",
+            colour = G.C.MULT,
+        }
+    end
+    return ret
+end
+
+G.P_CENTERS.e_polychrome.calculate = G.P_CENTERS.e_polychrome.calculate or function() end
+local hookTo = G.P_CENTERS.e_polychrome.calculate
+function G.P_CENTERS.e_polychrome:calculate(card, context)
+    local ret = hookTo(self,card,context)
+    if context.ygg_edition_upgrade and if_skill_obtained("ygg_polychrome_upgrade") then
+        for i,v in ipairs(G.jokers.cards) do
+            if v == card then
+                if G.jokers.cards[i+1] and not G.jokers.cards[i+1].edition and pseudorandom("ygg_poly_upgrade_check") <= 1/2 then
+                    G.jokers.cards[i+1]:set_edition("e_polychrome",true)   
+                    card.edition.x_mult = card.edition.x_mult + 0.2
+                end
+                if G.jokers.cards[i-1] and not G.jokers.cards[i-1].edition and pseudorandom("ygg_poly_upgrade_check") <= 1/2 then
+                    G.jokers.cards[i-1]:set_edition("e_polychrome",true)   
+                    card.edition.x_mult = card.edition.x_mult + 0.2
+                end
+                return
+            end
+        end
+
+        for i,v in ipairs(G.playing_cards) do
+            if v == card then
+                if G.playing_cards[i+1] and not G.playing_cards[i+1].edition and pseudorandom("ygg_poly_upgrade_check") <= 1/2 then
+                    G.playing_cards[i+1]:set_edition("e_polychrome",true)   
+                    card.edition.x_mult = card.edition.x_mult + 0.2
+                end
+                if G.playing_cards[i-1] and not G.playing_cards[i-1].edition and pseudorandom("ygg_poly_upgrade_check") <= 1/2 then
+                    G.playing_cards[i-1]:set_edition("e_polychrome",true)   
+                    card.edition.x_mult = card.edition.x_mult + 0.2
+                end
+                return
+            end
+        end
+    end
+    return ret
+end
+
+G.P_CENTERS.e_negative.calculate = G.P_CENTERS.e_negative.calculate or function() end
+local hookTo = G.P_CENTERS.e_negative.calculate
+function G.P_CENTERS.e_negative:calculate(card, context)
+    local ret = hookTo(self,card,context)
+    if context.selling_card and context.card and context.card ~= card and string.sub(context.card.config.center.key,1,2) == "j_" and context.card.edition and context.card.edition.key == "e_negative" and pseudorandom("ygg_negative_roll") <= 1/2 and if_skill_obtained("ygg_negative_upgrade") then
+        card.edition.card_limit = card.edition.card_limit + 1
+        if card.area then card.area.config.card_limit = card.area.config.card_limit + 1 end
+        return {
+            message = "Upgraded!",
+            colour = G.C.DARK_EDITION
+        }
+    end
+    return ret
+end
+
+local oldcardremove = Card.remove
+function Card:remove()
+    if self.added_to_deck and self.ability.set == 'Joker' and not G.CONTROLLER.locks.selling_card then
+        SMODS.calculate_context({ygg_destroying_joker = true, ygg_destroyed_joker = self})
+    end
+    return oldcardremove(self)
 end

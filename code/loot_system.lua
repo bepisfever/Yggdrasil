@@ -12,7 +12,7 @@ YggMaterialChance = {
     uncommon = {chance = 1/4, priority = 1},
     rare = {chance = 1/25, priority = 2},
     legendary = {chance = 1/50, priority = 3},
-    exotic = {chance = 1/2000, priority = 4},
+    exotic = {chance = 1/500, priority = 4},
 }
 YggMaterialList = {
     --[[

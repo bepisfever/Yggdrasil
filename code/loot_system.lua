@@ -519,7 +519,7 @@ YggCraftingRecipes = {
         config = {
             amount = 1,
             unique = true
-        },
+        }
     },
 } 
 
@@ -1083,17 +1083,6 @@ end
 local game_start_run_ref = Game.start_run
 function Game:start_run(args)
     game_start_run_ref(self, args)
-
-    self.ygg_relic_area = CardArea(
-        G.TILE_W - 600*G.CARD_W - 200.95, -100.1*G.jokers.T.h,
-        G.jokers.T.w, G.jokers.T.h,
-        { type = "joker", card_limit = 100000, highlighted_limit = 0 }
-    )
-    self.ygg_uneq_relic_area = CardArea(
-        G.TILE_W - 600*G.CARD_W - 200.95, -100.1*G.jokers.T.h,
-        G.jokers.T.w, G.jokers.T.h,
-        { type = "joker", card_limit = 100000, highlighted_limit = 0 }
-    )
 
     for i,v in ipairs(G.PROFILES[G.SETTINGS.profile]["YggInventory"] or {}) do --updating info so that its up to date
         if v.id and Yggdrasil.get_item(v.id) then
@@ -2129,6 +2118,134 @@ function ygg_create_text_input(args)
     return t
 end
 
+function load_relic_areas()
+    --loading in equipped relics to a cardarea. is this a bad idea? probably
+    --[[some explanation for MYSELF.
+    Q: what the hell is "true_cards"?
+    A: :remove_card(), :remove() are all events, so uh, if i simply check G.ygg_relic_area.cards then they arent properly updated yet until all those events are done.
+    so yeah, bugs
+    ]]
+    if G.ygg_relic_area and G.ygg_relic_area.cards then
+        local loaded_keys = {}
+        for _,v in ipairs(G.PROFILES[G.SETTINGS.profile]["YggEquipped"] or {}) do
+            if v.info and v.info.id then
+                local updated_info = Yggdrasil.get_item(v.info.id)
+                if updated_info then
+                    local card_key = "ygg_mat_"..(updated_info.mod_prefix or "ygg").."_"..(updated_info.card_key or updated_info.id)
+                    if not table.contains(loaded_keys, card_key) and not updated_info.mod_id or (updated_info.mod_id and next(SMODS.find_mod(updated_info.mod_id))) then
+                        loaded_keys[#loaded_keys+1] = card_key
+                    end 
+                end
+            end
+        end
+
+        local card_keys = {}
+        for _,v in ipairs(G.ygg_relic_area.true_cards or G.ygg_relic_area.cards or {}) do
+            card_keys[#card_keys+1] = v.config.center.key
+        end
+
+        local unequipped_keys = table.compare(card_keys, loaded_keys).missing
+        if next(unequipped_keys) then
+            for _,v in ipairs(G.ygg_relic_area.cards) do
+                if table.contains(unequipped_keys, v.config.center.key) then
+                    if v.config.center.on_unequip then
+                        v.config.center:on_unequip(v)
+                    end
+                end
+            end
+        end
+
+        if not table.equal(loaded_keys, card_keys, true) then
+            for _,v in ipairs(G.ygg_relic_area.cards) do
+                G.E_MANAGER:add_event(Event({
+                    func = function() 
+                        G.ygg_relic_area:remove_card(v)
+                        v:remove()
+                        return true 
+                    end
+                }))
+            end
+
+            local loaded_cards = {}
+            for _,v in ipairs(loaded_keys) do
+                local card = SMODS.add_card{key = v, area = G.ygg_relic_area}
+                loaded_cards[#loaded_cards+1] = card
+            end
+
+            G.ygg_relic_area.true_cards = loaded_cards
+
+            --[[
+            local keys = {}
+            for _,v in ipairs(G.ygg_relic_area.true_cards or G.ygg_relic_area.cards) do
+                keys[#keys+1] = v.config.center.key
+            end
+            print("added/rearranged relics, heres the new relics:")
+            print(keys)
+            print("intended keys:")
+            print(loaded_keys)
+            ]]
+        end
+    end
+
+    if G.ygg_uneq_relic_area and G.ygg_uneq_relic_area.cards then
+        local equipped_keys = {}
+        for _,v in ipairs(G.PROFILES[G.SETTINGS.profile]["YggEquipped"] or {}) do
+            if v.info and v.info.id then
+                equipped_keys[#equipped_keys+1] = v.info.id
+            end
+        end
+
+        local loaded_keys = {}
+        for _,v in ipairs(G.PROFILES[G.SETTINGS.profile]["YggInventory"] or {}) do
+            if v.id then
+                local updated_info = Yggdrasil.get_item(v.id)
+                if updated_info then
+                    local card_key = "ygg_mat_"..(updated_info.mod_prefix or "ygg").."_"..(updated_info.card_key or updated_info.id)
+                    if not table.contains(equipped_keys, v.id) and not table.contains(loaded_keys, card_key) and Yggdrasil.get_type_of_item(v.id) == "relic" then
+                        loaded_keys[#loaded_keys+1] = card_key
+                    end
+                end
+            end
+        end
+
+        local card_keys = {}
+        for _,v in ipairs(G.ygg_uneq_relic_area.true_cards or G.ygg_uneq_relic_area.cards or {}) do
+            card_keys[#card_keys+1] = v.config.center.key
+        end
+
+        local diff_keys = table.compare(card_keys, loaded_keys).missing
+        if next(diff_keys) then
+            for _,v in ipairs(G.ygg_uneq_relic_area.cards) do
+                if table.contains(diff_keys, v.config.center.key) then
+                    if v.config.center.on_equip then
+                        v.config.center:on_equip(v)
+                    end
+                end
+            end
+        end
+
+        if not table.equal(loaded_keys, card_keys) then
+            for _,v in ipairs(G.ygg_uneq_relic_area.cards) do
+                G.E_MANAGER:add_event(Event({
+                    func = function() 
+                        G.ygg_uneq_relic_area:remove_card(v)
+                        v:remove()
+                        return true 
+                    end
+                }))
+            end
+
+            local loaded_cards = {}
+            for _,v in ipairs(loaded_keys) do
+                local card = SMODS.add_card{key = v, area = G.ygg_uneq_relic_area}
+                loaded_cards[#loaded_cards+1] = card
+            end
+
+            G.ygg_uneq_relic_area.true_cards = loaded_cards
+        end
+    end
+end
+
 local hookTo = G.FUNCS.exit_overlay_menu
 G.FUNCS.exit_overlay_menu = function()
     G.E_MANAGER:clear_queue('yggdrasil')
@@ -2146,8 +2263,10 @@ function create_inventory_UI(args)
     local true_recipe_page = nil
     local true_equip_page = nil
 
-    local load_inventory_area = true
+    local load_inventory_area = true --...when this is disabled, lag doesn't appear. help (APPARENTLY NOT???)
     local load_equip_area = true
+    local add_right_area = true
+    local add_left_area = true --It's the left area that's lagging. Help. (NO???)
 
     local function clear_ygg_areas()
         for i = 1,3 do
@@ -2171,11 +2290,19 @@ function create_inventory_UI(args)
                 G["ygg_placeholder_cardarea"..i]:remove()
                 G["ygg_placeholder_cardarea"..i] = nil
             end
+            if G["ygg_equip_cardarea"..i] then
+                G["ygg_equip_cardarea"..i]:remove()
+                G["ygg_equip_cardarea"..i] = nil
+            end
         end
 
         if G["ygg_recipe_cardarea4"] then
             G["ygg_recipe_cardarea4"]:remove()
             G["ygg_recipe_cardarea4"] = nil
+        end
+        if G["ygg_equip_cardarea4"] then
+            G["ygg_equip_cardarea4"]:remove()
+            G["ygg_equip_cardarea4"] = nil
         end
         if G["ygg_crafting_show"] then G["ygg_crafting_show"]:remove(); G["ygg_crafting_show"] = nil end
     end
@@ -2183,6 +2310,7 @@ function create_inventory_UI(args)
     clear_ygg_areas()
     G.E_MANAGER:clear_queue('yggdrasil')
 
+    --Create cardareas.
     if not G.GAME["YggInvenArea"] or G.GAME["YggInvenArea"] == "Inventory" then
         for i = 1,3 do
             if G["ygg_inventory_cardarea"..i] then
@@ -2212,7 +2340,6 @@ function create_inventory_UI(args)
             G["ygg_equip_cardarea"..i].states.collide.can = true
         end
     end
-
     if G.GAME["YggSecondAreaMode"] and G.GAME["YggSecondAreaMode"] == "Delete" then
         for i = 1,3 do
             if G["ygg_delete_cardarea"..i] then
@@ -2291,358 +2418,187 @@ function create_inventory_UI(args)
         G["ygg_crafting_show"].states.collide.can = false
     end
 
-    if YggdrasilDebugCraftingMode then --please dont turn this on
-        for i = 1,3 do
-            for _, key in ipairs({"ygg_mat_ygg_card_scrap","ygg_mat_ygg_card_scrap","ygg_mat_ygg_card_scrap","ygg_mat_ygg_card_scrap","ygg_mat_ygg_card_scrap"}) do
-                local card = Card(G["ygg_inventory_cardarea"..i].T.x + G["ygg_inventory_cardarea"..i].T.w / 2, G["ygg_inventory_cardarea"..i].T.y,
-                    G.CARD_W, G.CARD_H, G.P_CARDS.empty,
-                    G.P_CENTERS[key])
-                card.ability.ygg_is_item = true
-                card.children.back:remove()
-                card.children.back = Sprite(card.T.x, card.T.y, card.T.w, card.T.h, G.ASSET_ATLAS["ygg_placeholder_mat"], { x = 0, y = 0 })
-                card.children.back.states.hover = card.states.hover
-                card.children.back.states.click = card.states.click
-                card.children.back.states.drag = card.states.drag
-                card.children.back.states.collide.can = false
-                card.children.back:set_role({major = card, role_type = 'Glued', draw_major = card})
-                G["ygg_inventory_cardarea"..i]:emplace(card)
-                --[[ Code supposed to add text on top of a card. Doesn't work. Resorted to just adding each instance of that material in the inventory instead.
-                G.idk = UIBox {
-                    definition = {
-                        n = G.UIT.ROOT,
-                        config = {
-                            align = "cm",
-                            minw = 1,
-                            minh = 0.3,
-                            padding = 0.15,
-                            r = 0.1,
-                            colour = G.C.CLEAR
-                        },
-                        nodes = {
-                            {
-                                n = G.UIT.C,
-                                config = {align = "cm", maxw = 2, padding = 0.1, r = 0.08, minw = 2, minh = 0, hover = true, shadow = true, colour = G.C.CLEAR},
-                                nodes = {
-                                    {n = G.UIT.T, config = {text = "X1", colour = G.C.BLACK, scale = 1}}
-                                }
-                            },
-                
-                        }
-                    },
-                    config = {
-                        align = "cm",
-                        offset = { x = 0, y = 0 },
-                        major = G["ygg_inventory_cardarea"..i].cards[#G["ygg_inventory_cardarea"..i].cards],
-                        bond = 'Strong'
-                    }
-                }
-                ]]
+    --Loading cards to cardareas.
+    if G.PROFILES[G.SETTINGS.profile]["YggInventory"] and (not G.GAME["YggInvenArea"] or G.GAME["YggInvenArea"] == "Inventory") then
+        local current_page = G.GAME.ygg_inven_page or 1
+        local list_to_use = table.clone(G.PROFILES[G.SETTINGS.profile]["YggInventory"])
+        for i,v in ipairs(list_to_use) do
+            if not Yggdrasil.get_item(v.id) or (v.mod_id and not next(SMODS.find_mod(v.mod_id))) then
+                table.remove(list_to_use,i)
             end
-        end 
-    else --Loading cards to the area.
-        if G.PROFILES[G.SETTINGS.profile]["YggInventory"] and (not G.GAME["YggInvenArea"] or G.GAME["YggInvenArea"] == "Inventory") then
-            local current_page = G.GAME.ygg_inven_page or 1
-            local list_to_use = table.clone(G.PROFILES[G.SETTINGS.profile]["YggInventory"])
-            for i,v in ipairs(list_to_use) do
-                if not Yggdrasil.get_item(v.id) or (v.mod_id and not next(SMODS.find_mod(v.mod_id))) then
-                    table.remove(list_to_use,i)
-                end
-            end
-            if G.GAME["YggSearchOption"] and type(G.GAME["YggSearchOption"]) == "string" then
-                local search_option = string.lower(Yggdrasil.remove_space(G.GAME["YggSearchOption"]))
-                local search_list = G.PROFILES[G.SETTINGS.profile]["YggInventory"]
+        end
+        if G.GAME["YggSearchOption"] and type(G.GAME["YggSearchOption"]) == "string" then
+            local search_option = string.lower(Yggdrasil.remove_space(G.GAME["YggSearchOption"]))
+            local search_list = G.PROFILES[G.SETTINGS.profile]["YggInventory"]
 
-                if search_option ~= "" then
-                    list_to_use = {}
-                    if string.find(search_option, "(type=", nil, true) then
-                        local start_type, end_type = string.find(search_option, "(type=", nil, true)
-                        
-                        local end_pos = end_type
-                        for i = end_type, #search_option do
-                            if string.sub(search_option, i, i) == ")" or i == #search_option then
-                                end_pos = i
-                                break
-                            end
+            if search_option ~= "" then
+                list_to_use = {}
+                if string.find(search_option, "(type=", nil, true) then
+                    local start_type, end_type = string.find(search_option, "(type=", nil, true)
+                    
+                    local end_pos = end_type
+                    for i = end_type, #search_option do
+                        if string.sub(search_option, i, i) == ")" or i == #search_option then
+                            end_pos = i
+                            break
                         end
-
-                        local type_cube = string.sub(search_option, start_type, end_pos)
-                        local actual_type = string.gsub(type_cube, "%(type=", "")
-                        actual_type = string.gsub(actual_type, "%)", "")
-
-                        if YggMaterialList[actual_type] then
-                            local available_mats = YggMaterialList[actual_type]
-                            local temp_search_list = {}
-
-                            for _,item_info in ipairs(search_list) do
-                                for _,avail_info in ipairs(available_mats) do
-                                    if avail_info.id == item_info.id then
-                                        temp_search_list[#temp_search_list+1] = item_info
-                                        break
-                                    end
-                                end
-                            end
-
-                            search_list = temp_search_list
-                        end
-
-                        local temp_search_option = nil
-                        if type_cube == "(type="..actual_type then
-                            temp_search_option = string.gsub(search_option,"%(type="..actual_type,"")
-                        elseif type_cube == "(type="..actual_type..")" then
-                            temp_search_option = string.gsub(search_option,"%(type="..actual_type.."%)","")
-                        else
-                            print("something went wrong with yggdrasil's type sorting in search bar - please show this message to BepisFever in Balatro discord, thanks and sorry.")
-                        end
-
-                        search_option = temp_search_option
                     end
 
-                    if string.find(search_option, "(rarity=", nil, true) then
-                        local start_type, end_type = string.find(search_option, "(rarity=", nil, true)
-                        
-                        local end_pos = end_type
-                        for i = end_type, #search_option do
-                            if string.sub(search_option, i, i) == ")" or i == #search_option then
-                                end_pos = i
-                                break
-                            end
-                        end
+                    local type_cube = string.sub(search_option, start_type, end_pos)
+                    local actual_type = string.gsub(type_cube, "%(type=", "")
+                    actual_type = string.gsub(actual_type, "%)", "")
 
-                        local type_cube = string.sub(search_option, start_type, end_pos)
-                        local actual_type = string.gsub(type_cube, "%(rarity=", "")
-                        actual_type = string.gsub(actual_type, "%)", "")
+                    if YggMaterialList[actual_type] then
+                        local available_mats = YggMaterialList[actual_type]
+                        local temp_search_list = {}
 
-                        if YggMaterialList[actual_type] then
-                            local available_mats = YggMaterialList[actual_type]
-                            local temp_search_list = {}
-
-                            for _,item_info in ipairs(search_list) do
-                                if item_info.rarity and item_info.rarity == actual_type then
+                        for _,item_info in ipairs(search_list) do
+                            for _,avail_info in ipairs(available_mats) do
+                                if avail_info.id == item_info.id then
                                     temp_search_list[#temp_search_list+1] = item_info
+                                    break
                                 end
                             end
-
-                            search_list = temp_search_list
                         end
 
-                        local temp_search_option = nil
-                        if type_cube == "(rarity="..actual_type then
-                            temp_search_option = string.gsub(search_option,"%(rarity="..actual_type,"")
-                        elseif type_cube == "(rarity="..actual_type..")" then
-                            temp_search_option = string.gsub(search_option,"%(rarity="..actual_type.."%)","")
-                        else
-                            print("something went wrong with yggdrasil's type sorting in search bar - please show this message to BepisFever in Balatro discord, thanks and sorry.")
-                        end
-
-                        search_option = temp_search_option
+                        search_list = temp_search_list
                     end
 
-                    for _,item_info in ipairs(search_list) do
-                        local item_name = string.lower(Yggdrasil.remove_underline(item_info.id))
-
-                        if string.find(item_name, search_option or "") then
-                            list_to_use[#list_to_use+1] = item_info
-                        end
+                    local temp_search_option = nil
+                    if type_cube == "(type="..actual_type then
+                        temp_search_option = string.gsub(search_option,"%(type="..actual_type,"")
+                    elseif type_cube == "(type="..actual_type..")" then
+                        temp_search_option = string.gsub(search_option,"%(type="..actual_type.."%)","")
+                    else
+                        print("something went wrong with yggdrasil's type sorting in search bar - please show this message to BepisFever in Balatro discord, thanks and sorry.")
                     end
 
-                    true_page = math.max(math.ceil(#(list_to_use or {})/15), 1)
-                    G.GAME.ygg_inven_page = math.min(G.GAME.ygg_inven_page or 1, true_page)
-                    current_page = G.GAME.ygg_inven_page
+                    search_option = temp_search_option
                 end
-            end
-            local list_to_take = list_to_use
 
-            if G.GAME.YggInventorySort then
-                if G.GAME.YggInventorySort == "Rarity" then
-                    local temp_list = {}
-                    --list_to_take = {}
-                    for _,item_info in ipairs(list_to_use) do
-                        if not temp_list[item_info.rarity] then temp_list[item_info.rarity] = {} end
-                        temp_list[item_info.rarity][#temp_list[item_info.rarity]+1] = item_info
-                    end
-
-                    local all_rarities = {}
-                    for rarity,_ in pairs(YggMaterialChance) do
-                        all_rarities[#all_rarities+1] = rarity
-                    end
-                    table.sort(all_rarities, function(a,b) return YggMaterialChance[a]["priority"] > YggMaterialChance[b]["priority"] end)
-
-                    list_to_take = {}
-                    for _,rarity in ipairs(all_rarities) do
-                        for _,item in ipairs(temp_list[rarity] or {}) do
-                            list_to_take[#list_to_take + 1] = item
+                if string.find(search_option, "(rarity=", nil, true) then
+                    local start_type, end_type = string.find(search_option, "(rarity=", nil, true)
+                    
+                    local end_pos = end_type
+                    for i = end_type, #search_option do
+                        if string.sub(search_option, i, i) == ")" or i == #search_option then
+                            end_pos = i
+                            break
                         end
                     end
 
-                    for _,item in ipairs(temp_list["common"] or {}) do
+                    local type_cube = string.sub(search_option, start_type, end_pos)
+                    local actual_type = string.gsub(type_cube, "%(rarity=", "")
+                    actual_type = string.gsub(actual_type, "%)", "")
+
+                    if YggMaterialList[actual_type] then
+                        local available_mats = YggMaterialList[actual_type]
+                        local temp_search_list = {}
+
+                        for _,item_info in ipairs(search_list) do
+                            if item_info.rarity and item_info.rarity == actual_type then
+                                temp_search_list[#temp_search_list+1] = item_info
+                            end
+                        end
+
+                        search_list = temp_search_list
+                    end
+
+                    local temp_search_option = nil
+                    if type_cube == "(rarity="..actual_type then
+                        temp_search_option = string.gsub(search_option,"%(rarity="..actual_type,"")
+                    elseif type_cube == "(rarity="..actual_type..")" then
+                        temp_search_option = string.gsub(search_option,"%(rarity="..actual_type.."%)","")
+                    else
+                        print("something went wrong with yggdrasil's type sorting in search bar - please show this message to BepisFever in Balatro discord, thanks and sorry.")
+                    end
+
+                    search_option = temp_search_option
+                end
+
+                for _,item_info in ipairs(search_list) do
+                    local item_name = string.lower(Yggdrasil.remove_underline(item_info.id))
+
+                    if string.find(item_name, search_option or "") then
+                        list_to_use[#list_to_use+1] = item_info
+                    end
+                end
+
+                true_page = math.max(math.ceil(#(list_to_use or {})/15), 1)
+                G.GAME.ygg_inven_page = math.min(G.GAME.ygg_inven_page or 1, true_page)
+                current_page = G.GAME.ygg_inven_page
+            end
+        end
+        local list_to_take = list_to_use
+
+        if G.GAME.YggInventorySort then
+            if G.GAME.YggInventorySort == "Rarity" then
+                local temp_list = {}
+                --list_to_take = {}
+                for _,item_info in ipairs(list_to_use) do
+                    if not temp_list[item_info.rarity] then temp_list[item_info.rarity] = {} end
+                    temp_list[item_info.rarity][#temp_list[item_info.rarity]+1] = item_info
+                end
+
+                local all_rarities = {}
+                for rarity,_ in pairs(YggMaterialChance) do
+                    all_rarities[#all_rarities+1] = rarity
+                end
+                table.sort(all_rarities, function(a,b) return YggMaterialChance[a]["priority"] > YggMaterialChance[b]["priority"] end)
+
+                list_to_take = {}
+                for _,rarity in ipairs(all_rarities) do
+                    for _,item in ipairs(temp_list[rarity] or {}) do
                         list_to_take[#list_to_take + 1] = item
                     end
                 end
-            end
 
-            local loaded_keys = {}
-
-            local temp_list_to_take = {}
-            for _,v in ipairs(list_to_take) do
-                local exist = false
-                for _,v2 in ipairs(temp_list_to_take) do
-                    if v2.id == v.id then exist = true break end
-                end
-                if not exist then
-                    temp_list_to_take[#temp_list_to_take+1] = v
-                end
-            end
-            list_to_take = temp_list_to_take
-
-            true_page = math.max(math.ceil(#list_to_take/15), 1)
-            if (G.GAME.ygg_inven_page or 1) >= true_page then G.GAME.ygg_inven_page = true_page end
-
-            if load_inventory_area then
-                for i = (1 + (15 * (current_page - 1))), (15 + (15 * (current_page - 1))) do
-                    local skill_to_insert = list_to_take[i]
-                    if skill_to_insert then
-                        local saved_skill_to_insert = skill_to_insert
-                        G.E_MANAGER:add_event(Event({
-                            func = function() 
-                                local key = "ygg_mat_"..saved_skill_to_insert.mod_prefix.."_"..saved_skill_to_insert.id
-                                if table.contains(loaded_keys, key) then return true end
-                                loaded_keys[#loaded_keys+1] = key
-                                local cardarea_to_insert = nil
-                                for i2 = 1,3 do
-                                    if not G["ygg_inventory_cardarea"..i2] or not G["ygg_inventory_cardarea"..i2].cards then return end
-                                    if #G["ygg_inventory_cardarea"..i2].cards < 5 then
-                                        cardarea_to_insert = G["ygg_inventory_cardarea"..i2]
-                                        break
-                                    end
-                                end
-                                if cardarea_to_insert then
-                                    local card = Card(cardarea_to_insert.T.x + cardarea_to_insert.T.w / 2, cardarea_to_insert.T.y,
-                                        G.CARD_W, G.CARD_H, G.P_CARDS.empty,
-                                        G.P_CENTERS[key])
-                                    card.ability.ygg_from_inventory = true
-                                    card.ability.ygg_is_item = true
-                                    card.children.back:remove()
-                                    card.children.back = Sprite(card.T.x, card.T.y, card.T.w, card.T.h, G.ASSET_ATLAS["ygg_placeholder_mat"], { x = 0, y = 0 })
-                                    card.children.back.states.hover = card.states.hover
-                                    card.children.back.states.click = card.states.click
-                                    card.children.back.states.drag = card.states.drag
-                                    card.children.back.states.collide.can = false
-                                    card.children.back:set_role({major = card, role_type = 'Glued', draw_major = card})
-                                    cardarea_to_insert:emplace(card) 
-                                end
-                                return true 
-                            end
-                        }), "yggdrasil")
-                    end
-                end
-            end
-        elseif G.PROFILES[G.SETTINGS.profile]["YggInventory"] and (G.GAME["YggInvenArea"] and G.GAME["YggInvenArea"] == "Equip") then
-            if G.PROFILES[G.SETTINGS.profile]["YggEquipped"] then
-                local cardarea_to_insert = G["ygg_equip_cardarea1"]
-                for _,v in ipairs(G.PROFILES[G.SETTINGS.profile]["YggEquipped"] or {}) do
-                    local load = true
-                    if not Yggdrasil.have_item(v.info.id) or (not Yggdrasil.get_item(v.info.id) or (v.info.mod_id and not next(SMODS.find_mod(v.info.mod_id)))) then
-                        for i,v2 in ipairs(G.PROFILES[G.SETTINGS.profile]["YggEquipped"] or {}) do
-                            if v2.info.id == v.info.id then table.remove(G.PROFILES[G.SETTINGS.profile]["YggEquipped"],i); load = false end
-                        end
-                    end
-
-                    if load_equip_area and load then
-                        local key = v.card_key
-                        local card = Card(cardarea_to_insert.T.x + cardarea_to_insert.T.w / 2, cardarea_to_insert.T.y,
-                            G.CARD_W, G.CARD_H, G.P_CARDS.empty,
-                            G.P_CENTERS[key])
-                        card.ability.is_equipped = true
-                        card.children.back:remove()
-                        card.children.back = Sprite(card.T.x, card.T.y, card.T.w, card.T.h, G.ASSET_ATLAS["ygg_placeholder_mat"], { x = 0, y = 0 })
-                        card.children.back.states.hover = card.states.hover
-                        card.children.back.states.click = card.states.click
-                        card.children.back.states.drag = card.states.drag
-                        card.children.back.states.collide.can = false
-                        card.children.back:set_role({major = card, role_type = 'Glued', draw_major = card})
-                        cardarea_to_insert:emplace(card) 
-                    end
-                end
-            end
-
-            local relics = {}
-            for _,v in ipairs(G.PROFILES[G.SETTINGS.profile]["YggInventory"]) do
-                local exists = false
-                for _,v2 in ipairs(relics) do
-                    if v2.id == v.id then exists = true break end
-                end
-                if not exists and Yggdrasil.get_type_of_item(v.id) == "relic" and Yggdrasil.get_item(v.id) and (not v.mod_id or (v.mod_id and next(SMODS.find_mod(v.mod_id)))) then
-                    relics[#relics+1] = v
-                end
-            end
-
-            if G.PROFILES[G.SETTINGS.profile]["YggEquipped"] then
-                for _,v in ipairs(G.PROFILES[G.SETTINGS.profile]["YggEquipped"] or {}) do
-                    for i,v2 in ipairs(relics) do
-                        if v2.id == v.info.id then table.remove(relics,i) end
-                    end
-                end
-            end
-
-            for i,v in ipairs(relics) do
-                if not Yggdrasil.get_item(v.id) or (v.mod_id and not next(SMODS.find_mod(v.mod_id))) then
-                    table.remove(relics,i)
-                end
-            end
-
-            true_equip_page = math.max(math.ceil(#relics/15),1)
-            local current_page = G.GAME["YggEquipPage"] or 1
-            if current_page > true_equip_page then
-                G.GAME["YggEquipPage"] = true_equip_page
-            end
-            if load_equip_area then
-                for i = (1 + (15 * (current_page - 1))), (15 + (15 * (current_page - 1))) do
-                    local saved_skill_to_insert = relics[i]
-                    if saved_skill_to_insert then
-                        saved_skill_to_insert = Yggdrasil.get_item(saved_skill_to_insert.id) --so that the info is always up to date, yeah
-                        G.E_MANAGER:add_event(Event({
-                            func = function() 
-                                local key = "ygg_mat_"..saved_skill_to_insert.mod_prefix.."_"..(saved_skill_to_insert.card_key or saved_skill_to_insert.id)
-                                local cardarea_to_insert = nil
-                                for i2 = 2,4 do
-                                    if G["ygg_equip_cardarea"..i2] and G["ygg_equip_cardarea"..i2].cards and #G["ygg_equip_cardarea"..i2].cards < 5 then cardarea_to_insert = G["ygg_equip_cardarea"..i2] break end
-                                end
-                                if cardarea_to_insert then
-                                    local card = Card(cardarea_to_insert.T.x + cardarea_to_insert.T.w / 2, cardarea_to_insert.T.y,
-                                        G.CARD_W, G.CARD_H, G.P_CARDS.empty,
-                                        G.P_CENTERS[key])
-                                    card.ability.to_equip = true
-                                    card.children.back:remove()
-                                    card.children.back = Sprite(card.T.x, card.T.y, card.T.w, card.T.h, G.ASSET_ATLAS["ygg_placeholder_mat"], { x = 0, y = 0 })
-                                    card.children.back.states.hover = card.states.hover
-                                    card.children.back.states.click = card.states.click
-                                    card.children.back.states.drag = card.states.drag
-                                    card.children.back.states.collide.can = false
-                                    card.children.back:set_role({major = card, role_type = 'Glued', draw_major = card})
-                                    cardarea_to_insert:emplace(card) 
-                                end
-                                return true 
-                            end
-                        }), "yggdrasil")
-                    end
+                for _,item in ipairs(temp_list["common"] or {}) do
+                    list_to_take[#list_to_take + 1] = item
                 end
             end
         end
 
-        for i = 1,3 do
-            if G.GAME["YggSecondAreaMode"] and G.GAME["YggSecondAreaMode"] == "Delete" then
-                if G.PROFILES[G.SETTINGS.profile]["YggDelete"..i] then
-                    for i2,v in ipairs(G.PROFILES[G.SETTINGS.profile]["YggDelete"..i]) do
-                        local skill_to_insert = v
-                        local valid_to_add = not not (Yggdrasil.get_item(skill_to_insert.id) and (not skill_to_insert.mod_id or (skill_to_insert.mod_id and next(SMODS.find_mod(skill_to_insert.mod_id)))))
-                        if skill_to_insert and valid_to_add then
-                            local saved_skill_to_insert = skill_to_insert
+        local loaded_keys = {}
+
+        local temp_list_to_take = {}
+        for _,v in ipairs(list_to_take) do
+            local exist = false
+            for _,v2 in ipairs(temp_list_to_take) do
+                if v2.id == v.id then exist = true break end
+            end
+            if not exist then
+                temp_list_to_take[#temp_list_to_take+1] = v
+            end
+        end
+        list_to_take = temp_list_to_take
+
+        true_page = math.max(math.ceil(#list_to_take/15), 1)
+        if (G.GAME.ygg_inven_page or 1) >= true_page then G.GAME.ygg_inven_page = true_page end
+
+        if load_inventory_area then
+            for i = (1 + (15 * (current_page - 1))), (15 + (15 * (current_page - 1))) do
+                local skill_to_insert = list_to_take[i]
+                if skill_to_insert then
+                    local saved_skill_to_insert = skill_to_insert
+                    G.E_MANAGER:add_event(Event({
+                        func = function() 
                             local key = "ygg_mat_"..saved_skill_to_insert.mod_prefix.."_"..saved_skill_to_insert.id
-                            local cardarea_to_insert = G["ygg_delete_cardarea"..i]
+                            if table.contains(loaded_keys, key) then return true end
+                            loaded_keys[#loaded_keys+1] = key
+                            local cardarea_to_insert = nil
+                            for i2 = 1,3 do
+                                if not G["ygg_inventory_cardarea"..i2] or not G["ygg_inventory_cardarea"..i2].cards then return end
+                                if #G["ygg_inventory_cardarea"..i2].cards < 5 then
+                                    cardarea_to_insert = G["ygg_inventory_cardarea"..i2]
+                                    break
+                                end
+                            end
                             if cardarea_to_insert then
                                 local card = Card(cardarea_to_insert.T.x + cardarea_to_insert.T.w / 2, cardarea_to_insert.T.y,
                                     G.CARD_W, G.CARD_H, G.P_CARDS.empty,
                                     G.P_CENTERS[key])
+                                card.ability.ygg_from_inventory = true
                                 card.ability.ygg_is_item = true
                                 card.children.back:remove()
                                 card.children.back = Sprite(card.T.x, card.T.y, card.T.w, card.T.h, G.ASSET_ATLAS["ygg_placeholder_mat"], { x = 0, y = 0 })
@@ -2653,28 +2609,88 @@ function create_inventory_UI(args)
                                 card.children.back:set_role({major = card, role_type = 'Glued', draw_major = card})
                                 cardarea_to_insert:emplace(card) 
                             end
-                        elseif not valid_to_add then
-                            table.remove(G.PROFILES[G.SETTINGS.profile]["YggDelete"..i], i2)
-                            table.insert(G.PROFILES[G.SETTINGS.profile]["YggInventory"], v)
+                            return true 
                         end
+                    }), "yggdrasil")
+                end
+            end
+        end
+    elseif G.PROFILES[G.SETTINGS.profile]["YggInventory"] and (G.GAME["YggInvenArea"] and G.GAME["YggInvenArea"] == "Equip") then
+        if G.PROFILES[G.SETTINGS.profile]["YggEquipped"] then
+            local cardarea_to_insert = G["ygg_equip_cardarea1"]
+            for _,v in ipairs(G.PROFILES[G.SETTINGS.profile]["YggEquipped"] or {}) do
+                local load = true
+                if not Yggdrasil.have_item(v.info.id) or (not Yggdrasil.get_item(v.info.id) or (v.info.mod_id and not next(SMODS.find_mod(v.info.mod_id)))) then
+                    for i,v2 in ipairs(G.PROFILES[G.SETTINGS.profile]["YggEquipped"] or {}) do
+                        if v2.info.id == v.info.id then table.remove(G.PROFILES[G.SETTINGS.profile]["YggEquipped"],i); load = false end
                     end
                 end
-            elseif G.GAME["YggSecondAreaMode"] and G.GAME["YggSecondAreaMode"] == "Recipes" then
-                --code here idk
-            else
-                if G.PROFILES[G.SETTINGS.profile]["YggCrafting"..i] then
-                    for _,v in ipairs(G.PROFILES[G.SETTINGS.profile]["YggCrafting"..i]) do
-                        local skill_to_insert = v
-                        local valid_to_add = not not (Yggdrasil.get_item(skill_to_insert.id) and (not skill_to_insert.mod_id or (skill_to_insert.mod_id and next(SMODS.find_mod(skill_to_insert.mod_id)))))
-                        if skill_to_insert and valid_to_add then
-                            local saved_skill_to_insert = skill_to_insert
-                            local key = "ygg_mat_"..saved_skill_to_insert.mod_prefix.."_"..saved_skill_to_insert.id
-                            local cardarea_to_insert = G["ygg_crafting_cardarea"..i]
+
+                if load_equip_area and load then
+                    local key = v.card_key
+                    local card = Card(cardarea_to_insert.T.x + cardarea_to_insert.T.w / 2, cardarea_to_insert.T.y,
+                        G.CARD_W, G.CARD_H, G.P_CARDS.empty,
+                        G.P_CENTERS[key])
+                    card.ability.is_equipped = true
+                    card.children.back:remove()
+                    card.children.back = Sprite(card.T.x, card.T.y, card.T.w, card.T.h, G.ASSET_ATLAS["ygg_placeholder_mat"], { x = 0, y = 0 })
+                    card.children.back.states.hover = card.states.hover
+                    card.children.back.states.click = card.states.click
+                    card.children.back.states.drag = card.states.drag
+                    card.children.back.states.collide.can = false
+                    card.children.back:set_role({major = card, role_type = 'Glued', draw_major = card})
+                    cardarea_to_insert:emplace(card) 
+                end
+            end
+        end
+
+        local relics = {}
+        for _,v in ipairs(G.PROFILES[G.SETTINGS.profile]["YggInventory"]) do
+            local exists = false
+            for _,v2 in ipairs(relics) do
+                if v2.id == v.id then exists = true break end
+            end
+            if not exists and Yggdrasil.get_type_of_item(v.id) == "relic" and Yggdrasil.get_item(v.id) and (not v.mod_id or (v.mod_id and next(SMODS.find_mod(v.mod_id)))) then
+                relics[#relics+1] = v
+            end
+        end
+
+        if G.PROFILES[G.SETTINGS.profile]["YggEquipped"] then
+            for _,v in ipairs(G.PROFILES[G.SETTINGS.profile]["YggEquipped"] or {}) do
+                for i,v2 in ipairs(relics) do
+                    if v2.id == v.info.id then table.remove(relics,i) end
+                end
+            end
+        end
+
+        for i,v in ipairs(relics) do
+            if not Yggdrasil.get_item(v.id) or (v.mod_id and not next(SMODS.find_mod(v.mod_id))) then
+                table.remove(relics,i)
+            end
+        end
+
+        true_equip_page = math.max(math.ceil(#relics/15),1)
+        local current_page = G.GAME["YggEquipPage"] or 1
+        if current_page > true_equip_page then
+            G.GAME["YggEquipPage"] = true_equip_page
+        end
+        if load_equip_area then
+            for i = (1 + (15 * (current_page - 1))), (15 + (15 * (current_page - 1))) do
+                local saved_skill_to_insert = relics[i]
+                if saved_skill_to_insert then
+                    saved_skill_to_insert = Yggdrasil.get_item(saved_skill_to_insert.id) --so that the info is always up to date, yeah
+                    G.E_MANAGER:add_event(Event({
+                        func = function() 
+                            local key = "ygg_mat_"..saved_skill_to_insert.mod_prefix.."_"..(saved_skill_to_insert.card_key or saved_skill_to_insert.id)
+                            local cardarea_to_insert = nil
+                            for i2 = 2,4 do
+                                if G["ygg_equip_cardarea"..i2] and G["ygg_equip_cardarea"..i2].cards and #G["ygg_equip_cardarea"..i2].cards < 5 then cardarea_to_insert = G["ygg_equip_cardarea"..i2] break end
+                            end
                             if cardarea_to_insert then
                                 local card = Card(cardarea_to_insert.T.x + cardarea_to_insert.T.w / 2, cardarea_to_insert.T.y,
                                     G.CARD_W, G.CARD_H, G.P_CARDS.empty,
                                     G.P_CENTERS[key])
-                                card.ability.ygg_is_item = true
+                                card.ability.to_equip = true
                                 card.children.back:remove()
                                 card.children.back = Sprite(card.T.x, card.T.y, card.T.w, card.T.h, G.ASSET_ATLAS["ygg_placeholder_mat"], { x = 0, y = 0 })
                                 card.children.back.states.hover = card.states.hover
@@ -2684,10 +2700,73 @@ function create_inventory_UI(args)
                                 card.children.back:set_role({major = card, role_type = 'Glued', draw_major = card})
                                 cardarea_to_insert:emplace(card) 
                             end
-                        elseif not valid_to_add then
-                            table.remove(G.PROFILES[G.SETTINGS.profile]["YggCrafting"..i], i2)
-                            table.insert(G.PROFILES[G.SETTINGS.profile]["YggInventory"], v)
+                            return true 
                         end
+                    }), "yggdrasil")
+                end
+            end
+        end
+    end
+
+    --Loading cards into the other areas.
+    for i = 1,3 do
+        if G.GAME["YggSecondAreaMode"] and G.GAME["YggSecondAreaMode"] == "Delete" then
+            if G.PROFILES[G.SETTINGS.profile]["YggDelete"..i] then
+                for i2,v in ipairs(G.PROFILES[G.SETTINGS.profile]["YggDelete"..i]) do
+                    local skill_to_insert = v
+                    local valid_to_add = not not (Yggdrasil.get_item(skill_to_insert.id) and (not skill_to_insert.mod_id or (skill_to_insert.mod_id and next(SMODS.find_mod(skill_to_insert.mod_id)))))
+                    if skill_to_insert and valid_to_add then
+                        local saved_skill_to_insert = skill_to_insert
+                        local key = "ygg_mat_"..saved_skill_to_insert.mod_prefix.."_"..saved_skill_to_insert.id
+                        local cardarea_to_insert = G["ygg_delete_cardarea"..i]
+                        if cardarea_to_insert then
+                            local card = Card(cardarea_to_insert.T.x + cardarea_to_insert.T.w / 2, cardarea_to_insert.T.y,
+                                G.CARD_W, G.CARD_H, G.P_CARDS.empty,
+                                G.P_CENTERS[key])
+                            card.ability.ygg_is_item = true
+                            card.children.back:remove()
+                            card.children.back = Sprite(card.T.x, card.T.y, card.T.w, card.T.h, G.ASSET_ATLAS["ygg_placeholder_mat"], { x = 0, y = 0 })
+                            card.children.back.states.hover = card.states.hover
+                            card.children.back.states.click = card.states.click
+                            card.children.back.states.drag = card.states.drag
+                            card.children.back.states.collide.can = false
+                            card.children.back:set_role({major = card, role_type = 'Glued', draw_major = card})
+                            cardarea_to_insert:emplace(card) 
+                        end
+                    elseif not valid_to_add then
+                        table.remove(G.PROFILES[G.SETTINGS.profile]["YggDelete"..i], i2)
+                        table.insert(G.PROFILES[G.SETTINGS.profile]["YggInventory"], v)
+                    end
+                end
+            end
+        elseif G.GAME["YggSecondAreaMode"] and G.GAME["YggSecondAreaMode"] == "Recipes" then
+            --code here idk
+        else
+            if G.PROFILES[G.SETTINGS.profile]["YggCrafting"..i] then
+                for _,v in ipairs(G.PROFILES[G.SETTINGS.profile]["YggCrafting"..i]) do
+                    local skill_to_insert = v
+                    local valid_to_add = not not (Yggdrasil.get_item(skill_to_insert.id) and (not skill_to_insert.mod_id or (skill_to_insert.mod_id and next(SMODS.find_mod(skill_to_insert.mod_id)))))
+                    if skill_to_insert and valid_to_add then
+                        local saved_skill_to_insert = skill_to_insert
+                        local key = "ygg_mat_"..saved_skill_to_insert.mod_prefix.."_"..saved_skill_to_insert.id
+                        local cardarea_to_insert = G["ygg_crafting_cardarea"..i]
+                        if cardarea_to_insert then
+                            local card = Card(cardarea_to_insert.T.x + cardarea_to_insert.T.w / 2, cardarea_to_insert.T.y,
+                                G.CARD_W, G.CARD_H, G.P_CARDS.empty,
+                                G.P_CENTERS[key])
+                            card.ability.ygg_is_item = true
+                            card.children.back:remove()
+                            card.children.back = Sprite(card.T.x, card.T.y, card.T.w, card.T.h, G.ASSET_ATLAS["ygg_placeholder_mat"], { x = 0, y = 0 })
+                            card.children.back.states.hover = card.states.hover
+                            card.children.back.states.click = card.states.click
+                            card.children.back.states.drag = card.states.drag
+                            card.children.back.states.collide.can = false
+                            card.children.back:set_role({major = card, role_type = 'Glued', draw_major = card})
+                            cardarea_to_insert:emplace(card) 
+                        end
+                    elseif not valid_to_add then
+                        table.remove(G.PROFILES[G.SETTINGS.profile]["YggCrafting"..i], i2)
+                        table.insert(G.PROFILES[G.SETTINGS.profile]["YggInventory"], v)
                     end
                 end
             end
@@ -2884,486 +2963,491 @@ function create_inventory_UI(args)
     
     local second_area_nodes = {}
     local inven_area_nodes = {}
-    if G.GAME["YggSecondAreaMode"] and G.GAME["YggSecondAreaMode"] == "Delete" then --Delete Area
-        second_area_nodes = {
-            {n = G.UIT.R, config = {align = "tm", padding = 0.2}, nodes = {
-                {n = G.UIT.O, config = {align = "tm",object = DynaText({scale = 0.75, string = localize('ygg_delete_area_text'), maxw = 9, colours = { G.C.WHITE }, float = true, silent = true, shadow = true})}}
-            }},
-            {n = G.UIT.R, config = {align = "tr", padding = 0.02}, nodes = {
-                ygg_create_text_input({w = 3, prompt_text = G.GAME["YggAutoDelete"], id = "ygg_auto_delete", extended_corpus = true, ref_table = G.GAME, ref_value = 'YggAutoDeleteInput',
-                    callback = function(_)
-                        local command_head = "-"
-                        local input = string.lower(Yggdrasil.remove_space(G.GAME["YggAutoDeleteInput"]))
-                        local current_command_starters = {
-                            "delete",
-                        }
-                        if string.sub(input,1,1) == command_head then
-                            local starter = ""
-                            local command = nil
-                            for i = 2,#input do
-                                if string.sub(input,i,i) == "(" then break end
-                                starter = starter..string.sub(input,i,i)
-                            end
 
-                            for _,v in ipairs(current_command_starters) do
-                                if v == starter then command = v break end
-                            end
-                            
-                            if command == "delete" then
-                                local item_key = nil
-                                local amt = nil
-
-                                local cut_off = string.sub(input,2+#command,#input)
-                                local sections = {}
-
-                                cut_off = string.gsub(cut_off, "%(", "")
-                                cut_off = string.gsub(cut_off, "%)", "")
-
-                                local indiv_sec = ""
-                                for i = 1, #cut_off do
-                                    local character = string.sub(cut_off,i,i)
-                                    if character == "," or i == #cut_off then
-                                        if i == #cut_off then indiv_sec = indiv_sec..string.sub(cut_off,i,i) end
-                                        sections[#sections+1] = string.gsub(indiv_sec, ",", "")
-                                        indiv_sec = ""
-                                    end
-                                    indiv_sec = indiv_sec..string.sub(cut_off,i,i)
+    if add_right_area then
+        if G.GAME["YggSecondAreaMode"] and G.GAME["YggSecondAreaMode"] == "Delete" then --Delete Area
+            second_area_nodes = {
+                {n = G.UIT.R, config = {align = "tm", padding = 0.2}, nodes = {
+                    {n = G.UIT.O, config = {align = "tm",object = DynaText({scale = 0.75, string = localize('ygg_delete_area_text'), maxw = 9, colours = { G.C.WHITE }, float = true, silent = true, shadow = true})}}
+                }},
+                {n = G.UIT.R, config = {align = "tr", padding = 0.02}, nodes = {
+                    ygg_create_text_input({w = 3, prompt_text = G.GAME["YggAutoDelete"], id = "ygg_auto_delete", extended_corpus = true, ref_table = G.GAME, ref_value = 'YggAutoDeleteInput',
+                        callback = function(_)
+                            local command_head = "-"
+                            local input = string.lower(Yggdrasil.remove_space(G.GAME["YggAutoDeleteInput"]))
+                            local current_command_starters = {
+                                "delete",
+                            }
+                            if string.sub(input,1,1) == command_head then
+                                local starter = ""
+                                local command = nil
+                                for i = 2,#input do
+                                    if string.sub(input,i,i) == "(" then break end
+                                    starter = starter..string.sub(input,i,i)
                                 end
 
-                                item_key = sections[1]
-                                amt = sections[2] or 1
+                                for _,v in ipairs(current_command_starters) do
+                                    if v == starter then command = v break end
+                                end
+                                
+                                if command == "delete" then
+                                    local item_key = nil
+                                    local amt = nil
 
-                                if item_key then
-                                    for _ = 1, amt do
-                                        for i,v in ipairs(G.PROFILES[G.SETTINGS.profile]["YggInventory"] or {}) do
-                                            if v.id == item_key then table.remove(G.PROFILES[G.SETTINGS.profile]["YggInventory"], i) break end
+                                    local cut_off = string.sub(input,2+#command,#input)
+                                    local sections = {}
+
+                                    cut_off = string.gsub(cut_off, "%(", "")
+                                    cut_off = string.gsub(cut_off, "%)", "")
+
+                                    local indiv_sec = ""
+                                    for i = 1, #cut_off do
+                                        local character = string.sub(cut_off,i,i)
+                                        if character == "," or i == #cut_off then
+                                            if i == #cut_off then indiv_sec = indiv_sec..string.sub(cut_off,i,i) end
+                                            sections[#sections+1] = string.gsub(indiv_sec, ",", "")
+                                            indiv_sec = ""
+                                        end
+                                        indiv_sec = indiv_sec..string.sub(cut_off,i,i)
+                                    end
+
+                                    item_key = sections[1]
+                                    amt = sections[2] or 1
+
+                                    if item_key then
+                                        for _ = 1, amt do
+                                            for i,v in ipairs(G.PROFILES[G.SETTINGS.profile]["YggInventory"] or {}) do
+                                                if v.id == item_key then table.remove(G.PROFILES[G.SETTINGS.profile]["YggInventory"], i) break end
+                                            end
                                         end
                                     end
                                 end
                             end
+                            G.GAME["YggAutoDelete"] = G.GAME["YggAutoDeleteInput"]
+                            G.FUNCS.ygg_open_inventory()
                         end
-                        G.GAME["YggAutoDelete"] = G.GAME["YggAutoDeleteInput"]
-                        G.FUNCS.ygg_open_inventory()
-                    end
-                }),
-                {n = G.UIT.C, config = {align = "tr", minw = 0.5, minh = 0.5, padding = 0.1, r = 0.1, hover = true, colour = G.C.RED, shadow = true, button = "ygg_clear_delete_text"}, nodes = {
-                    {n = G.UIT.R, config = { align = "cm", padding = 0.05 }, nodes = {
-                        {n = G.UIT.T, config = {text = localize("ygg_clear"), scale = 0.4, colour = G.C.UI.TEXT_LIGHT}}
+                    }),
+                    {n = G.UIT.C, config = {align = "tr", minw = 0.5, minh = 0.5, padding = 0.1, r = 0.1, hover = true, colour = G.C.RED, shadow = true, button = "ygg_clear_delete_text"}, nodes = {
+                        {n = G.UIT.R, config = { align = "cm", padding = 0.05 }, nodes = {
+                            {n = G.UIT.T, config = {text = localize("ygg_clear"), scale = 0.4, colour = G.C.UI.TEXT_LIGHT}}
+                            }
+                        },
+                        }
+                    },   
+                }},
+                {n = G.UIT.R, config = {align = "tr", padding = 0.02}, nodes = {
+                    {n = G.UIT.C, config = {align = "tr", minw = 0.5, minh = 0.5, padding = 0.1, r = 0.1, hover = true, colour = G.C.RED, shadow = true, button = "ygg_switch_second_area", second_area = "Craft"}, nodes = {
+                        {n = G.UIT.R, config = { align = "cm", padding = 0.05 }, nodes = {
+                            {n = G.UIT.T, config = {text = localize("ygg_craft_text"), scale = 0.4, colour = G.C.UI.TEXT_LIGHT}}
+                            }
+                        },
                         }
                     },
-                    }
-                },   
-            }},
-            {n = G.UIT.R, config = {align = "tr", padding = 0.02}, nodes = {
-                {n = G.UIT.C, config = {align = "tr", minw = 0.5, minh = 0.5, padding = 0.1, r = 0.1, hover = true, colour = G.C.RED, shadow = true, button = "ygg_switch_second_area", second_area = "Craft"}, nodes = {
-                    {n = G.UIT.R, config = { align = "cm", padding = 0.05 }, nodes = {
-                        {n = G.UIT.T, config = {text = localize("ygg_craft_text"), scale = 0.4, colour = G.C.UI.TEXT_LIGHT}}
+                    {n = G.UIT.C, config = {align = "tr", minw = 0.5, minh = 0.5, padding = 0.1, r = 0.1, hover = true, colour = G.C.RED, shadow = true, button = "ygg_switch_second_area", second_area = "Recipes"}, nodes = {
+                        {n = G.UIT.R, config = { align = "cm", padding = 0.05 }, nodes = {
+                            {n = G.UIT.T, config = {text = localize("ygg_recipes_text"), scale = 0.4, colour = G.C.UI.TEXT_LIGHT}}
+                            }
+                        },
                         }
-                    },
-                    }
-                },
-                {n = G.UIT.C, config = {align = "tr", minw = 0.5, minh = 0.5, padding = 0.1, r = 0.1, hover = true, colour = G.C.RED, shadow = true, button = "ygg_switch_second_area", second_area = "Recipes"}, nodes = {
-                    {n = G.UIT.R, config = { align = "cm", padding = 0.05 }, nodes = {
-                        {n = G.UIT.T, config = {text = localize("ygg_recipes_text"), scale = 0.4, colour = G.C.UI.TEXT_LIGHT}}
+                    },   
+                }},
+                {n = G.UIT.R, config = {align = "tm", padding = cardarea_padding}, nodes = {
+                    {n = G.UIT.O, config = {align = "tm", object = G["ygg_delete_cardarea1"]}}
+                }},
+                {n = G.UIT.R, config = {align = "tm", padding = cardarea_padding}, nodes = {
+                    {n = G.UIT.O, config = {align = "tm", object = G["ygg_delete_cardarea2"]}}
+                }},
+                {n = G.UIT.R, config = {align = "tm", padding = cardarea_padding}, nodes = {
+                    {n = G.UIT.O, config = {align = "tm", object = G["ygg_delete_cardarea3"]}}
+                }},
+                {n = G.UIT.R, config = {align = "cm", padding = 0.02}, nodes = {
+                    {n = G.UIT.C, config = {align = "cm", minw = 1.8, minh = 1.2, padding = 0.1, r = 0.1, hover = true, colour = G.C.RED, shadow = true, button = "ygg_delete_all"}, nodes = {
+                        {n = G.UIT.R, config = { align = "cm", padding = 0.05 }, nodes = {
+                            {n = G.UIT.T, config = {text = string.upper(localize("ygg_delete_text")), scale = 0.7, colour = G.C.UI.TEXT_LIGHT}}
+                            }
+                        },
                         }
-                    },
-                    }
-                },   
-            }},
-            {n = G.UIT.R, config = {align = "tm", padding = cardarea_padding}, nodes = {
-                {n = G.UIT.O, config = {align = "tm", object = G["ygg_delete_cardarea1"]}}
-            }},
-            {n = G.UIT.R, config = {align = "tm", padding = cardarea_padding}, nodes = {
-                {n = G.UIT.O, config = {align = "tm", object = G["ygg_delete_cardarea2"]}}
-            }},
-            {n = G.UIT.R, config = {align = "tm", padding = cardarea_padding}, nodes = {
-                {n = G.UIT.O, config = {align = "tm", object = G["ygg_delete_cardarea3"]}}
-            }},
-            {n = G.UIT.R, config = {align = "cm", padding = 0.02}, nodes = {
-                {n = G.UIT.C, config = {align = "cm", minw = 1.8, minh = 1.2, padding = 0.1, r = 0.1, hover = true, colour = G.C.RED, shadow = true, button = "ygg_delete_all"}, nodes = {
-                    {n = G.UIT.R, config = { align = "cm", padding = 0.05 }, nodes = {
-                        {n = G.UIT.T, config = {text = string.upper(localize("ygg_delete_text")), scale = 0.7, colour = G.C.UI.TEXT_LIGHT}}
+                    },   
+                }},
+            }
+        elseif G.GAME["YggSecondAreaMode"] and G.GAME["YggSecondAreaMode"] == "Recipes" then --Recipe Area
+            second_area_nodes = {
+                {n = G.UIT.R, config = {align = "tm", padding = 0.2}, nodes = {
+                    {n = G.UIT.O, config = {align = "tm",object = DynaText({scale = 0.75, string = localize('ygg_recipe_area_text'), maxw = 9, colours = { G.C.WHITE }, float = true, silent = true, shadow = true})}}
+                }},
+                {n = G.UIT.R, config = {align = "tr", padding = 0.02}, nodes = {
+                    ygg_create_text_input({w = 3, prompt_text = G.GAME["YggRecipe"], id = "ygg_recipe_search", extended_corpus = true, ref_table = G.GAME, ref_value = 'YggRecipeInput',
+                        callback = function(_)
+                            G.GAME["YggRecipe"] = G.GAME["YggRecipeInput"]
+                            G.FUNCS.ygg_open_inventory()
+                        end
+                    }),
+                    {n = G.UIT.C, config = {align = "tr", minw = 0.5, minh = 0.5, padding = 0.1, r = 0.1, hover = true, colour = G.C.RED, shadow = true, button = "ygg_clear_recipe_text"}, nodes = {
+                        {n = G.UIT.R, config = { align = "cm", padding = 0.05 }, nodes = {
+                            {n = G.UIT.T, config = {text = localize("ygg_clear"), scale = 0.4, colour = G.C.UI.TEXT_LIGHT}}
+                            }
+                        },
                         }
-                    },
-                    }
-                },   
-            }},
-        }
-    elseif G.GAME["YggSecondAreaMode"] and G.GAME["YggSecondAreaMode"] == "Recipes" then --Recipe Area
-        second_area_nodes = {
-            {n = G.UIT.R, config = {align = "tm", padding = 0.2}, nodes = {
-                {n = G.UIT.O, config = {align = "tm",object = DynaText({scale = 0.75, string = localize('ygg_recipe_area_text'), maxw = 9, colours = { G.C.WHITE }, float = true, silent = true, shadow = true})}}
-            }},
-            {n = G.UIT.R, config = {align = "tr", padding = 0.02}, nodes = {
-                ygg_create_text_input({w = 3, prompt_text = G.GAME["YggRecipe"], id = "ygg_recipe_search", extended_corpus = true, ref_table = G.GAME, ref_value = 'YggRecipeInput',
-                    callback = function(_)
-                        G.GAME["YggRecipe"] = G.GAME["YggRecipeInput"]
-                        G.FUNCS.ygg_open_inventory()
-                    end
-                }),
-                {n = G.UIT.C, config = {align = "tr", minw = 0.5, minh = 0.5, padding = 0.1, r = 0.1, hover = true, colour = G.C.RED, shadow = true, button = "ygg_clear_recipe_text"}, nodes = {
-                    {n = G.UIT.R, config = { align = "cm", padding = 0.05 }, nodes = {
-                        {n = G.UIT.T, config = {text = localize("ygg_clear"), scale = 0.4, colour = G.C.UI.TEXT_LIGHT}}
+                    },   
+                }},
+                {n = G.UIT.R, config = {align = "tr", padding = 0.02}, nodes = {
+                    {n = G.UIT.C, config = {align = "tr", minw = 0.5, minh = 0.5, padding = 0.1, r = 0.1, hover = true, colour = G.C.RED, shadow = true, button = "ygg_switch_second_area", second_area = "Craft"}, nodes = {
+                        {n = G.UIT.R, config = { align = "cm", padding = 0.05 }, nodes = {
+                            {n = G.UIT.T, config = {text = localize("ygg_craft_text"), scale = 0.4, colour = G.C.UI.TEXT_LIGHT}}
+                            }
+                        },
                         }
-                    },
-                    }
-                },   
-            }},
-            {n = G.UIT.R, config = {align = "tr", padding = 0.02}, nodes = {
-                {n = G.UIT.C, config = {align = "tr", minw = 0.5, minh = 0.5, padding = 0.1, r = 0.1, hover = true, colour = G.C.RED, shadow = true, button = "ygg_switch_second_area", second_area = "Craft"}, nodes = {
-                    {n = G.UIT.R, config = { align = "cm", padding = 0.05 }, nodes = {
-                        {n = G.UIT.T, config = {text = localize("ygg_craft_text"), scale = 0.4, colour = G.C.UI.TEXT_LIGHT}}
+                    }, 
+                    {n = G.UIT.C, config = {align = "tr", minw = 0.5, minh = 0.5, padding = 0.1, r = 0.1, hover = true, colour = G.C.RED, shadow = true, button = "ygg_switch_second_area", second_area = "Delete"}, nodes = {
+                        {n = G.UIT.R, config = { align = "cm", padding = 0.05 }, nodes = {
+                            {n = G.UIT.T, config = {text = localize("ygg_delete_text"), scale = 0.4, colour = G.C.UI.TEXT_LIGHT}}
+                            }
+                        },
                         }
-                    },
-                    }
-                }, 
-                {n = G.UIT.C, config = {align = "tr", minw = 0.5, minh = 0.5, padding = 0.1, r = 0.1, hover = true, colour = G.C.RED, shadow = true, button = "ygg_switch_second_area", second_area = "Delete"}, nodes = {
-                    {n = G.UIT.R, config = { align = "cm", padding = 0.05 }, nodes = {
-                        {n = G.UIT.T, config = {text = localize("ygg_delete_text"), scale = 0.4, colour = G.C.UI.TEXT_LIGHT}}
-                        }
-                    },
-                    }
-                },     
-            }},
-            {n = G.UIT.R, config = {align = "tm", padding = 0.2}, nodes = {
-                {n = G.UIT.C, config = {align = "tm", padding = 0.2}, nodes = {
-                    {n = G.UIT.R, config = {align = "tm", padding = cardarea_padding}, nodes = {
-                        {n = G.UIT.O, config = {align = "tm", object = G["ygg_recipe_cardarea1"]}}
+                    },     
+                }},
+                {n = G.UIT.R, config = {align = "tm", padding = 0.2}, nodes = {
+                    {n = G.UIT.C, config = {align = "tm", padding = 0.2}, nodes = {
+                        {n = G.UIT.R, config = {align = "tm", padding = cardarea_padding}, nodes = {
+                            {n = G.UIT.O, config = {align = "tm", object = G["ygg_recipe_cardarea1"]}}
+                        }},
+                        {n = G.UIT.R, config = {align = "tm", padding = cardarea_padding}, nodes = {
+                            {n = G.UIT.O, config = {align = "tm", object = G["ygg_recipe_cardarea2"]}}
+                        }},
+                        {n = G.UIT.R, config = {align = "tm", padding = cardarea_padding}, nodes = {
+                            {n = G.UIT.O, config = {align = "tm", object = G["ygg_recipe_cardarea3"]}}
+                        }},
                     }},
-                    {n = G.UIT.R, config = {align = "tm", padding = cardarea_padding}, nodes = {
-                        {n = G.UIT.O, config = {align = "tm", object = G["ygg_recipe_cardarea2"]}}
-                    }},
-                    {n = G.UIT.R, config = {align = "tm", padding = cardarea_padding}, nodes = {
-                        {n = G.UIT.O, config = {align = "tm", object = G["ygg_recipe_cardarea3"]}}
+                    {n=G.UIT.C, config={align = "cm",padding = args.padding or 0.2, minw = 1}, nodes= 
+                        {
+                            {n = G.UIT.O, config = {align = "tm",object = DynaText({scale = 0.75, string = ">", maxw = 9, colours = { G.C.WHITE }, float = true, silent = true, shadow = true})}}
+                        }
+                    },
+                    {n = G.UIT.C, config = {align = "tm", padding = 0.2}, nodes = {
+                        {n = G.UIT.R, config = {align = "tm", padding = cardarea_padding}, nodes = {
+                            {n = G.UIT.O, config = {align = "tm", object = G["ygg_placeholder_cardarea1"]}}
+                        }},
+                        {n = G.UIT.R, config = {align = "tm", padding = cardarea_padding}, nodes = {
+                            {n = G.UIT.O, config = {align = "tm", object = G["ygg_recipe_cardarea4"]}}
+                        }},
+                        {n = G.UIT.R, config = {align = "tm", padding = cardarea_padding}, nodes = {
+                            {n = G.UIT.O, config = {align = "tm", object = G["ygg_placeholder_cardarea2"]}}
+                        }},
                     }},
                 }},
-                {n=G.UIT.C, config={align = "cm",padding = args.padding or 0.2, minw = 1}, nodes= 
+                {n = G.UIT.R, config = {align = "cm", padding = 0.02}, nodes = {
                     {
-                        {n = G.UIT.O, config = {align = "tm",object = DynaText({scale = 0.75, string = ">", maxw = 9, colours = { G.C.WHITE }, float = true, silent = true, shadow = true})}}
-                    }
-                },
-                {n = G.UIT.C, config = {align = "tm", padding = 0.2}, nodes = {
-                    {n = G.UIT.R, config = {align = "tm", padding = cardarea_padding}, nodes = {
-                        {n = G.UIT.O, config = {align = "tm", object = G["ygg_placeholder_cardarea1"]}}
-                    }},
-                    {n = G.UIT.R, config = {align = "tm", padding = cardarea_padding}, nodes = {
-                        {n = G.UIT.O, config = {align = "tm", object = G["ygg_recipe_cardarea4"]}}
-                    }},
-                    {n = G.UIT.R, config = {align = "tm", padding = cardarea_padding}, nodes = {
-                        {n = G.UIT.O, config = {align = "tm", object = G["ygg_placeholder_cardarea2"]}}
-                    }},
+                        n = G.UIT.C,
+                        config = {
+                            align = "cm",
+                            minw = 0.5,
+                            minh = 0.5,
+                            padding = 0.1,
+                            r = 0.1,
+                            hover = true,
+                            colour = G.C.RED,
+                            shadow = true,
+                            button = "to_previous_recipe_page",
+                            page = true_recipe_page
+                        },
+                        nodes = {
+                            {
+                                n = G.UIT.R,
+                                config = { align = "cm", padding = 0.05 },
+                                nodes = {
+                                    {
+                                        n = G.UIT.T,
+                                        config = {
+                                            text = "<",
+                                            scale = 0.4,
+                                            colour = G.C.UI.TEXT_LIGHT
+                                        }
+                                    }
+                                }
+                            },
+                        }
+                    },   
+
+                    {
+                        n = G.UIT.C,
+                        config = {
+                            align = "cm",
+                            minw = 1,
+                            minh = 0.5,
+                            padding = 0.1,
+                            r = 0.1,
+                            hover = true,
+                            colour = G.C.RED,
+                            shadow = true,
+                        },
+                        nodes = {
+                            {
+                                n = G.UIT.R,
+                                config = { align = "cm", padding = 0.05 },
+                                nodes = {
+                                    {
+                                        n = G.UIT.T,
+                                        config = {
+                                            text = localize("ygg_page").." "..(G.GAME["YggRecipePage"] or 1).."/"..(true_recipe_page),
+                                            scale = 0.4,
+                                            colour = G.C.UI.TEXT_LIGHT
+                                        }
+                                    }
+                                }
+                            },
+                        }
+                    },   
+
+                    {
+                        n = G.UIT.C,
+                        config = {
+                            align = "cm",
+                            minw = 0.5,
+                            minh = 0.5,
+                            padding = 0.1,
+                            r = 0.1,
+                            hover = true,
+                            colour = G.C.RED,
+                            shadow = true,
+                            button = "to_next_recipe_page",
+                            page = true_recipe_page
+                        },
+                        nodes = {
+                            {
+                                n = G.UIT.R,
+                                config = { align = "cm", padding = 0.05 },
+                                nodes = {
+                                    {
+                                        n = G.UIT.T,
+                                        config = {
+                                            text = ">",
+                                            scale = 0.4,
+                                            colour = G.C.UI.TEXT_LIGHT
+                                        }
+                                    }
+                                }
+                            },
+                        }
+                    },   
                 }},
-            }},
-            {n = G.UIT.R, config = {align = "cm", padding = 0.02}, nodes = {
-                {
-                    n = G.UIT.C,
-                    config = {
-                        align = "cm",
-                        minw = 0.5,
-                        minh = 0.5,
-                        padding = 0.1,
-                        r = 0.1,
-                        hover = true,
-                        colour = G.C.RED,
-                        shadow = true,
-                        button = "to_previous_recipe_page",
-                        page = true_recipe_page
-                    },
-                    nodes = {
-                        {
-                            n = G.UIT.R,
-                            config = { align = "cm", padding = 0.05 },
-                            nodes = {
-                                {
-                                    n = G.UIT.T,
-                                    config = {
-                                        text = "<",
-                                        scale = 0.4,
-                                        colour = G.C.UI.TEXT_LIGHT
-                                    }
-                                }
+            }
+        else --Crafting Area
+            second_area_nodes = {
+                {n = G.UIT.R, config = {align = "tm", padding = 0.2}, nodes = {
+                    {n = G.UIT.O, config = {align = "tm",object = DynaText({scale = 0.75, string = localize('ygg_crafting_area_text'), maxw = 9, colours = { G.C.WHITE }, float = true, silent = true, shadow = true})}}
+                }},
+                {n = G.UIT.R, config = {align = "tr", padding = 0.02}, nodes = {
+                    {n = G.UIT.C, config = {align = "tr", minw = 0.5, minh = 0.5, padding = 0.1, r = 0.1, hover = true, colour = G.C.RED, shadow = true, button = "ygg_switch_second_area", second_area = "Delete"}, nodes = {
+                        {n = G.UIT.R, config = { align = "cm", padding = 0.05 }, nodes = {
+                            {n = G.UIT.T, config = {text = localize("ygg_delete_text"), scale = 0.4, colour = G.C.UI.TEXT_LIGHT}}
                             }
                         },
-                    }
-                },   
-
-                {
-                    n = G.UIT.C,
-                    config = {
-                        align = "cm",
-                        minw = 1,
-                        minh = 0.5,
-                        padding = 0.1,
-                        r = 0.1,
-                        hover = true,
-                        colour = G.C.RED,
-                        shadow = true,
-                    },
-                    nodes = {
-                        {
-                            n = G.UIT.R,
-                            config = { align = "cm", padding = 0.05 },
-                            nodes = {
-                                {
-                                    n = G.UIT.T,
-                                    config = {
-                                        text = localize("ygg_page").." "..(G.GAME["YggRecipePage"] or 1).."/"..(true_recipe_page),
-                                        scale = 0.4,
-                                        colour = G.C.UI.TEXT_LIGHT
-                                    }
-                                }
-                            }
-                        },
-                    }
-                },   
-
-                {
-                    n = G.UIT.C,
-                    config = {
-                        align = "cm",
-                        minw = 0.5,
-                        minh = 0.5,
-                        padding = 0.1,
-                        r = 0.1,
-                        hover = true,
-                        colour = G.C.RED,
-                        shadow = true,
-                        button = "to_next_recipe_page",
-                        page = true_recipe_page
-                    },
-                    nodes = {
-                        {
-                            n = G.UIT.R,
-                            config = { align = "cm", padding = 0.05 },
-                            nodes = {
-                                {
-                                    n = G.UIT.T,
-                                    config = {
-                                        text = ">",
-                                        scale = 0.4,
-                                        colour = G.C.UI.TEXT_LIGHT
-                                    }
-                                }
-                            }
-                        },
-                    }
-                },   
-            }},
-        }
-    else --Crafting Area
-        second_area_nodes = {
-            {n = G.UIT.R, config = {align = "tm", padding = 0.2}, nodes = {
-                {n = G.UIT.O, config = {align = "tm",object = DynaText({scale = 0.75, string = localize('ygg_crafting_area_text'), maxw = 9, colours = { G.C.WHITE }, float = true, silent = true, shadow = true})}}
-            }},
-            {n = G.UIT.R, config = {align = "tr", padding = 0.02}, nodes = {
-                {n = G.UIT.C, config = {align = "tr", minw = 0.5, minh = 0.5, padding = 0.1, r = 0.1, hover = true, colour = G.C.RED, shadow = true, button = "ygg_switch_second_area", second_area = "Delete"}, nodes = {
-                    {n = G.UIT.R, config = { align = "cm", padding = 0.05 }, nodes = {
-                        {n = G.UIT.T, config = {text = localize("ygg_delete_text"), scale = 0.4, colour = G.C.UI.TEXT_LIGHT}}
                         }
                     },
-                    }
-                },
-                {n = G.UIT.C, config = {align = "tr", minw = 0.5, minh = 0.5, padding = 0.1, r = 0.1, hover = true, colour = G.C.RED, shadow = true, button = "ygg_switch_second_area", second_area = "Recipes"}, nodes = {
-                    {n = G.UIT.R, config = { align = "cm", padding = 0.05 }, nodes = {
-                        {n = G.UIT.T, config = {text = localize("ygg_recipes_text"), scale = 0.4, colour = G.C.UI.TEXT_LIGHT}}
+                    {n = G.UIT.C, config = {align = "tr", minw = 0.5, minh = 0.5, padding = 0.1, r = 0.1, hover = true, colour = G.C.RED, shadow = true, button = "ygg_switch_second_area", second_area = "Recipes"}, nodes = {
+                        {n = G.UIT.R, config = { align = "cm", padding = 0.05 }, nodes = {
+                            {n = G.UIT.T, config = {text = localize("ygg_recipes_text"), scale = 0.4, colour = G.C.UI.TEXT_LIGHT}}
+                            }
+                        },
                         }
                     },
-                    }
-                },
-            }},
-            {n = G.UIT.R, config = {align = "tm", padding = cardarea_padding}, nodes = {
-                {n = G.UIT.O, config = {align = "tm", object = G["ygg_crafting_cardarea1"]}}
-            }},
-            {n = G.UIT.R, config = {align = "tm", padding = cardarea_padding}, nodes = {
-                {n = G.UIT.O, config = {align = "tm", object = G["ygg_crafting_cardarea2"]}}
-            }},
-            {n = G.UIT.R, config = {align = "tm", padding = cardarea_padding}, nodes = {
-                {n = G.UIT.O, config = {align = "tm", object = G["ygg_crafting_cardarea3"]}}
-            }},
-            {n = G.UIT.R, config = {align = "tm", padding = cardarea_padding}, nodes = {
-                {n = G.UIT.O, config = {align = "tm", object = DynaText({scale = 0.4, string = localize('ygg_craft_guide'), maxw = 9, colours = { G.C.GREY }, silent = true})}},
-            }},
-            {n = G.UIT.R, config = {align = "cm", padding = cardarea_padding, colour = {G.C.GREY[1], G.C.GREY[2], G.C.GREY[3],0.3}, r = 0.3}, nodes = {
-                {n = G.UIT.O, config = {align = "tm", object = G["ygg_crafting_show"]}}
-            }},
-        }
+                }},
+                {n = G.UIT.R, config = {align = "tm", padding = cardarea_padding}, nodes = {
+                    {n = G.UIT.O, config = {align = "tm", object = G["ygg_crafting_cardarea1"]}}
+                }},
+                {n = G.UIT.R, config = {align = "tm", padding = cardarea_padding}, nodes = {
+                    {n = G.UIT.O, config = {align = "tm", object = G["ygg_crafting_cardarea2"]}}
+                }},
+                {n = G.UIT.R, config = {align = "tm", padding = cardarea_padding}, nodes = {
+                    {n = G.UIT.O, config = {align = "tm", object = G["ygg_crafting_cardarea3"]}}
+                }},
+                {n = G.UIT.R, config = {align = "tm", padding = cardarea_padding}, nodes = {
+                    {n = G.UIT.O, config = {align = "tm", object = DynaText({scale = 0.4, string = localize('ygg_craft_guide'), maxw = 9, colours = { G.C.GREY }, silent = true})}},
+                }},
+                {n = G.UIT.R, config = {align = "cm", padding = cardarea_padding, colour = {G.C.GREY[1], G.C.GREY[2], G.C.GREY[3],0.3}, r = 0.3}, nodes = {
+                    {n = G.UIT.O, config = {align = "tm", object = G["ygg_crafting_show"]}}
+                }},
+            }
+        end
     end
 
-    if not G.GAME["YggInvenArea"] or G.GAME["YggInvenArea"] == "Inventory" then
-        inven_area_nodes = {
-            {n = G.UIT.R, config = {align = "tm", padding = 0.2}, nodes = {
-                {n = G.UIT.O, config = {align = "tm", object = DynaText({scale = 0.75, string = localize('ygg_inventory_text'), maxw = 9, colours = { G.C.WHITE }, float = true, silent = true, shadow = true})}}
-            }},
-            {n = G.UIT.R, config = {align = "tr", padding = 0.02}, nodes = {
-                ygg_create_text_input({w = 3, prompt_text = G.GAME["YggSearchOption"], id = "ygg_search_option", extended_corpus = true, ref_table = G.GAME, ref_value = 'YggSearchOptionInput',
-                    callback = function(_)
-                        G.GAME["YggSearchOption"] = G.GAME["YggSearchOptionInput"]
-                        G.FUNCS.ygg_open_inventory()
-                    end
-                }),
-                {n = G.UIT.C, config = {align = "tr", minw = 0.5, minh = 0.5, padding = 0.1, r = 0.1, hover = true, colour = G.C.RED, shadow = true, button = "ygg_clear_text"}, nodes = {
-                    {n = G.UIT.R, config = { align = "cm", padding = 0.05 }, nodes = {
-                        {n = G.UIT.T, config = {text = localize("ygg_clear"), scale = 0.4, colour = G.C.UI.TEXT_LIGHT}}
-                        }
-                    },
-                    }
-                },   
-            }},
-            {n = G.UIT.R, config = {align = "tr", padding = 0.02}, nodes = {
-                {
-                    n = G.UIT.C,
-                    config = {
-                        align = "tr",
-                        minw = 0.5,
-                        minh = 0.5,
-                        padding = 0.1,
-                        r = 0.1,
-                        hover = true,
-                        colour = G.C.RED,
-                        shadow = true,
-                        button = "ygg_switch_sort_type",
-                        sort_type = "Rarity",
-                    },
-                    nodes = {
-                        {
-                            n = G.UIT.R,
-                            config = { align = "cm", padding = 0.05 },
-                            nodes = {
-                                {
-                                    n = G.UIT.T,
-                                    config = {
-                                        text = localize("ygg_sort_rarity"),
-                                        scale = 0.3,
-                                        colour = G.C.UI.TEXT_LIGHT
-                                    }
-                                }
+    if add_left_area then
+        if not G.GAME["YggInvenArea"] or G.GAME["YggInvenArea"] == "Inventory" then
+            inven_area_nodes = {
+                {n = G.UIT.R, config = {align = "tm", padding = 0.2}, nodes = {
+                    {n = G.UIT.O, config = {align = "tm", object = DynaText({scale = 0.75, string = localize('ygg_inventory_text'), maxw = 9, colours = { G.C.WHITE }, float = true, silent = true, shadow = true})}}
+                }},
+                {n = G.UIT.R, config = {align = "tr", padding = 0.02}, nodes = {
+                    ygg_create_text_input({w = 3, prompt_text = G.GAME["YggSearchOption"], id = "ygg_search_option", extended_corpus = true, ref_table = G.GAME, ref_value = 'YggSearchOptionInput',
+                        callback = function(_)
+                            G.GAME["YggSearchOption"] = G.GAME["YggSearchOptionInput"]
+                            G.FUNCS.ygg_open_inventory()
+                        end
+                    }),
+                    {n = G.UIT.C, config = {align = "tr", minw = 0.5, minh = 0.5, padding = 0.1, r = 0.1, hover = true, colour = G.C.RED, shadow = true, button = "ygg_clear_text"}, nodes = {
+                        {n = G.UIT.R, config = { align = "cm", padding = 0.05 }, nodes = {
+                            {n = G.UIT.T, config = {text = localize("ygg_clear"), scale = 0.4, colour = G.C.UI.TEXT_LIGHT}}
                             }
                         },
-                    }
-                },   
-                {
-                    n = G.UIT.C,
-                    config = {
-                        align = "tr",
-                        minw = 0.5,
-                        minh = 0.5,
-                        padding = 0.1,
-                        r = 0.1,
-                        hover = true,
-                        colour = G.C.RED,
-                        shadow = true,
-                        button = "ygg_switch_sort_type",
-                        sort_type = "Date",
-                    },
-                    nodes = {
-                        {
-                            n = G.UIT.R,
-                            config = { align = "cm", padding = 0.05 },
-                            nodes = {
-                                {
-                                    n = G.UIT.T,
-                                    config = {
-                                        text = localize("ygg_sort_date"),
-                                        scale = 0.3,
-                                        colour = G.C.UI.TEXT_LIGHT
+                        }
+                    },   
+                }},
+                {n = G.UIT.R, config = {align = "tr", padding = 0.02}, nodes = {
+                    {
+                        n = G.UIT.C,
+                        config = {
+                            align = "tr",
+                            minw = 0.5,
+                            minh = 0.5,
+                            padding = 0.1,
+                            r = 0.1,
+                            hover = true,
+                            colour = G.C.RED,
+                            shadow = true,
+                            button = "ygg_switch_sort_type",
+                            sort_type = "Rarity",
+                        },
+                        nodes = {
+                            {
+                                n = G.UIT.R,
+                                config = { align = "cm", padding = 0.05 },
+                                nodes = {
+                                    {
+                                        n = G.UIT.T,
+                                        config = {
+                                            text = localize("ygg_sort_rarity"),
+                                            scale = 0.3,
+                                            colour = G.C.UI.TEXT_LIGHT
+                                        }
                                     }
                                 }
+                            },
+                        }
+                    },   
+                    {
+                        n = G.UIT.C,
+                        config = {
+                            align = "tr",
+                            minw = 0.5,
+                            minh = 0.5,
+                            padding = 0.1,
+                            r = 0.1,
+                            hover = true,
+                            colour = G.C.RED,
+                            shadow = true,
+                            button = "ygg_switch_sort_type",
+                            sort_type = "Date",
+                        },
+                        nodes = {
+                            {
+                                n = G.UIT.R,
+                                config = { align = "cm", padding = 0.05 },
+                                nodes = {
+                                    {
+                                        n = G.UIT.T,
+                                        config = {
+                                            text = localize("ygg_sort_date"),
+                                            scale = 0.3,
+                                            colour = G.C.UI.TEXT_LIGHT
+                                        }
+                                    }
+                                }
+                            },
+                        }
+                    },   
+                }},
+                {n = G.UIT.R, config = {align = "tr", padding = 0.02}, nodes = {
+                    {n = G.UIT.C, config = {align = "tr", minw = 0.5, minh = 0.5, padding = 0.1, r = 0.1, hover = true, colour = G.C.RED, shadow = true, button = "ygg_switch_inven_area", inven_area = "Equip"}, nodes = {
+                        {n = G.UIT.R, config = { align = "cm", padding = 0.05 }, nodes = {
+                            {n = G.UIT.T, config = {text = localize("ygg_equip_text"), scale = 0.4, colour = G.C.UI.TEXT_LIGHT}}
                             }
                         },
-                    }
-                },   
-            }},
-            {n = G.UIT.R, config = {align = "tr", padding = 0.02}, nodes = {
-                {n = G.UIT.C, config = {align = "tr", minw = 0.5, minh = 0.5, padding = 0.1, r = 0.1, hover = true, colour = G.C.RED, shadow = true, button = "ygg_switch_inven_area", inven_area = "Equip"}, nodes = {
-                    {n = G.UIT.R, config = { align = "cm", padding = 0.05 }, nodes = {
-                        {n = G.UIT.T, config = {text = localize("ygg_equip_text"), scale = 0.4, colour = G.C.UI.TEXT_LIGHT}}
                         }
-                    },
-                    }
-                }, 
-            }},
-            {n = G.UIT.R, config = {align = "tm", padding = cardarea_padding}, nodes = {
-                {n = G.UIT.O, config = {align = "tm", object = G["ygg_inventory_cardarea1"]}}
-            }},
-            {n = G.UIT.R, config = {align = "tm", padding = cardarea_padding}, nodes = {
-                {n = G.UIT.O, config = {align = "tm", object = G["ygg_inventory_cardarea2"]}}
-            }},
-            {n = G.UIT.R, config = {align = "tm", padding = cardarea_padding}, nodes = {
-                {n = G.UIT.O, config = {align = "tm", object = G["ygg_inventory_cardarea3"]}}
-            }},
-            {n = G.UIT.R, config = {align = "cm", padding = 0.02}, nodes = {
-                {n = G.UIT.C, config = {align = "cm", minw = 0.5, minh = 0.5, padding = 0.1, r = 0.1, hover = true, colour = G.C.RED, shadow = true, button = "to_previous_inventory_page", page = true_page}, nodes = {
-                    {n = G.UIT.R, config = {align = "cm", padding = 0.05}, nodes = {
-                        {n = G.UIT.T, config = {text = "<", scale = 0.4, colour = G.C.UI.TEXT_LIGHT}}
-                    }}
+                    }, 
                 }},
-                {n = G.UIT.C, config = {align = "cm", minw = 0.5, minh = 0.5, padding = 0.1, r = 0.1, hover = true, colour = G.C.RED, shadow = true}, nodes = {
-                    {n = G.UIT.R, config = {align = "cm", padding = 0.05}, nodes = {
-                        {n = G.UIT.T, config = {text = localize("ygg_page").." "..(G.GAME.ygg_inven_page or 1).."/"..(true_page or math.max(math.ceil(#(G.PROFILES[G.SETTINGS.profile]["YggInventory"] or {})/15), 1)), scale = 0.4, colour = G.C.UI.TEXT_LIGHT}}
-                    }}
-                }}, 
-                {n = G.UIT.C, config = {align = "cm", minw = 0.5, minh = 0.5, padding = 0.1, r = 0.1, hover = true, colour = G.C.RED, shadow = true, button = "to_next_inventory_page", page = true_page}, nodes = {
-                    {n = G.UIT.R, config = {align = "cm", padding = 0.05}, nodes = {
-                        {n = G.UIT.T, config = {text = ">", scale = 0.4, colour = G.C.UI.TEXT_LIGHT}}
-                    }}
+                {n = G.UIT.R, config = {align = "tm", padding = cardarea_padding}, nodes = {
+                    {n = G.UIT.O, config = {align = "tm", object = G["ygg_inventory_cardarea1"]}}
                 }},
-            }},
-        }
-    elseif G.GAME["YggInvenArea"] == "Equip" then
-        inven_area_nodes = {
-            {n = G.UIT.R, config = {align = "tm", padding = 0.2}, nodes = {
-                {n = G.UIT.O, config = {align = "tm", object = DynaText({scale = 0.75, string = localize('ygg_equip_area_text'), maxw = 9, colours = { G.C.WHITE }, float = true, silent = true, shadow = true})}}
-            }},
-            {n = G.UIT.R, config = {align = "tr", padding = 0.02}, nodes = {
-                {n = G.UIT.C, config = {align = "tr", minw = 0.5, minh = 0.5, padding = 0.1, r = 0.1, hover = true, colour = G.C.RED, shadow = true, button = "ygg_switch_inven_area", inven_area = "Inventory"}, nodes = {
-                    {n = G.UIT.R, config = { align = "cm", padding = 0.05 }, nodes = {
-                        {n = G.UIT.T, config = {text = localize("ygg_inventory_text"), scale = 0.4, colour = G.C.UI.TEXT_LIGHT}}
-                        }
-                    },
-                    }
-                }, 
-            }},
-            {n = G.UIT.R, config = {align = "tm", padding = cardarea_padding, r = 0.1, colour = adjust_alpha({G.C.GREY[1], G.C.GREY[2], G.C.GREY[3]}, 0.3)}, nodes = {
-                {n = G.UIT.C, config = {align = "tm", padding = 0, colour = G.C.CLEAR}, nodes = {
-                    --[[
-                    {n = G.UIT.R, config = {align = "tm", padding = 0, colour = G.C.CLEAR}, nodes = {
-                        {n = G.UIT.O, config = {align = "tm", object = DynaText({scale = 0.4, string = {{ref_table = YggEquipCount, ref_value = "text"}}, maxw = 9, colours = { G.C.WHITE }})}}
-                    }},]]
-                    {n = G.UIT.R, config = {align = "tm", padding = 0, colour = G.C.CLEAR}, nodes = {
-                        {n = G.UIT.O, config = {align = "tm", object = G["ygg_equip_cardarea1"]}},
+                {n = G.UIT.R, config = {align = "tm", padding = cardarea_padding}, nodes = {
+                    {n = G.UIT.O, config = {align = "tm", object = G["ygg_inventory_cardarea2"]}}
+                }},
+                {n = G.UIT.R, config = {align = "tm", padding = cardarea_padding}, nodes = {
+                    {n = G.UIT.O, config = {align = "tm", object = G["ygg_inventory_cardarea3"]}}
+                }},
+                {n = G.UIT.R, config = {align = "cm", padding = 0.02}, nodes = {
+                    {n = G.UIT.C, config = {align = "cm", minw = 0.5, minh = 0.5, padding = 0.1, r = 0.1, hover = true, colour = G.C.RED, shadow = true, button = "to_previous_inventory_page", page = true_page}, nodes = {
+                        {n = G.UIT.R, config = {align = "cm", padding = 0.05}, nodes = {
+                            {n = G.UIT.T, config = {text = "<", scale = 0.4, colour = G.C.UI.TEXT_LIGHT}}
+                        }}
+                    }},
+                    {n = G.UIT.C, config = {align = "cm", minw = 0.5, minh = 0.5, padding = 0.1, r = 0.1, hover = true, colour = G.C.RED, shadow = true}, nodes = {
+                        {n = G.UIT.R, config = {align = "cm", padding = 0.05}, nodes = {
+                            {n = G.UIT.T, config = {text = localize("ygg_page").." "..(G.GAME.ygg_inven_page or 1).."/"..(true_page or math.max(math.ceil(#(G.PROFILES[G.SETTINGS.profile]["YggInventory"] or {})/15), 1)), scale = 0.4, colour = G.C.UI.TEXT_LIGHT}}
+                        }}
+                    }}, 
+                    {n = G.UIT.C, config = {align = "cm", minw = 0.5, minh = 0.5, padding = 0.1, r = 0.1, hover = true, colour = G.C.RED, shadow = true, button = "to_next_inventory_page", page = true_page}, nodes = {
+                        {n = G.UIT.R, config = {align = "cm", padding = 0.05}, nodes = {
+                            {n = G.UIT.T, config = {text = ">", scale = 0.4, colour = G.C.UI.TEXT_LIGHT}}
+                        }}
                     }},
                 }},
-            }},
-            {n = G.UIT.R, config = {align = "tr", padding = 0.1}, nodes = {
-                {n = G.UIT.O, config = {align = "tr", object = DynaText({scale = 0.4, string = {{ref_table = YggEquipCount, ref_value = "text"}}, maxw = 9, colours = { G.C.WHITE }})}}
-            }},
-            {n = G.UIT.R, config = {align = "tm", padding = cardarea_padding}, nodes = {
-                {n = G.UIT.O, config = {align = "tm", object = G["ygg_equip_cardarea2"]}}
-            }},
-            {n = G.UIT.R, config = {align = "tm", padding = cardarea_padding}, nodes = {
-                {n = G.UIT.O, config = {align = "tm", object = G["ygg_equip_cardarea3"]}}
-            }},
-            {n = G.UIT.R, config = {align = "tm", padding = cardarea_padding}, nodes = {
-                {n = G.UIT.O, config = {align = "tm", object = G["ygg_equip_cardarea4"]}}
-            }},
-            {n = G.UIT.R, config = {align = "cm", padding = 0.02}, nodes = {
-                {n = G.UIT.C, config = {align = "cm", minw = 0.5, minh = 0.5, padding = 0.1, r = 0.1, hover = true, colour = G.C.RED, shadow = true, button = "to_previous_equip_page", page = true_equip_page}, nodes = {
-                    {n = G.UIT.R, config = {align = "cm", padding = 0.05}, nodes = {
-                        {n = G.UIT.T, config = {text = "<", scale = 0.4, colour = G.C.UI.TEXT_LIGHT}}
-                    }}
+            }
+        elseif G.GAME["YggInvenArea"] == "Equip" then
+            inven_area_nodes = {
+                {n = G.UIT.R, config = {align = "tm", padding = 0.2}, nodes = {
+                    {n = G.UIT.O, config = {align = "tm", object = DynaText({scale = 0.75, string = localize('ygg_equip_area_text'), maxw = 9, colours = { G.C.WHITE }, float = true, silent = true, shadow = true})}}
                 }},
-                {n = G.UIT.C, config = {align = "cm", minw = 0.5, minh = 0.5, padding = 0.1, r = 0.1, hover = true, colour = G.C.RED, shadow = true}, nodes = {
-                    {n = G.UIT.R, config = {align = "cm", padding = 0.05}, nodes = {
-                        {n = G.UIT.T, config = {text = localize("ygg_page").." "..(G.GAME.ygg_equip_page or 1).."/"..(true_equip_page or 1), scale = 0.4, colour = G.C.UI.TEXT_LIGHT}}
-                    }}
-                }}, 
-                {n = G.UIT.C, config = {align = "cm", minw = 0.5, minh = 0.5, padding = 0.1, r = 0.1, hover = true, colour = G.C.RED, shadow = true, button = "to_next_equip_page", page = true_equip_page}, nodes = {
-                    {n = G.UIT.R, config = {align = "cm", padding = 0.05}, nodes = {
-                        {n = G.UIT.T, config = {text = ">", scale = 0.4, colour = G.C.UI.TEXT_LIGHT}}
-                    }}
+                {n = G.UIT.R, config = {align = "tr", padding = 0.02}, nodes = {
+                    {n = G.UIT.C, config = {align = "tr", minw = 0.5, minh = 0.5, padding = 0.1, r = 0.1, hover = true, colour = G.C.RED, shadow = true, button = "ygg_switch_inven_area", inven_area = "Inventory"}, nodes = {
+                        {n = G.UIT.R, config = { align = "cm", padding = 0.05 }, nodes = {
+                            {n = G.UIT.T, config = {text = localize("ygg_inventory_text"), scale = 0.4, colour = G.C.UI.TEXT_LIGHT}}
+                            }
+                        },
+                        }
+                    }, 
                 }},
-            }},
-        }
+                {n = G.UIT.R, config = {align = "tm", padding = cardarea_padding, r = 0.1, colour = adjust_alpha({G.C.GREY[1], G.C.GREY[2], G.C.GREY[3]}, 0.3)}, nodes = {
+                    {n = G.UIT.C, config = {align = "tm", padding = 0, colour = G.C.CLEAR}, nodes = {
+                        --[[
+                        {n = G.UIT.R, config = {align = "tm", padding = 0, colour = G.C.CLEAR}, nodes = {
+                            {n = G.UIT.O, config = {align = "tm", object = DynaText({scale = 0.4, string = {{ref_table = YggEquipCount, ref_value = "text"}}, maxw = 9, colours = { G.C.WHITE }})}}
+                        }},]]
+                        {n = G.UIT.R, config = {align = "tm", padding = 0, colour = G.C.CLEAR}, nodes = {
+                            {n = G.UIT.O, config = {align = "tm", object = G["ygg_equip_cardarea1"]}},
+                        }},
+                    }},
+                }},
+                {n = G.UIT.R, config = {align = "tr", padding = 0.1}, nodes = {
+                    {n = G.UIT.O, config = {align = "tr", object = DynaText({scale = 0.4, string = {{ref_table = YggEquipCount, ref_value = "text"}}, maxw = 9, colours = { G.C.WHITE }})}}
+                }},
+                {n = G.UIT.R, config = {align = "tm", padding = cardarea_padding}, nodes = {
+                    {n = G.UIT.O, config = {align = "tm", object = G["ygg_equip_cardarea2"]}}
+                }},
+                {n = G.UIT.R, config = {align = "tm", padding = cardarea_padding}, nodes = {
+                    {n = G.UIT.O, config = {align = "tm", object = G["ygg_equip_cardarea3"]}}
+                }},
+                {n = G.UIT.R, config = {align = "tm", padding = cardarea_padding}, nodes = {
+                    {n = G.UIT.O, config = {align = "tm", object = G["ygg_equip_cardarea4"]}}
+                }},
+                {n = G.UIT.R, config = {align = "cm", padding = 0.02}, nodes = {
+                    {n = G.UIT.C, config = {align = "cm", minw = 0.5, minh = 0.5, padding = 0.1, r = 0.1, hover = true, colour = G.C.RED, shadow = true, button = "to_previous_equip_page", page = true_equip_page}, nodes = {
+                        {n = G.UIT.R, config = {align = "cm", padding = 0.05}, nodes = {
+                            {n = G.UIT.T, config = {text = "<", scale = 0.4, colour = G.C.UI.TEXT_LIGHT}}
+                        }}
+                    }},
+                    {n = G.UIT.C, config = {align = "cm", minw = 0.5, minh = 0.5, padding = 0.1, r = 0.1, hover = true, colour = G.C.RED, shadow = true}, nodes = {
+                        {n = G.UIT.R, config = {align = "cm", padding = 0.05}, nodes = {
+                            {n = G.UIT.T, config = {text = localize("ygg_page").." "..(G.GAME.ygg_equip_page or 1).."/"..(true_equip_page or 1), scale = 0.4, colour = G.C.UI.TEXT_LIGHT}}
+                        }}
+                    }}, 
+                    {n = G.UIT.C, config = {align = "cm", minw = 0.5, minh = 0.5, padding = 0.1, r = 0.1, hover = true, colour = G.C.RED, shadow = true, button = "to_next_equip_page", page = true_equip_page}, nodes = {
+                        {n = G.UIT.R, config = {align = "cm", padding = 0.05}, nodes = {
+                            {n = G.UIT.T, config = {text = ">", scale = 0.4, colour = G.C.UI.TEXT_LIGHT}}
+                        }}
+                    }},
+                }},
+            }
+        end
     end
 
     return {n=G.UIT.ROOT, config = {align = "cm", minw = G.ROOM.T.w*5, minh = G.ROOM.T.h*5,padding = 0.1, r = 0.1, colour = args.bg_colour or {G.C.GREY[1], G.C.GREY[2], G.C.GREY[3],0.7}}, nodes={
@@ -3386,6 +3470,7 @@ function create_inventory_UI(args)
                 },
             }},
 
+            --Back button.
             {n = G.UIT.R, config = {align = "cm", padding = 0}, nodes = {
                 not args.no_back and {n=G.UIT.C, config={id = args.back_id or 'overlay_menu_back_button', align = "cm", minw = 8, button_delay = args.back_delay, padding =0.1, r = 0.1, hover = true, colour = args.back_colour or G.C.ORANGE, button = back_func, shadow = true, focus_args = {nav = 'wide', button = 'b', snap_to = args.snap_back}}, nodes={
                     {n=G.UIT.R, config={align = "cm", padding = 0, no_fill = true}, nodes={
@@ -3408,6 +3493,7 @@ function create_inventory_menu()
     }))
   
     local t = create_inventory_UI()
+    Yggdrasil.cleanup_dead_elements(G, "MOVEABLES")
     return t
 end
 
@@ -3529,131 +3615,59 @@ function Game:update(dt)
         end
     end
 
-    --loading in equipped relics to a cardarea. is this a bad idea? probably
-    --[[some explanation for MYSELF.
-    Q: what the hell is "true_cards"?
-    A: :remove_card(), :remove() are all events, so uh, if i simply check self.ygg_relic_area.cards then they arent properly updated yet until all those events are done.
-    so yeah, bugs
-    ]]
-    if self.ygg_relic_area and self.ygg_relic_area.cards then
-        local loaded_keys = {}
-        for _,v in ipairs(G.PROFILES[G.SETTINGS.profile]["YggEquipped"] or {}) do
-            if v.info and v.info.id then
-                local updated_info = Yggdrasil.get_item(v.info.id)
-                if updated_info then
-                    local card_key = "ygg_mat_"..(updated_info.mod_prefix or "ygg").."_"..(updated_info.card_key or updated_info.id)
-                    if not table.contains(loaded_keys, card_key) and not updated_info.mod_id or (updated_info.mod_id and next(SMODS.find_mod(updated_info.mod_id))) then
-                        loaded_keys[#loaded_keys+1] = card_key
-                    end 
-                end
-            end
-        end
-
-        local card_keys = {}
-        for _,v in ipairs(self.ygg_relic_area.true_cards or self.ygg_relic_area.cards or {}) do
-            card_keys[#card_keys+1] = v.config.center.key
-        end
-
-        local unequipped_keys = table.compare(card_keys, loaded_keys).missing
-        if next(unequipped_keys) then
-            for _,v in ipairs(self.ygg_relic_area.cards) do
-                if table.contains(unequipped_keys, v.config.center.key) then
-                    if v.config.center.on_unequip then
-                        v.config.center:on_unequip(v)
-                    end
-                end
-            end
-        end
-
-        if not table.equal(loaded_keys, card_keys, true) then
-            for _,v in ipairs(self.ygg_relic_area.cards) do
-                G.E_MANAGER:add_event(Event({
-                    func = function() 
-                        self.ygg_relic_area:remove_card(v)
-                        v:remove()
-                        return true 
-                    end
-                }))
-            end
-
-            local loaded_cards = {}
-            for _,v in ipairs(loaded_keys) do
-                local card = SMODS.add_card{key = v, area = self.ygg_relic_area}
-                loaded_cards[#loaded_cards+1] = card
-            end
-
-            self.ygg_relic_area.true_cards = loaded_cards
-
-            --[[
-            local keys = {}
-            for _,v in ipairs(self.ygg_relic_area.true_cards or self.ygg_relic_area.cards) do
-                keys[#keys+1] = v.config.center.key
-            end
-            print("added/rearranged relics, heres the new relics:")
-            print(keys)
-            print("intended keys:")
-            print(loaded_keys)
-            ]]
-        end
-    end
-
-    if self.ygg_uneq_relic_area and self.ygg_uneq_relic_area.cards then
-        local equipped_keys = {}
-        for _,v in ipairs(G.PROFILES[G.SETTINGS.profile]["YggEquipped"] or {}) do
-            if v.info and v.info.id then
-                equipped_keys[#equipped_keys+1] = v.info.id
-            end
-        end
-
-        local loaded_keys = {}
-        for _,v in ipairs(G.PROFILES[G.SETTINGS.profile]["YggInventory"] or {}) do
-            if v.id then
-                local updated_info = Yggdrasil.get_item(v.id)
-                if updated_info then
-                    local card_key = "ygg_mat_"..(updated_info.mod_prefix or "ygg").."_"..(updated_info.card_key or updated_info.id)
-                    if not table.contains(equipped_keys, v.id) and not table.contains(loaded_keys, card_key) and Yggdrasil.get_type_of_item(v.id) == "relic" then
-                        loaded_keys[#loaded_keys+1] = card_key
-                    end
-                end
-            end
-        end
-
-        local card_keys = {}
-        for _,v in ipairs(self.ygg_uneq_relic_area.true_cards or self.ygg_uneq_relic_area.cards or {}) do
-            card_keys[#card_keys+1] = v.config.center.key
-        end
-
-        local diff_keys = table.compare(card_keys, loaded_keys).missing
-        if next(diff_keys) then
-            for _,v in ipairs(self.ygg_uneq_relic_area.cards) do
-                if table.contains(diff_keys, v.config.center.key) then
-                    if v.config.center.on_equip then
-                        v.config.center:on_equip(v)
-                    end
-                end
-            end
-        end
-
-        if not table.equal(loaded_keys, card_keys) then
-            for _,v in ipairs(self.ygg_uneq_relic_area.cards) do
-                G.E_MANAGER:add_event(Event({
-                    func = function() 
-                        self.ygg_uneq_relic_area:remove_card(v)
-                        v:remove()
-                        return true 
-                    end
-                }))
-            end
-
-            local loaded_cards = {}
-            for _,v in ipairs(loaded_keys) do
-                local card = SMODS.add_card{key = v, area = self.ygg_uneq_relic_area}
-                loaded_cards[#loaded_cards+1] = card
-            end
-
-            self.ygg_uneq_relic_area.true_cards = loaded_cards
-        end
-    end
+    load_relic_areas()
 
     return ret
+end
+
+function Yggdrasil.reset_game_globals(run_start)
+    if run_start then
+        G.ygg_relic_area = CardArea(
+            G.TILE_W - 600*G.CARD_W - 200.95, -100.1*G.jokers.T.h,
+            G.jokers.T.w, G.jokers.T.h,
+            { type = "joker", card_limit = 100000, highlighted_limit = 0 }
+        )
+        G.ygg_uneq_relic_area = CardArea(
+            G.TILE_W - 600*G.CARD_W - 200.95, -100.1*G.jokers.T.h,
+            G.jokers.T.w, G.jokers.T.h,
+            { type = "joker", card_limit = 100000, highlighted_limit = 0 }
+        )
+        load_relic_areas()
+
+        G.E_MANAGER:add_event(Event({
+            func = function() 
+                if G.ygg_relic_area and G.ygg_relic_area.cards then
+                    for _,v in ipairs(G.ygg_relic_area.cards) do
+                        if v.config.center.on_new_run then
+                            local ret = v.config.center:on_new_run(v,true)
+                            if not ret or not ret.disable_equip_effect then
+                                if v.config.center.on_equip then
+                                    v.config.center:on_equip(v,true)
+                                end
+                            end
+                            if ret and ret.unequip then
+                                for i,v2 in ipairs(G.PROFILES[G.SETTINGS.profile]["YggEquipped"]) do
+                                    if v2.card_key == v.config.center.key then
+                                        table.remove(G.PROFILES[G.SETTINGS.profile]["YggEquipped"], i)
+                                    end
+                                end
+                            end
+                        else
+                            if v.config.center.on_equip then
+                                v.config.center:on_equip(v,true)
+                            end
+                        end
+                    end
+                end
+                if G.ygg_uneq_relic_area and G.ygg_uneq_relic_area.cards then
+                    for _,v in ipairs(G.ygg_uneq_relic_area.cards) do
+                        if v.config.center.on_new_run then
+                            v.config.center:on_new_run(v,false)
+                        end
+                    end
+                end
+                return true 
+            end
+        }))
+    end
 end

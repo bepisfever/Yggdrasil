@@ -38,6 +38,7 @@ SkillTreePerks = {
     Button configs, yipee:
     - lock_first_round (boolean): Makes it so the buffs can only be purchased during round 0.
     - exclude_with_skills (table, string): If any of the skills listed in here are obtained, disables the skill button.
+    - func (function): Function that runs when the skill is purchased. Should be stored in G.FUNCS[func].
 
     1. How do you add your own skills and sections?
     EX:
@@ -169,10 +170,10 @@ SkillTreePerks = {
     },
     ygg_skill_tree_sec5 = {
         {
-            {text = "FOIL", perk_id = "ygg_foil_upgrade", max_cap = 1, cost = 75},
-            {text = "HOLO", perk_id = "ygg_holo_upgrade", max_cap = 1, cost = 75},
-            {text = "POLY", perk_id = "ygg_polychrome_upgrade", max_cap = 1, cost = 75},
-            {text = "NEG", perk_id = "ygg_negative_upgrade", max_cap = 1, cost = 300},
+            {text = "FOIL", perk_id = "ygg_foil_upgrade", max_cap = 1, cost = 75, item_cost = {{item_id = "half_a_chip", amt = 500}}},
+            {text = "HOLO", perk_id = "ygg_holo_upgrade", max_cap = 1, cost = 75, item_cost = {{item_id = "chains_of_eternity"}, {item_id = "soul_engine"}, {item_id = "harmony_joker"}}},
+            {text = "POLY", perk_id = "ygg_polychrome_upgrade", max_cap = 1, cost = 75, item_cost = {{item_id = "bismuth", amt = 9}}},
+            {text = "NEG", perk_id = "ygg_negative_upgrade", max_cap = 1, cost = 300, item_cost = {{item_id = "alkov_blade"}}},
         },
     },
     ygg_skill_tree_diff = {
@@ -311,6 +312,10 @@ function check_if_conflict(key)
     end
     return false
 end
+
+function if_skill_cost_unlocked(key)
+    return (get_skill_info(key).temp_item_upgrade and false) or (not not (G.PROFILES[G.SETTINGS.profile]["YggSkillUnlocked"] or {})[key])
+end
 --Skill Tree UI
 
 function create_skill_perk_desc(key, perk_info, specific)
@@ -410,6 +415,7 @@ function create_skill_perk_desc(key, perk_info, specific)
             local items = 0
             local items_each_line = 3
             local loc_num = 1
+            local item_unlocked = if_skill_cost_unlocked(perk_info.perk_id)
             for _,_ in pairs(perk_info.item_cost) do
                 items = items + 1
             end
@@ -424,7 +430,7 @@ function create_skill_perk_desc(key, perk_info, specific)
 
             if first_line_input then
                 loc_num = loc_num + 1
-                raw_desc = raw_desc..", {C:red}#"..loc_num.."#{} #"..(loc_num+1).."#,"
+                raw_desc = raw_desc..((not item_unlocked and ", {C:red}#") or (item_unlocked and ", {C:green}#"))..loc_num.."#{} #"..(loc_num+1).."#,"
                 if lines == 1 then raw_desc = string.sub(raw_desc,1,(#raw_desc-1)) end
             end
 
@@ -437,7 +443,7 @@ function create_skill_perk_desc(key, perk_info, specific)
                         if calc_items < items then
                             calc_items = calc_items + 1
                             loc_num = loc_num + 2
-                            new_text = new_text.."{C:red}#"..loc_num.."#{} #"..(loc_num+1).."#, "
+                            new_text = new_text..((not item_unlocked and "{C:red}#") or (item_unlocked and "{C:green}#"))..loc_num.."#{} #"..(loc_num+1).."#, "
                             if calc_items >= items then
                                 new_text = string.sub(new_text, 1, (#new_text - 2))
                                 break
@@ -528,6 +534,8 @@ end
 
 local hookTo = UIElement.hover
 function UIElement:hover() 
+    G.GAME.hovered_ui = self
+
     if self.config.juice_on_hover and sp_check_if_unlocked(self) then
         self:juice_up(0.3,0.2)    
     end
@@ -550,12 +558,13 @@ end
 local hookTo = UIElement.stop_hover
 function UIElement:stop_hover() 
     self.config.is_hovered = false
+    if G.GAME.hovered_ui == self then G.GAME.hovered_ui = nil end
 
     hookTo(self)
 end
 
 function check_valid_item_cost(perk_info)
-    if not perk_info.item_cost then return true end
+    if not perk_info.item_cost or if_skill_cost_unlocked(perk_info.perk_id) then return true end
     local items = {}
     local obtained_items = {}
     for _,v in ipairs(perk_info.item_cost) do
@@ -581,7 +590,7 @@ function check_valid_item_cost(perk_info)
 end
 
 function calculate_item_cost(perk_info, times)
-    if not perk_info.item_cost then return times end
+    if not perk_info.item_cost or if_skill_cost_unlocked(perk_info.perk_id) then return times end
     local items = {}
     local obtained_items = {}
     for _,v in ipairs(perk_info.item_cost) do
@@ -617,11 +626,12 @@ function calculate_item_cost(perk_info, times)
 end
 
 function purchase_item_cost(perk_info, times)
-    if not perk_info.item_cost then return end
+    if not perk_info.item_cost or if_skill_cost_unlocked(perk_info.perk_id) then return end
     local items = {}
     for _,v in ipairs(perk_info.item_cost) do
         items[v.item_id] = (items[v.item_id] or 0) + (v.amt or 1)
     end
+    if not perk_info.temp_item_upgrade then times = 1; if not G.PROFILES[G.SETTINGS.profile]["YggSkillUnlocked"] then G.PROFILES[G.SETTINGS.profile]["YggSkillUnlocked"] = {} end; G.PROFILES[G.SETTINGS.profile]["YggSkillUnlocked"][perk_info.perk_id] = true end
 
     for _ = 1, (times or 1) do
         for i,v in pairs(items) do
@@ -648,10 +658,14 @@ G.FUNCS.purchase_skill_perk = function(e)
             if not G.PROFILES[G.SETTINGS.profile].skill_perks then G.PROFILES[G.SETTINGS.profile].skill_perks = {} end
             G.PROFILES[G.SETTINGS.profile].skill_perks[e.config.perk_id] = (G.PROFILES[G.SETTINGS.profile].skill_perks[e.config.perk_id] or 0) + upgraded_times
             G.PROFILES[G.SETTINGS.profile].ygg_skill_points = (G.PROFILES[G.SETTINGS.profile].ygg_skill_points or 0) - (e.config.perk_info.cost * upgraded_times)
+            if e.config.perk_info.func and G.FUNCS[e.config.perk_info.func] then
+                G.FUNCS[e.config.perk_info.func](e)
+            end
 
             e.config.h_popup = nil
             e.config.h_popup = create_skill_perk_desc(e.config.loc_tooltip, e.config.perk_info)
             e.config.h_popup_config = {align="tm", offset = {x=0,y=-0.1}, parent = e}
+            
             if e.config.is_hovered then
                 Node.stop_hover(e)
                 Node.hover(e) 
@@ -667,6 +681,9 @@ G.FUNCS.purchase_skill_perk = function(e)
             if not G.GAME.skill_perks then G.GAME.skill_perks = {} end
             G.GAME.skill_perks[e.config.perk_id] = (G.GAME.skill_perks[e.config.perk_id] or 0) + upgraded_times
             G.GAME.ygg_skill_points = (G.GAME.ygg_skill_points or 0) - (e.config.perk_info.cost * upgraded_times)
+            if e.config.perk_info.func and G.FUNCS[e.config.perk_info.func] then
+                G.FUNCS[e.config.perk_info.func](e)
+            end
 
             e.config.h_popup = nil
             e.config.h_popup = create_skill_perk_desc(e.config.loc_tooltip, e.config.perk_info)
@@ -692,6 +709,9 @@ G.FUNCS.purchase_skill_perk = function(e)
             G.PROFILES[G.SETTINGS.profile].ygg_skill_points = (G.PROFILES[G.SETTINGS.profile].ygg_skill_points or 0) - cost_skill_points
 
             G.PROFILES[G.SETTINGS.profile].skill_perks[e.config.perk_id] = (G.PROFILES[G.SETTINGS.profile].skill_perks[e.config.perk_id] or 0) + upgraded_times
+            if e.config.perk_info.func and G.FUNCS[e.config.perk_info.func] then
+                G.FUNCS[e.config.perk_info.func](e)
+            end
 
             e.config.h_popup = nil
             e.config.h_popup = create_skill_perk_desc(e.config.loc_tooltip, e.config.perk_info)
@@ -705,6 +725,14 @@ G.FUNCS.purchase_skill_perk = function(e)
         end 
     end
 end 
+
+G.FUNCS.right_click_skill = function(e)
+    if ((G.GAME.round or 0) <= 0) or YggdrasilDebugMode then
+        local perk_info = e.config.perk_info
+        local key = perk_info.perk_id
+        Yggdrasil.reset_skill(key)
+    end
+end
 
 G.FUNCS.sp_check = function(e)
     if not sp_check_if_unlocked(e) then
@@ -769,7 +797,7 @@ function create_skill_perks(name)
                 }}
             else
                 await[i][#await[i]+1] =         
-                {n = G.UIT.C, config = {align = "cm", padding = 0.1, perk_id = v.perk_id, minh = 1, minw = 1, maxh = 1, maxw = 1, colour = G.C.L_BLACK, r = 0.2, outline = 1, outline_color = G.C.GREY, hover = true, shadow = true, juice = true, button = "purchase_skill_perk", func = "sp_check", loc_tooltip = "sp_"..v.perk_id, perk_info = v, juice_on_hover = true}, nodes = {
+                {n = G.UIT.C, config = {align = "cm", padding = 0.1, perk_id = v.perk_id, minh = 1, minw = 1, maxh = 1, maxw = 1, colour = G.C.L_BLACK, r = 0.2, outline = 1, outline_color = G.C.GREY, hover = true, shadow = true, juice = true, button = "purchase_skill_perk", r_button = "right_click_skill", func = "sp_check", loc_tooltip = "sp_"..v.perk_id, perk_info = v, juice_on_hover = true}, nodes = {
                     {n = G.UIT.T, config = {text = v.text, colour = G.C.WHITE, scale = 0.5, align = "cm"}}
                 }}
             end
@@ -1494,4 +1522,16 @@ function Game:update(dt) --SP Text.
     end
 end
 
+local right_click_ref = Controller.queue_R_cursor_press
+function Controller:queue_R_cursor_press(x, y)
+    local ret = right_click_ref(self, x , y)
+
+    if G.GAME.hovered_ui and G.GAME.hovered_ui.config then
+        if G.GAME.hovered_ui.config.r_button then
+            G.FUNCS[G.GAME.hovered_ui.config.r_button](G.GAME.hovered_ui)
+        end
+    end
+
+    return ret
+end
 --G.localization.descriptions.Joker <-- then something something here

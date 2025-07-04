@@ -2125,6 +2125,24 @@ function load_relic_areas()
     A: :remove_card(), :remove() are all events, so uh, if i simply check G.ygg_relic_area.cards then they arent properly updated yet until all those events are done.
     so yeah, bugs
     ]]
+    if G.jokers then
+        if not G.ygg_relic_area then
+            G.ygg_relic_area = CardArea(
+                G.TILE_W - 600*G.CARD_W - 200.95, -100.1*G.jokers.T.h,
+                G.jokers.T.w, G.jokers.T.h,
+                { type = "joker", card_limit = 100000, highlighted_limit = 0 }
+            )
+        end
+
+        if not G.ygg_uneq_relic_area then
+            G.ygg_uneq_relic_area = CardArea(
+                G.TILE_W - 600*G.CARD_W - 200.95, -100.1*G.jokers.T.h,
+                G.jokers.T.w, G.jokers.T.h,
+                { type = "joker", card_limit = 100000, highlighted_limit = 0 }
+            )
+        end
+    end
+    
     if G.ygg_relic_area and G.ygg_relic_area.cards then
         local loaded_keys = {}
         for _,v in ipairs(G.PROFILES[G.SETTINGS.profile]["YggEquipped"] or {}) do
